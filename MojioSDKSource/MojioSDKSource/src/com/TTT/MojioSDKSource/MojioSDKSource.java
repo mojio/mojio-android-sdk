@@ -39,16 +39,18 @@ public class MojioSDKSource{
 	}
 	
 	
-	public static void GetElement(String url){
-		new GetElementTask(url).execute();
+	public static void GetElement(String url, Context context){
+		new GetElementTask(url, context).execute();
 	}
 	
 	private static class GetElementTask extends AsyncTask<Void, Void, Void>{
 		
 		String _url;
+		Context _context;
 		
-		public GetElementTask(String url){
+		public GetElementTask(String url, Context context){
 			_url = url;
+			_context = context;
 			
 		}
 
@@ -57,9 +59,10 @@ public class MojioSDKSource{
 
 			try {
 
+				OauthHelper oauthHelper = new OauthHelper(_context);
 				URL productUrl = new URL(_url);
 				HttpsURLConnection conn = (HttpsURLConnection) productUrl.openConnection();
-
+				conn.setRequestProperty("MojioAPIToken", oauthHelper.GetAccessToken());
 				
 				// Build JSON object from HTTP response.
 				BufferedReader rd = new BufferedReader(new InputStreamReader(

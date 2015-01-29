@@ -50,7 +50,7 @@ public class MainActivity extends Activity implements AsyncResponse{
 			public void onClick(View v) {
 //				MojioSDKSource.GetEntityWithPath("", MainActivity.this);
 //				MojioSDKSource.getVehicle(MainActivity.this);
-				MojioSDKSource.GetElement("https://api.moj.io/v1/Vehicles/53cdeca5-b268-4a25-bfde-3938b5cf7d47");
+				MojioSDKSource.GetElement("https://api.moj.io/v1/Vehicles/53cdeca5-b268-4a25-bfde-3938b5cf7d47", MainActivity.this);
 				
 			}
 		});
