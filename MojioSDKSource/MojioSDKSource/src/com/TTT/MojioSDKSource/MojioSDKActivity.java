@@ -35,7 +35,7 @@ public class MojioSDKActivity extends Activity{
 		loginWebView.loadUrl("https://api.moj.io/OAuth2/authorize?response_type=token&client_id=3d431a5d-472f-4a10-b0dd-29d9f7f7c6dc&redirect_uri=mojioios://");
 		loginWebView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) { 
-                if(url.contains("mojioios://")){
+                if(url.startsWith("mojioios://")){
                 	Log.e("testing", "the whole url is: " + url);
                 	oauthHelper.SetAccessToken(url);
                 	oauthHelper.SetExpireTime(url);
