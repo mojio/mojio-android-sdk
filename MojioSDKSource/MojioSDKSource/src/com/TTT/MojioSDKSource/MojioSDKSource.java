@@ -8,7 +8,11 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
@@ -43,7 +47,7 @@ public class MojioSDKSource{
 		new GetElementTask(url, context).execute();
 	}
 	
-	private static class GetElementTask extends AsyncTask<Void, Void, Void>{
+	private static class GetElementTask extends AsyncTask<Void, Void, String>{
 		
 		String _url;
 		Context _context;
@@ -55,7 +59,7 @@ public class MojioSDKSource{
 		}
 
 		@Override
-		protected Void doInBackground(Void... params) {
+		protected String doInBackground(Void... params) {
 
 			try {
 
@@ -77,6 +81,7 @@ public class MojioSDKSource{
 //				new ObjectMapper().readValue(jsonData, Vehicle.class);
 				
 				Log.e("TESTING", "THIS IS WHAT I GOT: " + jsonData);
+				return jsonData;
 				
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
@@ -88,6 +93,38 @@ public class MojioSDKSource{
 			catch(Exception e){}
 			
 			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(String result) {
+
+			try {
+				JSONObject resultJson = new JSONObject(result);
+				String type = resultJson.getString("Type");
+				
+				String className = "com.TTT.MojioSDKSource.Models." + type;
+				Class myclass = Class.forName(className);
+
+				myclass = new ObjectMapper().readValue(result, myclass);
+
+				
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (JsonParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}
