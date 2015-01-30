@@ -8,6 +8,7 @@ import com.TTT.MojioSDKSource.OauthHelper.OauthHelper;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +26,7 @@ public class MainActivity extends Activity implements AsyncResponse{
 	WebView webview;
 	Button loginbutton;
 	TextView accesstokentextview;
+	TextView t;
 	
 	private TextView _ResponseShowTextView;
 	
@@ -34,6 +36,9 @@ public class MainActivity extends Activity implements AsyncResponse{
         setContentView(R.layout.activity_main);
         
         loginbutton = (Button) findViewById(R.id.login_button);
+        t = (TextView) findViewById(R.id.access_token_text);
+        
+        
         loginbutton.setOnClickListener(new OnClickListener() {
         	
 			@Override
@@ -43,17 +48,17 @@ public class MainActivity extends Activity implements AsyncResponse{
 			}
 		});
         
-        TextView t = (TextView) findViewById(R.id.access_token_text);
-        t.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-//				MojioSDKSource.GetEntityWithPath("", MainActivity.this);
-//				MojioSDKSource.getVehicle(MainActivity.this);
-				MojioSDKSource.GetElement("https://api.moj.io/v1/Vehicles/53cdeca5-b268-4a25-bfde-3938b5cf7d47", MainActivity.this);
-				
-			}
-		});
+        
+//        t.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+////				MojioSDKSource.GetEntityWithPath("", MainActivity.this);
+////				MojioSDKSource.getVehicle(MainActivity.this);
+//				MojioSDKSource.GetElement("https://api.moj.io/v1/Vehicles/53cdeca5-b268-4a25-bfde-3938b5cf7d47", MainActivity.this);
+//				
+//			}
+//		});
       
 
         
@@ -61,7 +66,26 @@ public class MainActivity extends Activity implements AsyncResponse{
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    // Pass back to authenticator
+
+    	if(requestCode == 0){
+    		Bundle bundle = data.getExtras();
+    		t.setText("The access token returned is: " + bundle.getString("accessToken"));
+    		
+    		Button nextActivityButton = (Button)findViewById(R.id.next_activity);
+    		nextActivityButton.setVisibility(View.VISIBLE);
+    		
+    		nextActivityButton.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(MainActivity.this, SDKCallsActivity.class);
+		    		startActivity(intent);
+				}
+			});
+    		
+    		
+    		
+    	}
    
     }
 

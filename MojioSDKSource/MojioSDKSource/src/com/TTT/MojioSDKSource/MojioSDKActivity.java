@@ -40,8 +40,11 @@ public class MojioSDKActivity extends Activity{
                 	oauthHelper.SetAccessToken(url);
                 	oauthHelper.SetExpireTime(url);
                 	
+                	Bundle bundle = new Bundle();
+                	bundle.putString("accessToken", oauthHelper.GetAccessToken());
+                	
                     Intent resultIntent = new Intent();
-//                    resultIntent.putExtra(RESULT_DATA_ACCESS_CODE, code);
+                    resultIntent.putExtras(bundle);
                     setResult(RESULT_OK, resultIntent);
                     finish();
                     

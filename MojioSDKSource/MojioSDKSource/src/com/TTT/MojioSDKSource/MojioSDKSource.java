@@ -28,7 +28,7 @@ public class MojioSDKSource{
 	public static void RequestAccessToken( Activity context){
 		
 		Intent i = new Intent(context, MojioSDKActivity.class);
-		context.startActivityForResult(i, 22);
+		context.startActivityForResult(i, 0);
 			
 
 	}
@@ -70,8 +70,6 @@ public class MojioSDKSource{
 				rd.close();
 				String jsonData = sb.toString();
 //				new ObjectMapper().readValue(jsonData, Vehicle.class);
-				
-				Log.e("TESTING", "THIS IS WHAT I GOT: " + jsonData);
 				return jsonData;
 				
 			} catch (MalformedURLException e) {
@@ -92,17 +90,15 @@ public class MojioSDKSource{
 			try {
 				JSONObject resultJson = new JSONObject(result);
 				String type = resultJson.getString("Type");
+				Log.e("testing", "THE ELEMENT RETURNED IS: " + result);
 				
-				String className = "com.TTT.MojioSDKSource.Models." + type;
-				Class myclass = Class.forName(className);
+//				String className = "com.TTT.MojioSDKSource.Models." + type;
+//				Class myclass = Class.forName(className);
 
 //				myclass = new ObjectMapper().readValue(result, myclass);
 
 				
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

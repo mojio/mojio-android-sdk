@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <TextView 
+        android:id="@+id/get_textview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Get"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="16sp"
+        android:textColor="#0000FF"/>
+    
+    <TextView 
+        android:id="@+id/post_textview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Post"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="16sp"
+        android:textColor="#0000FF"/>
+    
+    <TextView 
+        android:id="@+id/delete_textview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="16sp"
+        android:textColor="#0000FF"/>
+    
+    <TextView 
+        android:id="@+id/create_textview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Create"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="16sp"
+        android:textColor="#0000FF"/>
+    
+
+</LinearLayout>

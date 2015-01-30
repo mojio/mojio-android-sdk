@@ -26,6 +26,12 @@
             </intent-filter>
         </activity>
         
+        <activity
+            android:name=".SDKCallsActivity"
+            android:label="@string/app_name" >
+
+        </activity>
+        
         <activity android:name="com.TTT.MojioSDKSource.MojioSDKActivity" />
         
         
