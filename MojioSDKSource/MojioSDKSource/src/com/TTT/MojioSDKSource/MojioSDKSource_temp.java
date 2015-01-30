@@ -4,11 +4,13 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
+
 
 
 import android.app.Activity;
@@ -72,10 +74,11 @@ public class MojioSDKSource_temp {
 	            conn.setRequestProperty("Content-Type", "application/json");
 	            //set request length
 	            conn.setRequestProperty("Content-Length", String.valueOf(params.length));
-	         /*   //o
+	        
 	            OutputStream outputStream = conn.getOutputStream();
-	            outputStream.write(data);
-	            
+	            //Byte[] data = getRequestData
+	            //outputStream.write(params);
+	            /*   //o    
 	            int response = httpURLConnection.getResponseCode();            //获得服务器的响应码
 	            if(response == HttpURLConnection.HTTP_OK) {
 	                InputStream inptStream = httpURLConnection.getInputStream();
