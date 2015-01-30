@@ -1,6 +1,5 @@
 package com.TTT.MojioSDKSource.Models;
 
-import org.codehaus.jackson.annotate.JsonProperty;
 
 public class LastAccelerometer {
 	
@@ -14,7 +13,7 @@ public class LastAccelerometer {
 		
 	}
 
-	@JsonProperty("X")
+
 	public float getX() {
 		return X;
 	}
@@ -24,7 +23,6 @@ public class LastAccelerometer {
 		X = x;
 	}
 
-	@JsonProperty("Y")
 	public float getY() {
 		return Y;
 	}
@@ -34,7 +32,6 @@ public class LastAccelerometer {
 		Y = y;
 	}
 
-	@JsonProperty("Z")
 	public float getZ() {
 		return Z;
 	}
@@ -44,7 +41,6 @@ public class LastAccelerometer {
 		Z = z;
 	}
 
-	@JsonProperty("Magnitude")
 	public float getMagnitude() {
 		return Magnitude;
 	}

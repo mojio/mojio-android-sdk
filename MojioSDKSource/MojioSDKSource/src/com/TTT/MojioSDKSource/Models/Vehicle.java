@@ -2,7 +2,6 @@ package com.TTT.MojioSDKSource.Models;
 
 import java.util.ArrayList;
 
-import org.codehaus.jackson.annotate.JsonProperty;
 
 public class Vehicle {
 	
@@ -51,7 +50,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("Type")
+
 	public String getType() {
 		return Type;
 	}
@@ -63,7 +62,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("OwnerId")
+
 	public String getOwnerId() {
 		return OwnerId;
 	}
@@ -75,7 +74,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("MojioId")
+
 	public String getMojioId() {
 		return MojioId;
 	}
@@ -87,7 +86,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("Name")
+
 	public String getName() {
 		return Name;
 	}
@@ -99,7 +98,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("VIN")
+
 	public String getVIN() {
 		return VIN;
 	}
@@ -111,19 +110,19 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LicensePlate")
+
 	public String getLicensePlate() {
 		return LicensePlate;
 	}
 
 
 
-	public void setLicensePlate(String licencePlate) {
-		LicensePlate = licencePlate;
+	public void setLicensePlate(String licensePlate) {
+		LicensePlate = licensePlate;
 	}
 
 
-	@JsonProperty("IgnitionOn")
+
 	public boolean isIgnitionOn() {
 		return IgnitionOn;
 	}
@@ -135,7 +134,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("VehicleTime")
+
 	public String getVehicleTime() {
 		return VehicleTime;
 	}
@@ -147,7 +146,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LastTripEvent")
+
 	public String getLastTripEvent() {
 		return LastTripEvent;
 	}
@@ -159,7 +158,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LastLocationTime")
+
 	public String getLastLocationTime() {
 		return LastLocationTime;
 	}
@@ -171,7 +170,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LastLocation")
+
 	public LastLocation getLastLocation() {
 		return LastLocation;
 	}
@@ -183,7 +182,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LastSpeed")
+
 	public float getLastSpeed() {
 		return LastSpeed;
 	}
@@ -195,7 +194,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("FuelLevel")
+
 	public float getFuelLevel() {
 		return FuelLevel;
 	}
@@ -207,7 +206,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LastAcceleration")
+
 	public float getLastAcceleration() {
 		return LastAcceleration;
 	}
@@ -219,7 +218,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LastAccelerometer")
+
 	public LastAccelerometer getLastAccelerometer() {
 		return LastAccelerometer;
 	}
@@ -231,19 +230,19 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LastAltitude")
+
 	public float getLastAltitude() {
 		return LastAltitude;
 	}
 
 
-	@JsonProperty("LastAltitude")
+
 	public void setLastAltitude(float lastAltitude) {
 		LastAltitude = lastAltitude;
 	}
 
 
-	@JsonProperty("LastBatteryVoltage")
+
 	public float getLastBatteryVoltage() {
 		return LastBatteryVoltage;
 	}
@@ -255,7 +254,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LastDistance")
+
 	public float getLastDistance() {
 		return LastDistance;
 	}
@@ -267,7 +266,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LastHeading")
+
 	public float getLastHeading() {
 		return LastHeading;
 	}
@@ -279,7 +278,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LastVirtualOdometer")
+
 	public float getLastVirtualOdometer() {
 		return LastVirtualOdometer;
 	}
@@ -291,7 +290,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LastOdometer")
+
 	public float getLastOdometer() {
 		return LastOdometer;
 	}
@@ -303,7 +302,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LastRpm")
+
 	public float getLastRpm() {
 		return LastRpm;
 	}
@@ -315,7 +314,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LastFuelEfficiency")
+
 	public float getLastFuelEfficiency() {
 		return LastFuelEfficiency;
 	}
@@ -327,7 +326,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("CurrentTrip")
+
 	public String getCurrentTrip() {
 		return CurrentTrip;
 	}
@@ -339,7 +338,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LastTrip")
+
 	public String getLastTrip() {
 		return LastTrip;
 	}
@@ -351,7 +350,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LastContactTime")
+
 	public String getLastContactTime() {
 		return LastContactTime;
 	}
@@ -363,7 +362,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("MilStatus")
+
 	public boolean isMilStatus() {
 		return MilStatus;
 	}
@@ -375,7 +374,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("DiagnosticCodes")
+
 	public Object getDiagnosticCodes() {
 		return DiagnosticCodes;
 	}
@@ -387,7 +386,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("FaultsDetected")
+
 	public boolean isFaultsDetected() {
 		return FaultsDetected;
 	}
@@ -399,7 +398,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LastLocationTimes")
+
 	public ArrayList<String> getLastLocationTimes() {
 		return LastLocationTimes;
 	}
@@ -411,7 +410,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LastLocations")
+
 	public ArrayList<Float> getLastLocations() {
 		return LastLocations;
 	}
@@ -423,7 +422,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LastSpeeds")
+
 	public ArrayList<Float> getLastSpeeds() {
 		return LastSpeeds;
 	}
@@ -435,7 +434,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LastHeadings")
+
 	public ArrayList<Float> getLastHeadings() {
 		return LastHeadings;
 	}
@@ -447,7 +446,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("LastAltitudes")
+
 	public ArrayList<Float> getLastAltitudes() {
 		return LastAltitudes;
 	}
@@ -459,7 +458,7 @@ public class Vehicle {
 	}
 
 
-	@JsonProperty("Viewers")
+
 	public ArrayList<Object> getViewers() {
 		return Viewers;
 	}
@@ -470,20 +469,12 @@ public class Vehicle {
 		Viewers = viewers;
 	}
 
-	@JsonProperty("_deleted")
-	public boolean is_deleted() {
-		return _deleted;
-	}
 
 
-	public void set_deleted(boolean _deleted) {
-		this._deleted = _deleted;
-	}
-
-	@JsonProperty("_id")
 	public String get_id() {
 		return _id;
 	}
+
 
 
 	public void set_id(String _id) {
@@ -492,7 +483,15 @@ public class Vehicle {
 
 
 
+	public boolean is_deleted() {
+		return _deleted;
+	}
 
+
+
+	public void set_deleted(boolean _deleted) {
+		this._deleted = _deleted;
+	}
 
 
 

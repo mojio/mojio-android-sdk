@@ -1,6 +1,5 @@
 package com.TTT.MojioSDKSource.Models;
 
-import org.codehaus.jackson.annotate.JsonProperty;
 
 public class LastLocation {
 	
@@ -14,7 +13,6 @@ public class LastLocation {
 		
 	}
 
-	@JsonProperty("Lat")
 	public long getLat() {
 		return Lat;
 	}
@@ -23,7 +21,6 @@ public class LastLocation {
 		Lat = lat;
 	}
 
-	@JsonProperty("Lng")
 	public long getLng() {
 		return Lng;
 	}
@@ -32,7 +29,6 @@ public class LastLocation {
 		Lng = lng;
 	}
 
-	@JsonProperty("FromLockedGPS")
 	public boolean isFromLockedGPS() {
 		return FromLockedGPS;
 	}
@@ -41,7 +37,6 @@ public class LastLocation {
 		FromLockedGPS = fromLockedGPS;
 	}
 
-	@JsonProperty("Dilution")
 	public float getDilution() {
 		return Dilution;
 	}
@@ -50,7 +45,6 @@ public class LastLocation {
 		Dilution = dilution;
 	}
 
-	@JsonProperty("IsValid")
 	public boolean isIsValid() {
 		return IsValid;
 	}

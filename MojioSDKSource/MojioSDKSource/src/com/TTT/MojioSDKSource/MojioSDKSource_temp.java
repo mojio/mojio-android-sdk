@@ -8,7 +8,7 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import org.codehaus.jackson.map.ObjectMapper;
+
 
 import android.app.Activity;
 import android.content.Context;
@@ -19,16 +19,12 @@ import android.util.Log;
 import com.TTT.MojioSDKSource.Models.Vehicle;
 //import com.TTT.MojioSDKSource.MojioSDKSource.GetElementTask;
 import com.TTT.MojioSDKSource.OauthHelper.OauthHelper;
-import com.TTT.MojioSDKSource.Requests.LocationRequest;
-import com.octo.android.robospice.JacksonSpringAndroidSpiceService;
-import com.octo.android.robospice.SpiceManager;
 
 
 	
 
 public class MojioSDKSource_temp {
-	private SpiceManager _contentManager = new SpiceManager(JacksonSpringAndroidSpiceService.class);
-	private String _lastRequestCacheKey = null;
+
 	
 	public static void PutElement(String url, Context context){
 		new PutElementTask(url, context).execute();
