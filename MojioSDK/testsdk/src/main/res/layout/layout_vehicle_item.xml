@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/v_title"
+        android:textStyle="bold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/v_OwnerId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="OwnerId" />
+
+    <TextView
+        android:id="@+id/v_LicensePlate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LicensePlate" />
+
+    <TextView
+        android:id="@+id/v_LastLocationTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LastLocationTime" />
+
+    <TextView
+        android:id="@+id/v_LastContactTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LastContactTime" />
+
+</LinearLayout>
