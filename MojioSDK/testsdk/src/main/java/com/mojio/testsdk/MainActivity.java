@@ -19,12 +19,11 @@ import java.util.HashMap;
 
 public class MainActivity extends ActionBarActivity {
 
-    // MOJIO_API_KEY 53cdeca5-b268-4a25-bfde-3938b5cf7d47
     MojioClient _mojioClient;
 
     // User config
     // TODO move to config file?
-    private static String USER_AUTH_TOKEN = "3d431a5d-472f-4a10-b0dd-29d9f7f7c6dc";
+    private static String USER_SECRET_KEY = "3d431a5d-472f-4a10-b0dd-29d9f7f7c6dc";
     private static String REDIRECT_URL = "mojioios://";
 
     // Request constants
@@ -40,7 +39,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         _loginButton = (Button)findViewById(R.id.oauthButton);
         _listView = (ListView)findViewById(R.id.vehicleList);
-        _mojioClient = new MojioClient(getApplicationContext(), USER_AUTH_TOKEN, REDIRECT_URL);
+        _mojioClient = new MojioClient(getApplicationContext(), USER_SECRET_KEY, REDIRECT_URL);
 
         _loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
 
         if (_mojioClient.isUserLoggedIn()) {
             _loginButton.setText("Force another login");
-            //getVehicles();
+            getVehicles();
             createStore("testAgainFromSDK", "bdbdbdbdbdb");
         }
         else {
@@ -74,7 +73,7 @@ public class MainActivity extends ActionBarActivity {
     // This gets an array of vehicles, single vehicles also work
     public void getVehicles() {
         // Now we can call the get.
-        String vehicleURL = "https://api.moj.io/v1/Vehicles"; ///53cdeca5-b268-4a25-bfde-3938b5cf7d47";
+        String vehicleURL = "Vehicles"; ///53cdeca5-b268-4a25-bfde-3938b5cf7d47";
         HashMap<String, String> queryParams = new HashMap<>();
         queryParams.put("limit", "3");
         queryParams.put("sortBy", "Name");
@@ -95,8 +94,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void createStore(final String key, String body) {
-
-        String storeUrl = "https://api.moj.io/v1/Vehicles/53cdeca5-b268-4a25-bfde-3938b5cf7d47/Store/"+ key;
+        String storeUrl = "Vehicles/53cdeca5-b268-4a25-bfde-3938b5cf7d47/Store/"+ key;
         HashMap<String, String> queryParams = new HashMap<>();
 
         _mojioClient.create(String.class, storeUrl, body, new MojioClient.ResponseListener<String>() {
@@ -113,19 +111,36 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
-    public void getStore(String key) {
-        String storeUrl = "https://api.moj.io/v1/Vehicles/53cdeca5-b268-4a25-bfde-3938b5cf7d47/Store/"+ key;
+    public void getStore(final String key) {
+        String storeUrl = "Vehicles/53cdeca5-b268-4a25-bfde-3938b5cf7d47/Store/"+ key;
         HashMap<String, String> queryParams = new HashMap<>();
 
         _mojioClient.get(String.class, storeUrl, queryParams, new MojioClient.ResponseListener<String>() {
             @Override
             public void onSuccess(String result) {
                 Toast.makeText(MainActivity.this, "Get store success: " + result, Toast.LENGTH_LONG).show();
+                deleteStore(key);
             }
 
             @Override
             public void onFailure() {
                 Toast.makeText(MainActivity.this, "Get store fail", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void deleteStore(String key) {
+        String storeUrl = "Vehicles/53cdeca5-b268-4a25-bfde-3938b5cf7d47/Store/"+ key;
+
+        _mojioClient.delete(String.class, storeUrl, new MojioClient.ResponseListener<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Toast.makeText(MainActivity.this, "Delete store success: " + result, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure() {
+                Toast.makeText(MainActivity.this, "Delete store fail", Toast.LENGTH_LONG).show();
             }
         });
     }

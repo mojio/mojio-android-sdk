@@ -177,15 +177,15 @@ public class MojioRequest<T> extends Request<T> {
 
             // If we want just a String, simply return the response.data casted as such.
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+            Log.i("MOJIO", "Response for " + mUrl);
+            Log.i("MOJIO", json);
+
             if (this.clazz == String.class) {
                 result = (T)json;
                 return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
             }
 
             // If here, attempt to parse response into the desired class.
-            Log.i("MOJIO", "Response for " + mUrl);
-            Log.i("MOJIO", json);
-
             // Parse into small test object first to determine if we have an array of objects, or
             // just a single object.
             JSONObject testObject = new JSONObject(json);

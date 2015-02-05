@@ -21,12 +21,14 @@ import java.util.Map;
  */
 public class MojioClient {
 
-    // Config
-    private static String BASE_URL = "https://api.moj.io/";
-    private static String URL_AUTH_PATH = BASE_URL + "OAuth2/authorize?response_type=token&client_id=%s";
+    // Static
+    private static String URL_AUTH_PATH = "https://api.moj.io/OAuth2/authorize?response_type=token&client_id=%s";
 
-    private static String _userAuthToken;
-    private static String _redirectUrl;
+    // Config
+    //https://api.moj.io/v1/Vehicles/53cdeca5-b268-4a25-bfde-3938b5cf7d47/Store/
+    private String _apiBaseUrl = "https://api.moj.io/v1/"; // Default
+    private String _userAuthToken;
+    private String _redirectUrl;
 
     // Interfaces
     public interface ResponseListener<T> {
@@ -38,6 +40,11 @@ public class MojioClient {
     private Context _ctx;
     private DataStorageHelper _oauthHelper;
     private VolleyHelper _requestHelper;
+
+    // Assign the values of the App id, secret key and redirect uri scheme to the client
+    //- (void) initWithAppId : (NSString *)
+    // appId andSecretrKey : (NSString *)secretKey
+    // andRedirectUrlScheme : (NSString *) urlScheme;
 
     // Initialization
     public MojioClient(Context ctx, String userSecretKey, String redirectUrl) {
@@ -76,17 +83,17 @@ public class MojioClient {
     }
 
     // Get - GET
-    public <T> void get(final Class<T> modelClass, String url, Map<String, String> queryOptions, final ResponseListener<T> listener) {
+    public <T> void get(final Class<T> modelClass, String entityPath, Map<String, String> queryOptions, final ResponseListener<T> listener) {
         // Add query options to get url
         String getParams = "";
         if (queryOptions != null) {
             for (String key : queryOptions.keySet()) {
                 getParams += String.format("&%s=%s", key, queryOptions.get(key));
             }
-            url += getParams.replaceFirst("&", "?");
+            entityPath += getParams.replaceFirst("&", "?");
         }
 
-        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.GET, url, modelClass, queryOptions,
+        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.GET, _apiBaseUrl + entityPath, modelClass, queryOptions,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -107,8 +114,8 @@ public class MojioClient {
     }
 
     // Update - PUT
-    public <T> void update(final Class<T> modelClass, String url, String contentBody, final ResponseListener<T> listener) {
-        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.PUT, url, modelClass, contentBody,
+    public <T> void update(final Class<T> modelClass, String entityPath, String contentBody, final ResponseListener<T> listener) {
+        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.PUT, _apiBaseUrl + entityPath, modelClass, contentBody,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -129,8 +136,8 @@ public class MojioClient {
     }
 
     // Delete - DELETE
-    public <T> void delete(final Class<T> modelClass, String url, final ResponseListener<T> listener) {
-        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.DELETE, url, modelClass,
+    public <T> void delete(final Class<T> modelClass, String entityPath, final ResponseListener<T> listener) {
+        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.DELETE, _apiBaseUrl + entityPath, modelClass,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -151,8 +158,8 @@ public class MojioClient {
     }
 
     // Create - POST
-    public <T> void create(final Class<T> modelClass, String url, String contentBody, final ResponseListener<T> listener) {
-        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, url, modelClass, contentBody,
+    public <T> void create(final Class<T> modelClass, String entityPath, String contentBody, final ResponseListener<T> listener) {
+        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, _apiBaseUrl + entityPath, modelClass, contentBody,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
