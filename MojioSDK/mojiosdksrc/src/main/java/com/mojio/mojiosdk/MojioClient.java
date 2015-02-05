@@ -75,7 +75,7 @@ public class MojioClient {
         activity.startActivityForResult(intent, requestCode);
     }
 
-    // Get
+    // Get - GET
     public <T> void get(final Class<T> modelClass, String url, Map<String, String> queryOptions, final ResponseListener<T> listener) {
         // Add query options to get url
         String getParams = "";
@@ -106,7 +106,7 @@ public class MojioClient {
         _requestHelper.addToRequestQueue(apiRequest);
     }
 
-    // Put
+    // Update - PUT
     public <T> void update(final Class<T> modelClass, String url, String contentBody, final ResponseListener<T> listener) {
         MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.PUT, url, modelClass, contentBody,
                 new Response.Listener<T>() {
@@ -128,7 +128,7 @@ public class MojioClient {
         _requestHelper.addToRequestQueue(apiRequest);
     }
 
-    // Delete
+    // Delete - DELETE
     public <T> void delete(final Class<T> modelClass, String url, final ResponseListener<T> listener) {
         MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.DELETE, url, modelClass,
                 new Response.Listener<T>() {
@@ -150,9 +150,9 @@ public class MojioClient {
         _requestHelper.addToRequestQueue(apiRequest);
     }
 
-    // Delete
-    public <T> void create(final Class<T> modelClass, String url, final ResponseListener<T> listener) {
-        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, url, modelClass,
+    // Create - POST
+    public <T> void create(final Class<T> modelClass, String url, String contentBody, final ResponseListener<T> listener) {
+        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, url, modelClass, contentBody,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {

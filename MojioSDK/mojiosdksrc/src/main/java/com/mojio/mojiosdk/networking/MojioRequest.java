@@ -168,14 +168,21 @@ public class MojioRequest<T> extends Request<T> {
 
             T result = null;
             // If putting an entity, result will be empty.
-            if ((this.mMethod == Method.PUT) || (this.mMethod == Method.DELETE)) {
+            if ((this.mMethod == Method.PUT)
+                    || (this.mMethod == Method.DELETE)
+                    || (this.mMethod == Method.POST)) {
                 // Response body will be empty, no need to parse.
                 return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
             }
 
-            // If here, attempt to parse response
+            // If we want just a String, simply return the response.data casted as such.
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+            if (this.clazz == String.class) {
+                result = (T)json;
+                return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
+            }
 
+            // If here, attempt to parse response into the desired class.
             Log.i("MOJIO", "Response for " + mUrl);
             Log.i("MOJIO", json);
 

@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.mojio.mojiosdk.MojioClient;
 import com.mojio.mojiosdk.models.Vehicle;
@@ -50,7 +51,8 @@ public class MainActivity extends ActionBarActivity {
 
         if (_mojioClient.isUserLoggedIn()) {
             _loginButton.setText("Force another login");
-            getVehicles();
+            //getVehicles();
+            createStore("testAgainFromSDK", "bdbdbdbdbdb");
         }
         else {
             // Allow login
@@ -88,6 +90,42 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onFailure() {
                 Log.e("MOJIO", "Vehicle get fail");
+            }
+        });
+    }
+
+    public void createStore(final String key, String body) {
+
+        String storeUrl = "https://api.moj.io/v1/Vehicles/53cdeca5-b268-4a25-bfde-3938b5cf7d47/Store/"+ key;
+        HashMap<String, String> queryParams = new HashMap<>();
+
+        _mojioClient.create(String.class, storeUrl, body, new MojioClient.ResponseListener<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Toast.makeText(MainActivity.this, "Create store success", Toast.LENGTH_LONG).show();
+                getStore(key);
+            }
+
+            @Override
+            public void onFailure() {
+                Toast.makeText(MainActivity.this, "Create store fail", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void getStore(String key) {
+        String storeUrl = "https://api.moj.io/v1/Vehicles/53cdeca5-b268-4a25-bfde-3938b5cf7d47/Store/"+ key;
+        HashMap<String, String> queryParams = new HashMap<>();
+
+        _mojioClient.get(String.class, storeUrl, queryParams, new MojioClient.ResponseListener<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Toast.makeText(MainActivity.this, "Get store success: " + result, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure() {
+                Toast.makeText(MainActivity.this, "Get store fail", Toast.LENGTH_LONG).show();
             }
         });
     }
