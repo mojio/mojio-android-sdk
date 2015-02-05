@@ -4,11 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.mojio.mojiosdk.networking.MojioRequest;
 import com.mojio.mojiosdk.networking.OAuthLoginActivity;
 import com.mojio.mojiosdk.networking.VolleyHelper;
@@ -75,16 +76,15 @@ public class MojioClient {
     }
 
     // Get
-    // TODO with params
-
     public <T> void get(final Class<T> modelClass, String url, Map<String, String> queryOptions, final ResponseListener<T> listener) {
-
         // Add query options to get url
         String getParams = "";
-        for (String key : queryOptions.keySet()) {
-            getParams += String.format("&%s=%s", key, queryOptions.get(key));
+        if (queryOptions != null) {
+            for (String key : queryOptions.keySet()) {
+                getParams += String.format("&%s=%s", key, queryOptions.get(key));
+            }
+            url += getParams.replaceFirst("&", "?");
         }
-        url += getParams.replaceFirst("&", "?");
 
         MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.GET, url, modelClass, queryOptions,
                 new Response.Listener<T>() {
@@ -97,12 +97,99 @@ public class MojioClient {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        reportVolleyError(error);
                         listener.onFailure();
-                        Toast.makeText(_ctx, "FAILED TO GET VALUES", Toast.LENGTH_LONG).show();
                     }
                 });
 
         // Run request
         _requestHelper.addToRequestQueue(apiRequest);
     }
+
+    // Put
+    public <T> void update(final Class<T> modelClass, String url, String contentBody, final ResponseListener<T> listener) {
+        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.PUT, url, modelClass, contentBody,
+                new Response.Listener<T>() {
+                    @Override
+                    public void onResponse(T response) {
+                        listener.onSuccess(response);
+                    }
+                },
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        reportVolleyError(error);
+                        listener.onFailure();
+                    }
+                });
+
+        // Run request
+        _requestHelper.addToRequestQueue(apiRequest);
+    }
+
+    // Delete
+    public <T> void delete(final Class<T> modelClass, String url, final ResponseListener<T> listener) {
+        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.DELETE, url, modelClass,
+                new Response.Listener<T>() {
+                    @Override
+                    public void onResponse(T response) {
+                        listener.onSuccess(response);
+                    }
+                },
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        reportVolleyError(error);
+                        listener.onFailure();
+                    }
+                });
+
+        // Run request
+        _requestHelper.addToRequestQueue(apiRequest);
+    }
+
+    // Delete
+    public <T> void create(final Class<T> modelClass, String url, final ResponseListener<T> listener) {
+        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, url, modelClass,
+                new Response.Listener<T>() {
+                    @Override
+                    public void onResponse(T response) {
+                        listener.onSuccess(response);
+                    }
+                },
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        reportVolleyError(error);
+                        listener.onFailure();
+                    }
+                });
+
+        // Run request
+        _requestHelper.addToRequestQueue(apiRequest);
+    }
+
+    // Helpers
+    private void reportVolleyError(VolleyError error) {
+        // Attempt to parse response errors
+        try {
+            String errorResponse = new String(error.networkResponse.data,
+                    HttpHeaderParser.parseCharset(error.networkResponse.headers));
+            Log.e("MOJIO", errorResponse);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+    }
+
+    //  (void) updateEntityWithPath:(NSString*)path
+    // withContentBody : (NSString *)contentBody
+    // success : (void(^)(void))success
+    // failure : (void(^)(void)) failure;
+
+
 }
