@@ -189,6 +189,7 @@ public class MojioClient {
 
         } catch (Exception e) {
             e.printStackTrace();
+            Log.e("MOJIO", e.getMessage());
 
         }
     }

@@ -47,4 +47,24 @@ public class Vehicle {
     public ArrayList<Object> Viewers;
     public String _id;
     public boolean _deleted;
+
+    // Note, currently the Vehicle model does not contain this info
+    // TODO Talk to Ashish
+    public String getModelAndYearDescription() {
+        return String.format("Model: %s Year: %s", "N/A", "N/A");
+    }
+
+    public String getLicensePlateDescription() {
+        return String.format("License Plate: %s", this.LicensePlate);
+    }
+
+    public String getLastContactTimeDescription() {
+        // TODO time format
+        return this.LastContactTime;
+    }
+
+    public String getLastContactLocationDescription() {
+        // TODO Talk to Ashish, not returned in data
+        return "N/A";
+    }
 }

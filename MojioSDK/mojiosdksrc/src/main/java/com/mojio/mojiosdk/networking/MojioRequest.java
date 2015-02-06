@@ -101,7 +101,6 @@ public class MojioRequest<T> extends Request<T> {
         super(method, url, errorListener);
         commonInit(appContext, method, url, clazz, listener, errorListener);
         this.contentBody = contentBody;
-
     }
 
     private void commonInit(Context appContext,
@@ -117,6 +116,8 @@ public class MojioRequest<T> extends Request<T> {
         this.mMethod = method;
         mGson = new Gson();
         // Error listener?
+
+        Log.i("MOJIO", "Creating request for " + this.mUrl);
     }
 
     @Override
