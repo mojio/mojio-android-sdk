@@ -7,6 +7,7 @@ public class Diagnostics {
 
     // Note, commenting out parameters currently unused by our app
 
+    public String Type;
     public String Code;
     public String Description;
     public String Source;
