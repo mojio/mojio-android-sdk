@@ -27,7 +27,7 @@ public class MojioClient {
     // Config
     //https://api.moj.io/v1/Vehicles/53cdeca5-b268-4a25-bfde-3938b5cf7d47/Store/
     private String _apiBaseUrl = "https://api.moj.io/v1/"; // Default
-    private String _userAuthToken;
+    private String _mojioAppID;
     private String _redirectUrl;
 
     // Interfaces
@@ -47,11 +47,11 @@ public class MojioClient {
     // andRedirectUrlScheme : (NSString *) urlScheme;
 
     // Initialization
-    public MojioClient(Context ctx, String userSecretKey, String redirectUrl) {
+    public MojioClient(Context ctx, String mojioAppID, String redirectUrl) {
         _ctx = ctx;
         _oauthHelper = new DataStorageHelper(_ctx);
         _requestHelper = new VolleyHelper(_ctx);
-        _userAuthToken = userSecretKey;
+        _mojioAppID = mojioAppID;
         _redirectUrl = redirectUrl;
     }
 
@@ -75,7 +75,7 @@ public class MojioClient {
     public void launchLoginActivity(Activity activity, int requestCode) {
         Intent intent = new Intent(activity, OAuthLoginActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putString("URL_AUTH_PATH", String.format(URL_AUTH_PATH, _userAuthToken));
+        bundle.putString("URL_AUTH_PATH", String.format(URL_AUTH_PATH, _mojioAppID));
         bundle.putString("USER_AUTH_TOKEN", _oauthHelper.GetAccessToken());
         bundle.putString("REDIRECT_URL",  _redirectUrl);
         intent.putExtras(bundle);
@@ -193,6 +193,12 @@ public class MojioClient {
 
         }
     }
+
+    public void addRequestToQueue(Request request) {
+        Log.i("MOJIO", "Adding to request queue: " + request.getUrl());
+        _requestHelper.addToRequestQueue(request);
+    }
+
 
     //  (void) updateEntityWithPath:(NSString*)path
     // withContentBody : (NSString *)contentBody
