@@ -22,6 +22,7 @@ import java.util.Map;
 public class MojioClient {
 
     // Static
+    private static String REQUEST_TAG = "MojioRequest";
     private static String URL_AUTH_PATH = "https://api.moj.io/OAuth2/authorize?response_type=token&client_id=%s";
 
     // Config
@@ -110,7 +111,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest);
+        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
     // Update - PUT
@@ -132,7 +133,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest);
+        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
     // Delete - DELETE
@@ -154,7 +155,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest);
+        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
     // Create - POST
@@ -176,7 +177,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest);
+        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
     // Helpers
@@ -196,7 +197,11 @@ public class MojioClient {
 
     public void addRequestToQueue(Request request) {
         Log.i("MOJIO", "Adding to request queue: " + request.getUrl());
-        _requestHelper.addToRequestQueue(request);
+        _requestHelper.addToRequestQueue(request, REQUEST_TAG);
+    }
+
+    public void cancelAllRequests() {
+        _requestHelper.cancelPendingRequests(REQUEST_TAG);
     }
 
 

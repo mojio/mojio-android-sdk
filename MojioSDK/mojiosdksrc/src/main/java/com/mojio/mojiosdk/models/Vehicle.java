@@ -20,7 +20,7 @@ public class Vehicle {
     public String VehicleTime;
     public String LastTripEvent;
     public String LastLocationTime;
-    //public LastLocation LastLocation;
+    public Location LastLocation;
     public float LastSpeed;
     public float FuelLevel;
     public float LastAcceleration;
@@ -63,8 +63,7 @@ public class Vehicle {
         return this.LastContactTime;
     }
 
-    public String getLastContactLocationDescription() {
-        // TODO Talk to Ashish, not returned in data
-        return "N/A";
+    public String getDrivingDescription() {
+        return (IgnitionOn) ? "Driving" : "Parked";
     }
 }
