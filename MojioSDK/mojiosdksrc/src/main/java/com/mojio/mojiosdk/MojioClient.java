@@ -10,6 +10,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.mojio.mojiosdk.models.UserToken;
 import com.mojio.mojiosdk.networking.MojioRequest;
 import com.mojio.mojiosdk.networking.OAuthLoginActivity;
 import com.mojio.mojiosdk.networking.VolleyHelper;
@@ -34,7 +35,7 @@ public class MojioClient {
     // Interfaces
     public interface ResponseListener<T> {
         public void onSuccess(T result);
-        public void onFailure();
+        public void onFailure(String error);
     }
 
     // Properties
@@ -54,6 +55,10 @@ public class MojioClient {
         _requestHelper = new VolleyHelper(_ctx);
         _mojioAppID = mojioAppID;
         _redirectUrl = redirectUrl;
+
+        // Store so we do not have to pass to our request object
+        // TODO May want to change this
+        _oauthHelper.SetAppAuthToken(_mojioAppID);
     }
 
     /**
@@ -83,6 +88,42 @@ public class MojioClient {
         activity.startActivityForResult(intent, requestCode);
     }
 
+    public void login(String userNameOrPassword, String password, final ResponseListener<String> responseListener) {
+        String entityPath = String.format("Login/User?userOrEmail=%s&password=%s&minutes=%s",
+                userNameOrPassword, password, "43829");
+
+        /*{
+          "AppId": "",
+          "UserId": "",
+          "ValidUntil": "",
+          "Scopes": "",
+          "Sandboxed": false,
+          "Deprecated": false,
+          "_deleted": false,
+          "_id": ""
+        }*/
+
+        this.create(UserToken.class, entityPath, new MojioClient.ResponseListener<UserToken>() {
+            @Override
+            public void onSuccess(UserToken result) {
+                // Save auth tokens
+                _oauthHelper.SetAccessToken(result._id);
+                _oauthHelper.SetExpireTime(result.ValidUntil);
+                responseListener.onSuccess(result._id);
+            }
+
+            @Override
+            public void onFailure(String error) {
+                responseListener.onFailure(error);
+                // TODO Need a way to pass back failures better (reasons)
+            }
+        });
+    }
+
+    public void logout() {
+        _oauthHelper.removeAllStoredValues();
+    }
+
     // Get - GET
     public <T> void get(final Class<T> modelClass, String entityPath, Map<String, String> queryOptions, final ResponseListener<T> listener) {
         // Add query options to get url
@@ -105,8 +146,7 @@ public class MojioClient {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        reportVolleyError(error);
-                        listener.onFailure();
+                        reportVolleyError(error, listener);
                     }
                 });
 
@@ -127,8 +167,7 @@ public class MojioClient {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        reportVolleyError(error);
-                        listener.onFailure();
+                        reportVolleyError(error, listener);
                     }
                 });
 
@@ -149,8 +188,31 @@ public class MojioClient {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        reportVolleyError(error);
-                        listener.onFailure();
+                        reportVolleyError(error, listener);
+                    }
+                });
+
+        // Run request
+        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+    }
+
+    // Create - POST
+    public <T> void create(final Class<T> modelClass, String entityPath, final ResponseListener<T> listener) {
+
+        String contentBody = null;
+
+        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, _apiBaseUrl + entityPath, modelClass, contentBody,
+                new Response.Listener<T>() {
+                    @Override
+                    public void onResponse(T response) {
+                        listener.onSuccess(response);
+                    }
+                },
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        reportVolleyError(error, listener);
                     }
                 });
 
@@ -171,8 +233,28 @@ public class MojioClient {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        reportVolleyError(error);
-                        listener.onFailure();
+                        reportVolleyError(error, listener);
+                    }
+                });
+
+        // Run request
+        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+    }
+
+    // Create - POST
+    public <T> void create(final Class<T> modelClass, String entityPath, Map<String, String> params, final ResponseListener<T> listener) {
+        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, _apiBaseUrl + entityPath, modelClass, params,
+                new Response.Listener<T>() {
+                    @Override
+                    public void onResponse(T response) {
+                        listener.onSuccess(response);
+                    }
+                },
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        reportVolleyError(error, listener);
                     }
                 });
 
@@ -181,16 +263,16 @@ public class MojioClient {
     }
 
     // Helpers
-    private void reportVolleyError(VolleyError error) {
+    private void reportVolleyError(VolleyError error, ResponseListener listener) {
         // Attempt to parse response errors
         try {
-            String errorResponse = new String(error.networkResponse.data,
-                    HttpHeaderParser.parseCharset(error.networkResponse.headers));
+            String errorResponse = new String(error.networkResponse.data, HttpHeaderParser.parseCharset(error.networkResponse.headers));
             Log.e("MOJIO", errorResponse);
+            listener.onFailure(errorResponse);
 
         } catch (Exception e) {
             e.printStackTrace();
-            Log.e("MOJIO", e.getMessage());
+            Log.e("MOJIO", e.getClass().toString());
 
         }
     }

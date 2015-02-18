@@ -87,7 +87,7 @@ public class MainActivity extends ActionBarActivity {
             }
 
             @Override
-            public void onFailure() {
+            public void onFailure(String error) {
                 Log.e("MOJIO", "Vehicle get fail");
             }
         });
@@ -105,7 +105,7 @@ public class MainActivity extends ActionBarActivity {
             }
 
             @Override
-            public void onFailure() {
+            public void onFailure(String error) {
                 Toast.makeText(MainActivity.this, "Create store fail", Toast.LENGTH_LONG).show();
             }
         });
@@ -123,7 +123,7 @@ public class MainActivity extends ActionBarActivity {
             }
 
             @Override
-            public void onFailure() {
+            public void onFailure(String error) {
                 Toast.makeText(MainActivity.this, "Get store fail", Toast.LENGTH_LONG).show();
             }
         });
@@ -139,7 +139,7 @@ public class MainActivity extends ActionBarActivity {
             }
 
             @Override
-            public void onFailure() {
+            public void onFailure(String error) {
                 Toast.makeText(MainActivity.this, "Delete store fail", Toast.LENGTH_LONG).show();
             }
         });

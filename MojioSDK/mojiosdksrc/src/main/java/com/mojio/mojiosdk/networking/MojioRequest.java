@@ -125,7 +125,13 @@ public class MojioRequest<T> extends Request<T> {
         DataStorageHelper oauth = new DataStorageHelper(this.mAppContext);  // TODO move out of here
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.putAll(super.getHeaders());
-        headers.put("MojioAPIToken", oauth.GetAccessToken());
+
+        // Check for auth token
+        // First try user auth; if none saved, use app auth
+        String userAuth = oauth.GetAccessToken();
+        String authToken = (userAuth == null) ? oauth.GetAppAuthToken() : userAuth;
+        headers.put("MojioAPIToken", authToken);
+
         Log.i("MOJIO", "Adding headers: " + headers.toString());
         return headers;
     }
@@ -140,10 +146,14 @@ public class MojioRequest<T> extends Request<T> {
         // If content body given, use it.
         if (this.contentBody == null) {
             return super.getBody();
-        }
-        else {
-            //String body = this.contentBody;
-            String body = String.format("\"%s\"", this.contentBody); // Add quotes around body
+
+        } else {
+            String body = this.contentBody;
+
+            if (!body.startsWith("{")) {
+                body = String.format("\"%s\"", this.contentBody); // Add quotes around body
+            }
+
             Log.i("MOJIO", "Adding content body: " + body);
             return body.getBytes();
         }
@@ -168,35 +178,44 @@ public class MojioRequest<T> extends Request<T> {
             }
 
             T result = null;
-            // If putting an entity, result will be empty.
+
+            String responseString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+            Log.i("MOJIO", "Response for " + mUrl);
+            Log.i("MOJIO", responseString);
+
+            if (responseString.isEmpty()) {
+                // Body was empty, no need to parse.
+                return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
+            }
+
+            // Else attempt to parse into the expected class.
+
+            /*
             if ((this.mMethod == Method.PUT)
                     || (this.mMethod == Method.DELETE)
                     || (this.mMethod == Method.POST)) {
                 // Response body will be empty, no need to parse.
                 return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
             }
+            */
 
             // If we want just a String, simply return the response.data casted as such.
-            String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-            Log.i("MOJIO", "Response for " + mUrl);
-            Log.i("MOJIO", json);
-
             if (this.clazz == String.class) {
-                result = (T)json;
+                result = (T)responseString;
                 return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
             }
 
             // If here, attempt to parse response into the desired class.
             // Parse into small test object first to determine if we have an array of objects, or
             // just a single object.
-            JSONObject testObject = new JSONObject(json);
+            JSONObject testObject = new JSONObject(responseString);
 
             if (testObject.has("Data")) {
                 // Result contains Data object (array).
                 result = mGson.fromJson(testObject.getString("Data"), clazz);
             } else {
                 // Result does not contain the Data object - assumed to be a single result.
-                result = mGson.fromJson(json, clazz);
+                result = mGson.fromJson(responseString, clazz);
             }
 
             return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
