@@ -10,11 +10,13 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.mojio.mojiosdk.models.User;
 import com.mojio.mojiosdk.models.UserToken;
 import com.mojio.mojiosdk.networking.MojioRequest;
 import com.mojio.mojiosdk.networking.OAuthLoginActivity;
 import com.mojio.mojiosdk.networking.VolleyHelper;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -30,6 +32,7 @@ public class MojioClient {
     //https://api.moj.io/v1/Vehicles/53cdeca5-b268-4a25-bfde-3938b5cf7d47/Store/
     private String _apiBaseUrl = "https://api.moj.io/v1/"; // Default
     private String _mojioAppID;
+    private String _mojioAppSecretKey;
     private String _redirectUrl;
 
     // Interfaces
@@ -49,16 +52,13 @@ public class MojioClient {
     // andRedirectUrlScheme : (NSString *) urlScheme;
 
     // Initialization
-    public MojioClient(Context ctx, String mojioAppID, String redirectUrl) {
+    public MojioClient(Context ctx, String mojioAppID, String mojioSecretkey, String redirectUrl) {
         _ctx = ctx;
         _oauthHelper = new DataStorageHelper(_ctx);
         _requestHelper = new VolleyHelper(_ctx);
         _mojioAppID = mojioAppID;
+        _mojioAppSecretKey = mojioSecretkey;
         _redirectUrl = redirectUrl;
-
-        // Store so we do not have to pass to our request object
-        // TODO May want to change this
-        _oauthHelper.SetAppAuthToken(_mojioAppID);
     }
 
     /**
@@ -88,20 +88,17 @@ public class MojioClient {
         activity.startActivityForResult(intent, requestCode);
     }
 
-    public void login(String userNameOrPassword, String password, final ResponseListener<String> responseListener) {
-        String entityPath = String.format("Login/User?userOrEmail=%s&password=%s&minutes=%s",
-                userNameOrPassword, password, "43829");
+    /**
+     * @param userNameOrPassword
+     * @param password
+     * @param responseListener
+     */
+    public void login(String userNameOrPassword, String password, final ResponseListener<User> responseListener) {
+        //String entityPath = String.format("Login/User?userOrEmail=%s&password=%s&minutes=%s",
+        //        userNameOrPassword, password, "43829");
 
-        /*{
-          "AppId": "",
-          "UserId": "",
-          "ValidUntil": "",
-          "Scopes": "",
-          "Sandboxed": false,
-          "Deprecated": false,
-          "_deleted": false,
-          "_id": ""
-        }*/
+        String entityPath = String.format("Login/%s?secretKey=%s&userOrEmail=%s&password=%s&minutes=%s",
+                _mojioAppID, _mojioAppSecretKey, userNameOrPassword, password, "43829");
 
         this.create(UserToken.class, entityPath, new MojioClient.ResponseListener<UserToken>() {
             @Override
@@ -109,7 +106,10 @@ public class MojioClient {
                 // Save auth tokens
                 _oauthHelper.SetAccessToken(result._id);
                 _oauthHelper.SetExpireTime(result.ValidUntil);
-                responseListener.onSuccess(result._id);
+
+                // Now we need to get the USER
+                String userID = result.UserId;
+                getUser(userID, responseListener); // Pass along response listener
             }
 
             @Override
@@ -118,6 +118,18 @@ public class MojioClient {
                 // TODO Need a way to pass back failures better (reasons)
             }
         });
+    }
+
+    /**
+     * Part of the "Login" flow.
+     * @param userID
+     * @param responseListener
+     */
+    private void getUser(String userID, final MojioClient.ResponseListener<User> responseListener) {
+        // TODO Check cache?
+        String entityPath = "Users/" + userID;
+        HashMap<String, String> queryParams = new HashMap<>();
+        this.get(User.class, entityPath, queryParams, responseListener);
     }
 
     public void logout() {

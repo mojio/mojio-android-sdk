@@ -12,7 +12,7 @@ import org.joda.time.format.PeriodFormatterBuilder;
  */
 public class TimeFormatHelpers {
 
-    private static DateTimeFormatter FORMATTER_FROM_SERVER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    private static DateTimeFormatter FORMATTER_FROM_SERVER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSZ");
     private static DateTimeFormatter FORMATTER_VERBOSE_DATE = DateTimeFormat.forPattern("MMMM dd, YYYY hh:mma"); // Feb 1st, 2015 5:00pm
 
     private static PeriodFormatter FORMATTER_FOR_ELAPSED_TIME = new PeriodFormatterBuilder()

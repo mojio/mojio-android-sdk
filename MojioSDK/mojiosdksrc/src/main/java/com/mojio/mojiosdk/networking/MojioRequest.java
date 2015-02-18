@@ -127,10 +127,7 @@ public class MojioRequest<T> extends Request<T> {
         headers.putAll(super.getHeaders());
 
         // Check for auth token
-        // First try user auth; if none saved, use app auth
-        String userAuth = oauth.GetAccessToken();
-        String authToken = (userAuth == null) ? oauth.GetAppAuthToken() : userAuth;
-        headers.put("MojioAPIToken", authToken);
+        headers.put("MojioAPIToken", oauth.GetAccessToken());
 
         Log.i("MOJIO", "Adding headers: " + headers.toString());
         return headers;

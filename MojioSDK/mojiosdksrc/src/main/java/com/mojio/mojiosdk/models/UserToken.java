@@ -6,6 +6,7 @@ package com.mojio.mojiosdk.models;
 public class UserToken {
     public String Type;
     public String AppId;
+    public String UserId;
     public String ValidUntil;
     public String Scopes;
     public boolean Sandboxed;

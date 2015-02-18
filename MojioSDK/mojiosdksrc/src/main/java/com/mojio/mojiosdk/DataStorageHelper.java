@@ -14,7 +14,6 @@ public class DataStorageHelper {
     private static String SHARED_PREF_ID = "mojioauthsdk";
     private static String PREF_ACCESS_TOKEN = "PREF_ACCESS_TOKEN";
     private static String PREF_TOKEN_EXPIRES = "PREF_TOKEN_EXPIRES";
-    private static String PREF_APP_AUTH = "PREF_APP_AUTH";
 
     private Context mContext;
 
@@ -34,15 +33,6 @@ public class DataStorageHelper {
         } else {
             return getSharedPreferenceString(PREF_ACCESS_TOKEN);
         }
-    }
-
-    public void SetAppAuthToken(String appAuth) {
-        Log.i("MOJIO", "THE PREF_APP_AUTH IS: " + appAuth);
-        setSharedPreference(PREF_APP_AUTH, appAuth);
-    }
-
-    public String GetAppAuthToken() {
-        return getSharedPreferenceString(PREF_APP_AUTH);
     }
 
     public void SetExpireTime(String expireTime) {
