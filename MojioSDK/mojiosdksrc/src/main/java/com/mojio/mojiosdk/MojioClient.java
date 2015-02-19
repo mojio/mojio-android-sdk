@@ -89,6 +89,37 @@ public class MojioClient {
     }
 
     /**
+     *  Get app authentication
+     *  Calling this cNOTE THIS IS THE APP AUTH TOKEN
+     *  We only want to use the app auth token when we have no stored USER auth token
+     * This may happen when we are creating a new user
+     * @param responseListener
+     */
+    public void authenticateApp(final ResponseListener<UserToken> responseListener) {
+        String entityPath = String.format("Login/%s?secretKey=%s&minutes=%s",
+                _mojioAppID, _mojioAppSecretKey, "43829");
+
+        this.create(UserToken.class, entityPath, new MojioClient.ResponseListener<UserToken>() {
+            @Override
+            public void onSuccess(UserToken result) {
+                // Save auth tokens
+                // NOTE THIS IS THE APP AUTH TOKEN
+                // We only want to use the app auth token when we have no stored USER auth token
+                // This may happen when we are creating a new user
+                _oauthHelper.SetAppToken(result._id);
+                _oauthHelper.SetAppExpireTime(result.ValidUntil);
+                responseListener.onSuccess(result);
+            }
+
+            @Override
+            public void onFailure(String error) {
+                responseListener.onFailure(error);
+                // TODO Need a way to pass back failures better (reasons)
+            }
+        });
+    }
+
+    /**
      * @param userNameOrPassword
      * @param password
      * @param responseListener
@@ -105,7 +136,7 @@ public class MojioClient {
             public void onSuccess(UserToken result) {
                 // Save auth tokens
                 _oauthHelper.SetAccessToken(result._id);
-                _oauthHelper.SetExpireTime(result.ValidUntil);
+                _oauthHelper.SetAccessExpireTime(result.ValidUntil);
 
                 // Now we need to get the USER
                 String userID = result.UserId;

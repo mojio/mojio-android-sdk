@@ -43,7 +43,7 @@ public class OAuthLoginActivity extends Activity {
                     String [] expiresIn = parameters[2].split("=");
 
                     _oauthHelper.SetAccessToken(accessToken[1]);
-                    _oauthHelper.SetExpireTime(expiresIn[1]);
+                    _oauthHelper.SetAccessExpireTime(expiresIn[1]);
 
                     // Return in bundle, but also stored in shared prefs
                     Bundle bundle = new Bundle();

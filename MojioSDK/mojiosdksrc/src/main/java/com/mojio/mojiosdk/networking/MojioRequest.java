@@ -122,13 +122,21 @@ public class MojioRequest<T> extends Request<T> {
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        DataStorageHelper oauth = new DataStorageHelper(this.mAppContext);  // TODO move out of here
+        DataStorageHelper oauth = new DataStorageHelper(this.mAppContext);
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.putAll(super.getHeaders());
 
         // Check for auth token
-        headers.put("MojioAPIToken", oauth.GetAccessToken());
+        // Start with user auth, if that does not exist, check for app auth
+        String mojioAuth = oauth.GetAccessToken();
+        if (mojioAuth == null) {
+            mojioAuth = oauth.GetAppToken();
+        }
+        if (mojioAuth != null) {
+            headers.put("MojioAPIToken", mojioAuth);
+        }
 
+        // TODO may want to init MojioClient WITH access token. This would make the app responsible for storing token data.
         Log.i("MOJIO", "Adding headers: " + headers.toString());
         return headers;
     }

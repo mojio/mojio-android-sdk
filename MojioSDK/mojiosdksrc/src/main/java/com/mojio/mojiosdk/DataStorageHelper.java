@@ -12,8 +12,14 @@ import java.util.Calendar;
 public class DataStorageHelper {
 
     private static String SHARED_PREF_ID = "mojioauthsdk";
+
+    // User auth
     private static String PREF_ACCESS_TOKEN = "PREF_ACCESS_TOKEN";
-    private static String PREF_TOKEN_EXPIRES = "PREF_TOKEN_EXPIRES";
+    private static String PREF_ACCESS_TOKEN_EXPIRES = "PREF_TOKEN_EXPIRES";
+
+    // App auth
+    private static String PREF_APP_TOKEN = "PREF_APP_TOKEN";
+    private static String PREF_APP_EXPIRES = "PREF_APP_EXPIRES";
 
     private Context mContext;
 
@@ -21,21 +27,54 @@ public class DataStorageHelper {
         mContext = context;
     }
 
+    //=======================================================
+    // User
+    //=======================================================
     public void SetAccessToken(String accessToken) {
         Log.i("MOJIO", "THE ACCESS TOKEN IS: " + accessToken);
         setSharedPreference(PREF_ACCESS_TOKEN, accessToken);
+    }
 
+    public void SetAccessExpireTime(String expireTime) {
+        SetExpireTime(expireTime, PREF_ACCESS_TOKEN_EXPIRES);
     }
 
     public String GetAccessToken() {
-        if (ShouldRefreshAccessToken()) {
+        if (ShouldRefreshToken(PREF_ACCESS_TOKEN_EXPIRES)) {
             return null;
         } else {
             return getSharedPreferenceString(PREF_ACCESS_TOKEN);
         }
     }
 
-    public void SetExpireTime(String expireTime) {
+    public boolean ShouldRefreshAccessToken() {
+        return ShouldRefreshToken(PREF_ACCESS_TOKEN);
+    }
+
+    //=======================================================
+    // App
+    //=======================================================
+    public void SetAppToken(String accessToken) {
+        Log.i("MOJIO", "THE ACCESS TOKEN IS: " + accessToken);
+        setSharedPreference(PREF_APP_TOKEN, accessToken);
+    }
+
+    public void SetAppExpireTime(String expireTime) {
+        SetExpireTime(expireTime, PREF_APP_EXPIRES);
+    }
+
+    public String GetAppToken() {
+        if (ShouldRefreshToken(PREF_APP_EXPIRES)) {
+            return null;
+        } else {
+            return getSharedPreferenceString(PREF_APP_TOKEN);
+        }
+    }
+
+    //=======================================================
+    // Helpers
+    //=======================================================
+    private void SetExpireTime(String expireTime, String pref_const) {
         Log.i("MOJIO", "THE EXPIRES TIME IS: " + expireTime);
 
         long expire;
@@ -51,13 +90,13 @@ public class DataStorageHelper {
             expire = dt.getMillis();
         }
 
-        setSharedPreference(PREF_TOKEN_EXPIRES, expire);
+        setSharedPreference(pref_const, expire);
     }
 
-    public boolean ShouldRefreshAccessToken() {
+    private boolean ShouldRefreshToken(String pref_const) {
         Calendar calendar = Calendar.getInstance();
         long currentTimeMilli = calendar.getTimeInMillis();
-        long expiresInMilli = getSharedPreferenceLong(PREF_TOKEN_EXPIRES);
+        long expiresInMilli = getSharedPreferenceLong(pref_const);
         long timeRemaining = expiresInMilli - currentTimeMilli;
         if (timeRemaining > 0) {
             return false;
@@ -65,7 +104,6 @@ public class DataStorageHelper {
             return true;
         }
     }
-
 
     //========================================================================================
     // Storage methods
