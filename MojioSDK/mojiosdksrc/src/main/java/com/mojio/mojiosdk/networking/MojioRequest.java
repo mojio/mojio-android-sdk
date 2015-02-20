@@ -226,12 +226,15 @@ public class MojioRequest<T> extends Request<T> {
             return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
 
         } catch (UnsupportedEncodingException e) {
+            Log.e("MOJIO", "MojioRequest UnsupportedEncodingException error");
             return Response.error(new ParseError(e));
 
         } catch (JsonSyntaxException e) {
+            Log.e("MOJIO", "MojioRequest JsonSyntaxException error");
             return Response.error(new ParseError(e));
 
         } catch (JSONException e) {
+            Log.e("MOJIO", "MojioRequest JSONException error");
             return Response.error(new ParseError(e));
 
         }

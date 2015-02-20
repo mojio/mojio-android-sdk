@@ -29,8 +29,8 @@ public class MojioClient {
     private static String URL_AUTH_PATH = "https://api.moj.io/OAuth2/authorize?response_type=token&client_id=%s";
 
     // Config
-    //https://api.moj.io/v1/Vehicles/53cdeca5-b268-4a25-bfde-3938b5cf7d47/Store/
     private String _apiBaseUrl = "https://api.moj.io/v1/"; // Default
+
     private String _mojioAppID;
     private String _mojioAppSecretKey;
     private String _redirectUrl;
@@ -336,7 +336,7 @@ public class MojioClient {
     }
 
     // Helpers
-    private void reportVolleyError(VolleyError error, ResponseListener listener) {
+    private void reportVolleyError(final VolleyError error, ResponseListener listener) {
         // Attempt to parse response errors
         try {
             String errorResponse = new String(error.networkResponse.data, HttpHeaderParser.parseCharset(error.networkResponse.headers));
@@ -344,8 +344,18 @@ public class MojioClient {
             listener.onFailure(errorResponse);
 
         } catch (Exception e) {
+
+            String result;
+            try {
+                result = error.getMessage();
+            }
+            catch (Exception e2) {
+                result = e.getMessage();
+            }
+
             e.printStackTrace();
-            Log.e("MOJIO", e.getClass().toString());
+            Log.e("MOJIO", result);
+            listener.onFailure(result);
 
         }
     }
