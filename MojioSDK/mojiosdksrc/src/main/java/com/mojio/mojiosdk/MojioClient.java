@@ -152,6 +152,36 @@ public class MojioClient {
     }
 
     /**
+     * @param fbAccesstoken
+     * @param responseListener
+     */
+    public void loginFacebook(String fbAccesstoken, final MojioClient.ResponseListener<User> responseListener){
+
+        String entityPath = String.format("Login/ExternalUser?accessToken=%s", fbAccesstoken);
+
+        this.create(UserToken.class, entityPath, new MojioClient.ResponseListener<UserToken>() {
+            @Override
+            public void onSuccess(UserToken result) {
+                // Save auth tokens
+                // NOTE THIS IS THE APP AUTH TOKEN
+                // We only want to use the app auth token when we have no stored USER auth token
+                // This may happen when we are creating a new user
+                _oauthHelper.SetAppToken(result._id);
+                _oauthHelper.SetAppExpireTime(result.ValidUntil);
+                String userID = result.UserId;
+                getUser(userID, responseListener); // Pass along response listener
+
+            }
+
+            @Override
+            public void onFailure(String error) {
+                responseListener.onFailure(error);
+                // TODO Need a way to pass back failures better (reasons)
+            }
+        });
+    }
+
+    /**
      * Part of the "Login" flow.
      * @param userID
      * @param responseListener
