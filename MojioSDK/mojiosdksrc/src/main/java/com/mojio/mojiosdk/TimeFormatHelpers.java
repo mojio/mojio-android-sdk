@@ -14,6 +14,7 @@ public class TimeFormatHelpers {
 
     private static DateTimeFormatter FORMATTER_FROM_SERVER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSZ");
     private static DateTimeFormatter FORMATTER_VERBOSE_DATE = DateTimeFormat.forPattern("MMMM dd, YYYY hh:mma"); // Feb 1st, 2015 5:00pm
+    private static DateTimeFormatter FORMATTER_TIME_CRITERIA = DateTimeFormat.forPattern("YYYY.MM.dd");
 
     private static PeriodFormatter FORMATTER_FOR_ELAPSED_TIME = new PeriodFormatterBuilder()
             .printZeroAlways()
@@ -60,6 +61,14 @@ public class TimeFormatHelpers {
     public static String getElapsedTime(long startTimeMS, long endTimeMS) {
         Period elapsed = new Period(startTimeMS, endTimeMS);
         return FORMATTER_FOR_ELAPSED_TIME.print(elapsed);
+    }
+
+    /**
+     * Ex 2014.12.31
+     * Used in Events criteria
+     */
+    public static String toCriteriaTime(DateTime time) {
+        return FORMATTER_TIME_CRITERIA.print(time);
     }
 
     public static boolean isToday(String date) {
