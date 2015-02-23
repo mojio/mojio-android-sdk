@@ -10,6 +10,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.google.gson.Gson;
 import com.mojio.mojiosdk.models.User;
 import com.mojio.mojiosdk.models.UserToken;
 import com.mojio.mojiosdk.networking.MojioRequest;
@@ -228,7 +229,19 @@ public class MojioClient {
     }
 
     // Update - PUT
-    public <T> void update(final Class<T> modelClass, String entityPath, String contentBody, final ResponseListener<T> listener) {
+    public <T> void update(final Class<T> modelClass, String entityPath, T data, final ResponseListener<T> listener) {
+        Gson gson = new Gson();
+        String contentBody = null;
+        try {
+            contentBody = gson.toJson(data, modelClass);
+        }
+        catch (Exception e) {
+            String error = "Failed to parse data to string";
+            Log.e("MOJIO", error);
+            listener.onFailure(error);
+            return;
+        }
+
         MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.PUT, _apiBaseUrl + entityPath, modelClass, contentBody,
                 new Response.Listener<T>() {
                     @Override
