@@ -17,6 +17,8 @@ import com.mojio.mojiosdk.networking.MojioRequest;
 import com.mojio.mojiosdk.networking.OAuthLoginActivity;
 import com.mojio.mojiosdk.networking.VolleyHelper;
 
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -229,18 +231,9 @@ public class MojioClient {
     }
 
     // Update - PUT
-    public <T> void update(final Class<T> modelClass, String entityPath, T data, final ResponseListener<T> listener) {
-        Gson gson = new Gson();
-        String contentBody = null;
-        try {
-            contentBody = gson.toJson(data, modelClass);
-        }
-        catch (Exception e) {
-            String error = "Failed to parse data to string";
-            Log.e("MOJIO", error);
-            listener.onFailure(error);
-            return;
-        }
+    public <T> void update(final Class<T> modelClass, String entityPath, JSONObject data, final ResponseListener<T> listener) {
+
+        String contentBody = data.toString();
 
         MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.PUT, _apiBaseUrl + entityPath, modelClass, contentBody,
                 new Response.Listener<T>() {
