@@ -44,6 +44,16 @@ public class TimeFormatHelpers {
         // Feb 1st, 2015 5:00pm
         try {
             DateTime dt = DateTime.parse(datetime, FORMATTER_FROM_SERVER);
+            return getVerboseDateTime(dt);
+        }
+        catch (Exception e) {
+            return ERROR_RESPONSE;
+        }
+    }
+
+    public static String getVerboseDateTime(DateTime dt) {
+        // Feb 1st, 2015 5:00pm
+        try {
             return FORMATTER_VERBOSE_DATE.print(dt);
         }
         catch (Exception e) {
