@@ -13,7 +13,8 @@ public class Vehicle {
     public String OwnerId;
     public String MojioId;
     @SerializedName("Name")
-    public String VehicleName;
+    private String VehicleName;
+    public void setVehicleName(String name) { VehicleName = name; }
     public String VIN;
     public String LicensePlate;
     public boolean IgnitionOn;
@@ -54,13 +55,13 @@ public class Vehicle {
         return String.format("Model: %s Year: %s", "N/A", "N/A");
     }
 
-    public String getLicensePlateDescription() {
-        return String.format("License Plate: %s", this.LicensePlate);
-    }
-
     public String getLastContactTimeDescription() {
         // TODO time format
         return this.LastContactTime;
+    }
+
+    public String getNameDescription() {
+        return (VehicleName == null) ? "Unknown Vehicle" : VehicleName;
     }
 
     public String getDrivingDescription() {
