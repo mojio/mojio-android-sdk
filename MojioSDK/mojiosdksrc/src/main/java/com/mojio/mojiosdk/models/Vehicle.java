@@ -49,6 +49,9 @@ public class Vehicle {
     public String _id;
     public boolean _deleted;
 
+    // Not from Json - populated on demand
+    public Trip LastTripDetails;
+
     // Note, currently the Vehicle model does not contain this info
     // TODO Talk to Ashish
     public String getModelAndYearDescription() {
