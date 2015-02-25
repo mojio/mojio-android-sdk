@@ -3,6 +3,7 @@ package com.mojio.mojiosdk;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -13,6 +14,7 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
 import com.mojio.mojiosdk.models.User;
 import com.mojio.mojiosdk.models.UserToken;
+import com.mojio.mojiosdk.networking.MojioImageRequest;
 import com.mojio.mojiosdk.networking.MojioRequest;
 import com.mojio.mojiosdk.networking.OAuthLoginActivity;
 import com.mojio.mojiosdk.networking.VolleyHelper;
@@ -228,6 +230,37 @@ public class MojioClient {
 
         // Run request
         _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+    }
+
+    // Get image
+    public void getImage(String entityPath, Map<String, String> queryOptions,  final ResponseListener<Bitmap> listener){
+
+        String getParams = "";
+        if (queryOptions != null) {
+            for (String key : queryOptions.keySet()) {
+                getParams += String.format("&%s=%s", key, queryOptions.get(key));
+            }
+            entityPath += getParams.replaceFirst("&", "?");
+        }
+
+        MojioImageRequest imageRequest = new MojioImageRequest(_ctx, _apiBaseUrl + entityPath, 0,0,null,
+                new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap response) {
+//                        mProfileImage.setImageBitmap(response);
+                        listener.onSuccess(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        reportVolleyError(error, listener);
+
+                    }
+                });
+
+        addRequestToQueue(imageRequest);
+
     }
 
     // Update - PUT
