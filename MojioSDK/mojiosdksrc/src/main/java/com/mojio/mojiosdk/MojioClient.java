@@ -198,7 +198,7 @@ public class MojioClient {
     }
 
     public void logout() {
-        _oauthHelper.removeAllStoredValues();
+        _oauthHelper.removeAllUserStoredValues();
     }
 
     // Get - GET

@@ -130,9 +130,16 @@ public class DataStorageHelper {
         sharedPreferences.commit();
     }
 
+    /*
     public void removeAllStoredValues() {
         Editor sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE).edit();
         sharedPreferences.clear().commit();
+    }
+    */
+
+    public void removeAllUserStoredValues() {
+        Editor sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE).edit();
+        sharedPreferences.remove(PREF_ACCESS_TOKEN).remove(PREF_ACCESS_TOKEN_EXPIRES).commit();
     }
 
 }

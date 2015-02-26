@@ -1,5 +1,7 @@
 package com.mojio.mojiosdk.models;
 
+import android.graphics.drawable.Drawable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -51,6 +53,7 @@ public class Vehicle {
 
     // Not from Json - populated on demand
     public Trip LastTripDetails;
+    public Drawable VehicleImage;
 
     // Note, currently the Vehicle model does not contain this info
     // TODO Talk to Ashish
@@ -70,4 +73,5 @@ public class Vehicle {
     public String getDrivingDescription() {
         return (IgnitionOn) ? "Driving" : "Parked";
     }
+
 }
