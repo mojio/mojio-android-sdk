@@ -35,6 +35,9 @@ public class GooglePlace {
     public String vicinity;
     public OpeningHours opening_hours;
 
+    // Found via secondary lookup, but cached here
+    public String phone_number;
+
     public boolean isMechanic() {
         return isType("car_repair");
     }
