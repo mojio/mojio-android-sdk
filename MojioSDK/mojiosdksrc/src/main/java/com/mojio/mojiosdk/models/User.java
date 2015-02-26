@@ -1,5 +1,7 @@
 package com.mojio.mojiosdk.models;
 
+import android.graphics.Bitmap;
+
 import com.google.gson.annotations.SerializedName;
 
 public class User {
@@ -23,5 +25,7 @@ public class User {
     public String AnotherName;
     public String _id;
     //public boolean _deleted;
+
+    public Bitmap downloadedImage;
 
 }
