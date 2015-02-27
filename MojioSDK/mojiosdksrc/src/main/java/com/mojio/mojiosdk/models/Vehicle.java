@@ -54,6 +54,7 @@ public class Vehicle {
     // Not from Json - populated on demand
     public Trip LastTripDetails;
     public Drawable VehicleImage;
+    public VehicleDetails VehicleDetails;
 
     // Note, currently the Vehicle model does not contain this info
     // TODO Talk to Ashish
