@@ -67,4 +67,8 @@ public class Vehicle {
         return (IgnitionOn) ? "Driving" : "Parked";
     }
 
+    public boolean isConnected() {
+        return (this.MojioId != null) && (!this.MojioId.isEmpty());
+    }
+
 }
