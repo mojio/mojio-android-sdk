@@ -54,12 +54,6 @@ public class Vehicle {
     public int VehicleImage;
     public VehicleDetails VehicleDetails;
 
-    // Note, currently the Vehicle model does not contain this info
-    // TODO Talk to Ashish
-    public String getModelAndYearDescription() {
-        return String.format("Model: %s Year: %s", "N/A", "N/A");
-    }
-
     public String getLastContactTimeDescription() {
         // TODO time format
         return this.LastContactTime;

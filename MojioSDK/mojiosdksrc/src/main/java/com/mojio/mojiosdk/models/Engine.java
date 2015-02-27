@@ -7,4 +7,6 @@ public class Engine {
     public String Name;
     public int Cylinders;
     public int Displacement;
+    public String MaxHp;
+    public String MaxHpAt;
 }
