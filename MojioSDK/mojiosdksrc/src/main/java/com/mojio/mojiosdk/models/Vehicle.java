@@ -1,7 +1,5 @@
 package com.mojio.mojiosdk.models;
 
-import android.graphics.drawable.Drawable;
-
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -53,7 +51,7 @@ public class Vehicle {
 
     // Not from Json - populated on demand
     public Trip LastTripDetails;
-    public Drawable VehicleImage;
+    public int VehicleImage;
     public VehicleDetails VehicleDetails;
 
     // Note, currently the Vehicle model does not contain this info
