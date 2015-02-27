@@ -286,6 +286,28 @@ public class MojioClient {
         _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
+    public <T> void updateImage(final Class<T> modelClass, String entityPath, Bitmap data, final ResponseListener<T> listener) {
+
+
+        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.PUT, _apiBaseUrl + entityPath, modelClass, data,
+                new Response.Listener<T>() {
+                    @Override
+                    public void onResponse(T response) {
+                        listener.onSuccess(response);
+                    }
+                },
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        reportVolleyError(error, listener);
+                    }
+                });
+
+        // Run request
+        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+    }
+
     // Delete - DELETE
     public <T> void delete(final Class<T> modelClass, String entityPath, final ResponseListener<T> listener) {
         MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.DELETE, _apiBaseUrl + entityPath, modelClass,

@@ -1,6 +1,8 @@
 package com.mojio.mojiosdk.networking;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.Base64;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -17,6 +19,7 @@ import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,6 +54,7 @@ public class MojioRequest<T> extends Request<T> {
     private Class<T> clazz;
     private Map<String, String> params;
     private String contentBody;
+    private byte[] imageByteArray;
     private Response.Listener<T> listener;
     private String mUrl;
     private int mMethod;
@@ -103,6 +107,27 @@ public class MojioRequest<T> extends Request<T> {
         this.contentBody = contentBody;
     }
 
+    public MojioRequest(Context appContext,
+                        int method,
+                        String url,
+                        Class<T> clazz,
+                        Bitmap contentBody,
+                        Response.Listener<T> listener,
+                        Response.ErrorListener errorListener) {
+
+        super(method, url, errorListener);
+        commonInit(appContext, method, url, clazz, listener, errorListener);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        contentBody.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
+        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+
+
+        this.imageByteArray = b;
+        this.contentBody = imageEncoded;
+    }
+
     private void commonInit(Context appContext,
                             int method,
                             String url,
@@ -135,6 +160,11 @@ public class MojioRequest<T> extends Request<T> {
         if (mojioAuth != null) {
             headers.put("MojioAPIToken", mojioAuth);
         }
+        if(imageByteArray != null){
+            String body = String.format("\"%s\"", this.contentBody);
+            headers.put("Content-Type", "application/json; charset=utf-8");
+            headers.put("Content-Length",String.valueOf(body.length()));
+        }
 
         // TODO may want to init MojioClient WITH access token. This would make the app responsible for storing token data.
         Log.i("MOJIO", "Adding headers: " + headers.toString());
@@ -148,6 +178,9 @@ public class MojioRequest<T> extends Request<T> {
 
     @Override
     public byte[] getBody() throws AuthFailureError {
+
+
+
         // If content body given, use it.
         if (this.contentBody == null) {
             return super.getBody();
