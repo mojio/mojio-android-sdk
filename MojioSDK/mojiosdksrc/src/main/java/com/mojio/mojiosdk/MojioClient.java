@@ -404,19 +404,19 @@ public class MojioClient {
             listener.onFailure(errorResponse);
 
         } catch (Exception e) {
-
             String result;
             try {
+                // Report raw volley error
                 result = error.getMessage();
             }
             catch (Exception e2) {
-                result = e.getMessage();
+                // Return unknown
+                result = "Unknown error";
             }
 
             e.printStackTrace();
             Log.e("MOJIO", result);
             listener.onFailure(result);
-
         }
     }
 
