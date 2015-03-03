@@ -71,4 +71,19 @@ public class Vehicle {
         return (this.MojioId != null) && (!this.MojioId.isEmpty());
     }
 
+    public int getBatteryPercentage() {
+        float result = (this.LastBatteryVoltage / 12.5f) * 100;
+        return (int)result;
+    }
+
+    public int getFuelPercentage() {
+        return (int)(this.FuelLevel);
+    }
+
+    public int getDisplacementPercentage() {
+        if (this.VehicleDetails != null) {
+            return (this.VehicleDetails.InstalledEngine.Displacement);
+        }
+        return 0;
+    }
 }
