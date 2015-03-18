@@ -53,6 +53,7 @@ public class Vehicle {
     public Trip LastTripDetails;
     public int VehicleImage;
     public VehicleDetails VehicleDetails;
+    public ArrayList<ServiceNote> ServiceNotes;
 
     public String getLastContactTimeDescription() {
         // TODO time format
