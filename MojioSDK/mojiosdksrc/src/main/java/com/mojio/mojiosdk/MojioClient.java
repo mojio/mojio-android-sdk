@@ -263,9 +263,9 @@ public class MojioClient {
     }
 
     // Update - PUT
-    public <T> void update(final Class<T> modelClass, String entityPath, JSONObject data, final ResponseListener<T> listener) {
+    public <T> void update(final Class<T> modelClass, String entityPath, String contentBody, final ResponseListener<T> listener) {
 
-        String contentBody = data.toString();
+
 
         MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.PUT, _apiBaseUrl + entityPath, modelClass, contentBody,
                 new Response.Listener<T>() {
