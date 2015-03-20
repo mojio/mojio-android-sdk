@@ -178,9 +178,6 @@ public class MojioRequest<T> extends Request<T> {
 
     @Override
     public byte[] getBody() throws AuthFailureError {
-
-
-
         // If content body given, use it.
         if (this.contentBody == null) {
             return super.getBody();

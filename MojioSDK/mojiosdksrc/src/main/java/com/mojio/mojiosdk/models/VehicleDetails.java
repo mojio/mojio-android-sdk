@@ -12,6 +12,8 @@ public class VehicleDetails {
     public String VehicleType;
     public String BodyType;
     public Engine InstalledEngine;
+    public ServiceBulletin [] ServiceBulletins;
+    public Recall [] Recalls;
     public String _id;
 
     private String mUnknownData = "--";
