@@ -10,6 +10,9 @@ import java.util.ArrayList;
  */
 public class Vehicle {
 
+    //===================================================================
+    // Mojio Vehicle data model
+    //===================================================================
     public String Type;
     public String OwnerId;
     public String MojioId;
@@ -50,12 +53,17 @@ public class Vehicle {
     public String _id;
     public boolean _deleted;
 
-    // Not from Json - populated on demand
+    //===================================================================
+    // Not from Json - apps must set these values if they want to use them
+    //===================================================================
     public Trip LastTripDetails;
     public int VehicleImage;
     public VehicleDetails VehicleDetails;
     public ArrayList<ServiceNote> ServiceNotes;
 
+    //===================================================================
+    // Get methods
+    //===================================================================
     public String getLastContactTimeDescription() {
         // TODO time format
         return this.LastContactTime;
@@ -73,8 +81,11 @@ public class Vehicle {
         return (this.MojioId != null) && (!this.MojioId.isEmpty());
     }
 
+    /**
+     * Currently 14V is max
+     */
     public int getBatteryPercentage() {
-        float result = (this.LastBatteryVoltage / 12.5f) * 100;
+        float result = (this.LastBatteryVoltage / 14f) * 100;
         return (int)result;
     }
 
@@ -82,11 +93,12 @@ public class Vehicle {
         return (int)(this.FuelLevel);
     }
 
+    /**
+     * For now always return 100.
+     * TODO Determine the percentage range for displacement.
+     */
     public int getDisplacementPercentage() {
-        // For now always return 100.
-        // TODO Determine the percentage range for displacement.
         return 100;
-
         /*
         if (this.VehicleDetails != null) {
             return (this.VehicleDetails.InstalledEngine.Displacement);
@@ -107,7 +119,11 @@ public class Vehicle {
      * @return
      */
     public float getOdometerForUnits(int units) {
-        float result = LastVirtualOdometer;
+        // If last odometer is null, then use last virtual odometer
+        Float result = LastOdometer;
+        if (result == null) {
+            result = LastVirtualOdometer;
+        }
 
         switch (units) {
             case Distance.MIS:
@@ -116,6 +132,18 @@ public class Vehicle {
         }
 
         return result;
+    }
+
+    public void setOdometerForUnits(float odometer, int units) {
+        float result = odometer;
+
+        switch (units) {
+            case Distance.MIS:
+                result = result * Distance.MI_PER_KM;
+                break;
+        }
+
+        LastOdometer = odometer;
     }
 
     // TODO instead search through list of last speeds?
