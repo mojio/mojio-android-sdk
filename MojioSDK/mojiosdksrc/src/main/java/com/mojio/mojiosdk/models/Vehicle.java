@@ -1,6 +1,7 @@
 package com.mojio.mojiosdk.models;
 
 import com.google.gson.annotations.SerializedName;
+import com.mojio.mojiosdk.units.Distance;
 
 import java.util.ArrayList;
 
@@ -30,8 +31,8 @@ public class Vehicle {
     public float LastBatteryVoltage;
     public float LastDistance;
     public float LastHeading;
-    public float LastVirtualOdometer;
-    public float LastOdometer;
+    private float LastVirtualOdometer;
+    private float LastOdometer;
     public float LastRpm;
     public float LastFuelEfficiency;
     public String CurrentTrip;
@@ -82,9 +83,63 @@ public class Vehicle {
     }
 
     public int getDisplacementPercentage() {
+        // For now always return 100.
+        // TODO Determine the percentage range for displacement.
+        return 100;
+
+        /*
         if (this.VehicleDetails != null) {
             return (this.VehicleDetails.InstalledEngine.Displacement);
         }
         return 0;
+        */
+    }
+
+    //===================================================================
+    // Unit conversion helpers
+    // NOTE Currently Distance units are stored per user; we may want to change
+    // this to be stored per vehicle. If stored per vehicle we would not
+    // have to pass in the unit enum to each of these methods.
+    //===================================================================
+    /**
+     * Units from SDK units.Distance class
+     * @param units
+     * @return
+     */
+    public float getOdometerForUnits(int units) {
+        float result = LastVirtualOdometer;
+
+        switch (units) {
+            case Distance.MIS:
+                result = result * Distance.MI_PER_KM;
+                break;
+        }
+
+        return result;
+    }
+
+    // TODO instead search through list of last speeds?
+    public float getLastMaxSpeedForUnits(int units) {
+        float result = LastTripDetails.MaxSpeed;
+
+        switch (units) {
+            case Distance.MIS:
+                result = result * Distance.MI_PER_KM;
+                break;
+        }
+
+        return result;
+    }
+
+    public float getLastDistanceForUnits(int units) {
+        float result = LastTripDetails.Distance;
+
+        switch (units) {
+            case Distance.MIS:
+                result = result * Distance.MI_PER_KM;
+                break;
+        }
+
+        return result;
     }
 }
