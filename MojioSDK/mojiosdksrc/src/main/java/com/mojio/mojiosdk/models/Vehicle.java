@@ -170,4 +170,16 @@ public class Vehicle {
 
         return result;
     }
+
+    public float getFuelEfficiencyForUnits(int units) {
+        float result = LastFuelEfficiency;
+
+        switch (units) {
+            case Distance.MIS:
+                result = result * Distance.MI_PER_KM;
+                break;
+        }
+
+        return result;
+    }
 }
