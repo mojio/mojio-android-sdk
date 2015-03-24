@@ -19,7 +19,8 @@ public class Vehicle {
     @SerializedName("Name")
     private String VehicleName;
     public void setVehicleName(String name) { VehicleName = name; }
-    public String VIN;
+    private String VIN;
+    public String getVIN() { return VIN; }
     public String LicensePlate;
     public boolean IgnitionOn;
     public String VehicleTime;
@@ -105,6 +106,26 @@ public class Vehicle {
         }
         return 0;
         */
+    }
+
+    //===================================================================
+    // AltVIN
+    // Indicates if the VIN came from the altVin data store or has been entered manually
+    //===================================================================
+    private boolean usingAltVIN = false;
+    public void setAltVIN(String vin) {
+        VIN = vin;
+        usingAltVIN = true;
+    }
+
+    public void clearAltVIN() {
+        VIN = null;
+        usingAltVIN = false;
+        VehicleDetails = null;
+    }
+
+    public boolean isUsingAltVIN() {
+        return usingAltVIN;
     }
 
     //===================================================================

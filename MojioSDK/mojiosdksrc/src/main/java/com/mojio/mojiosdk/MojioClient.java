@@ -154,6 +154,38 @@ public class MojioClient {
     }
 
     /**
+     * Must already be logged in and have an access token
+     */
+    public void setSandboxedAccess(boolean sandboxed, final ResponseListener<Boolean> responseListener) {
+        String currentAccessToken = _oauthHelper.GetAccessToken();
+
+        if (currentAccessToken == null) {
+            responseListener.onFailure("Not logged in");
+            return;
+        }
+
+        String entityPath = String.format("Login/%s/Sandboxed", currentAccessToken);
+        entityPath += "?sandboxed=" + String.valueOf(sandboxed);
+
+        this.update(UserToken.class, entityPath, null, new MojioClient.ResponseListener<UserToken>() {
+            @Override
+            public void onSuccess(UserToken result) {
+                Log.e("testing", "success.  sandboxmode is now: " + result.Sandboxed);
+                // Update access tokens
+                _oauthHelper.SetAccessToken(result._id);
+                _oauthHelper.SetAccessExpireTime(result.ValidUntil);
+                responseListener.onSuccess(true);
+            }
+
+            @Override
+            public void onFailure(String error) {
+                responseListener.onFailure(error);
+            }
+        });
+    }
+
+
+    /**
      * @param fbAccesstoken
      * @param responseListener
      */
