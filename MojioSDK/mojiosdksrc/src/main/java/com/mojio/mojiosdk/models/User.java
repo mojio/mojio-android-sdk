@@ -3,7 +3,6 @@ package com.mojio.mojiosdk.models;
 import android.graphics.Bitmap;
 
 import com.google.gson.annotations.SerializedName;
-import com.mojio.mojiosdk.units.Distance;
 
 public class User {
     public String UserName;
@@ -20,5 +19,4 @@ public class User {
     // Not from JSON - set by applications
     // TODO move out of SDK
     public Bitmap downloadedImage;
-    public int distanceUnits = Distance.KMS; // Default to KMs
 }

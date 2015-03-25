@@ -1,7 +1,7 @@
 package com.mojio.mojiosdk.models;
 
 import com.google.gson.annotations.SerializedName;
-import com.mojio.mojiosdk.units.Distance;
+import com.mojio.mojiosdk.units.Measure;
 
 import java.util.ArrayList;
 
@@ -135,9 +135,7 @@ public class Vehicle {
     // have to pass in the unit enum to each of these methods.
     //===================================================================
     /**
-     * Units from SDK units.Distance class
-     * @param units
-     * @return
+     * Units from SDK units.Measure class
      */
     public float getOdometerForUnits(int units) {
         // If last odometer is null, then use last virtual odometer
@@ -147,8 +145,8 @@ public class Vehicle {
         }
 
         switch (units) {
-            case Distance.MIS:
-                result = result * Distance.MI_PER_KM;
+            case Measure.IMPERIAL:
+                result = Measure.kmsToMiles(result);
                 break;
         }
 
@@ -159,8 +157,8 @@ public class Vehicle {
         float result = odometer;
 
         switch (units) {
-            case Distance.MIS:
-                result = result * Distance.MI_PER_KM;
+            case Measure.IMPERIAL:
+                result = Measure.kmsToMiles(result);
                 break;
         }
 
@@ -172,8 +170,8 @@ public class Vehicle {
         float result = LastTripDetails.MaxSpeed;
 
         switch (units) {
-            case Distance.MIS:
-                result = result * Distance.MI_PER_KM;
+            case Measure.IMPERIAL:
+                result = Measure.kmsToMiles(result);
                 break;
         }
 
@@ -184,8 +182,8 @@ public class Vehicle {
         float result = LastTripDetails.Distance;
 
         switch (units) {
-            case Distance.MIS:
-                result = result * Distance.MI_PER_KM;
+            case Measure.IMPERIAL:
+                result = Measure.kmsToMiles(result);
                 break;
         }
 
@@ -196,8 +194,8 @@ public class Vehicle {
         float result = LastFuelEfficiency;
 
         switch (units) {
-            case Distance.MIS:
-                result = result * Distance.MI_PER_KM;
+            case Measure.IMPERIAL:
+                result = Measure.kmsToMiles(result);
                 break;
         }
 
