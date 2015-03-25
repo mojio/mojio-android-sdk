@@ -26,4 +26,16 @@ public class Measure {
     public static float milesToKms(float miles) {
         return miles * (1/MILES_PER_KM);
     }
+
+    /**
+     * Convert from L / 100KM to MPG
+     * http://www.calculateme.com/cGasMileage/LitersPer100kmtoMPG.htm
+     */
+    public static float lp100kmTompg(float lp100km) {
+        if (lp100km == 0) {
+            return 0;
+        }
+
+        return (100 * (1/GALLONS_PER_LITRE)) / ((1/MILES_PER_KM) * lp100km);
+    }
 }

@@ -190,12 +190,15 @@ public class Vehicle {
         return result;
     }
 
+    /**
+     *
+     */
     public float getFuelEfficiencyForUnits(int units) {
         float result = LastFuelEfficiency;
 
         switch (units) {
             case Measure.IMPERIAL:
-                result = Measure.kmsToMiles(result);
+                result = Measure.lp100kmTompg(result);
                 break;
         }
 
