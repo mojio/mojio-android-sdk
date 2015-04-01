@@ -61,6 +61,7 @@ public class Vehicle {
     public int VehicleImage;
     public VehicleDetails VehicleDetails;
     public ArrayList<ServiceNote> ServiceNotes;
+    public String LastServiceODO;
 
     //===================================================================
     // Get methods
