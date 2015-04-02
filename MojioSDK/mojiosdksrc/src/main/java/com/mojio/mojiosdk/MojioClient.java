@@ -292,6 +292,35 @@ public class MojioClient {
 
     }
 
+    //get observers
+    public <T> void getObservers(final Class<T> modelClass, String entityPath, Map<String, String> queryOptions, final ResponseListener<T> listener){
+        String getParams = "";
+        if (queryOptions != null) {
+            for (String key : queryOptions.keySet()) {
+                getParams += String.format("&%s=%s", key, queryOptions.get(key));
+            }
+            entityPath += getParams.replaceFirst("&", "?");
+
+            MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.GET, _apiBaseUrl + entityPath, modelClass, queryOptions,
+                    new Response.Listener<T>() {
+                        @Override
+                        public void onResponse(T response) {
+                            listener.onSuccess(response);
+                        }
+                    },
+
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            reportVolleyError(error, listener);
+                        }
+                    });
+
+            // Run request
+            _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        }
+    }
+
     // Update - PUT
     public <T> void update(final Class<T> modelClass, String entityPath, String contentBody, final ResponseListener<T> listener) {
         MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.PUT, _apiBaseUrl + entityPath, modelClass, contentBody,
@@ -337,6 +366,27 @@ public class MojioClient {
 
     // Delete - DELETE
     public <T> void delete(final Class<T> modelClass, String entityPath, final ResponseListener<T> listener) {
+        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.DELETE, _apiBaseUrl + entityPath, modelClass,
+                new Response.Listener<T>() {
+                    @Override
+                    public void onResponse(T response) {
+                        listener.onSuccess(response);
+                    }
+                },
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        reportVolleyError(error, listener);
+                    }
+                });
+
+        // Run request
+        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+    }
+
+    // Delete - DELETE
+    public <T> void deleteObserver(final Class<T> modelClass, String entityPath, final ResponseListener<T> listener) {
         MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.DELETE, _apiBaseUrl + entityPath, modelClass,
                 new Response.Listener<T>() {
                     @Override
@@ -404,6 +454,27 @@ public class MojioClient {
     // Create - POST
     public <T> void create(final Class<T> modelClass, String entityPath, Map<String, String> params, final ResponseListener<T> listener) {
         MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, _apiBaseUrl + entityPath, modelClass, params,
+                new Response.Listener<T>() {
+                    @Override
+                    public void onResponse(T response) {
+                        listener.onSuccess(response);
+                    }
+                },
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        reportVolleyError(error, listener);
+                    }
+                });
+
+        // Run request
+        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+    }
+
+    // Create - POST
+    public <T> void createObserver(final Class<T> modelClass, String entityPath, String contentBody, final ResponseListener<T> listener) {
+        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, _apiBaseUrl + entityPath, modelClass, contentBody,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
