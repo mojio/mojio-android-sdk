@@ -61,7 +61,7 @@ public class Vehicle {
     public int VehicleImage;
     public VehicleDetails VehicleDetails;
     public ArrayList<ServiceNote> ServiceNotes;
-    public String LastServiceODO;
+    public Float LastServiceODO;
 
     //===================================================================
     // Get methods
@@ -164,6 +164,47 @@ public class Vehicle {
         }
 
         LastOdometer = odometer;
+    }
+
+    /**
+     * Can be null if not set
+     */
+    public Float getServiceOdometerForUnits(int units) {
+        // If last odometer is null, then use last virtual odometer
+        Float result = LastServiceODO;
+        if (result == null) {
+            return null;
+        }
+
+        switch (units) {
+            case Measure.IMPERIAL:
+                result = Measure.kmsToMiles(result);
+                break;
+        }
+
+        return result;
+    }
+
+    public String getServiceOdometerStringForUnits(int units) {
+        Float value = getServiceOdometerForUnits(units);
+
+        if (value == null) {
+            return "";
+        }
+
+        return String.valueOf(Math.round(value));
+    }
+
+    public void setServiceOdometerForUnits(float odometer, int units) {
+        float result = odometer;
+
+        switch (units) {
+            case Measure.IMPERIAL:
+                result = Measure.kmsToMiles(result);
+                break;
+        }
+
+        LastServiceODO = odometer;
     }
 
     // TODO instead search through list of last speeds?
