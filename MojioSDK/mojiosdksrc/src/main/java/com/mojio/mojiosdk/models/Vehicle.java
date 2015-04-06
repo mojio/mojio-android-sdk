@@ -1,7 +1,6 @@
 package com.mojio.mojiosdk.models;
 
 import com.google.gson.annotations.SerializedName;
-import com.mojio.mojiosdk.units.Measure;
 
 import java.util.ArrayList;
 
@@ -17,10 +16,18 @@ public class Vehicle {
     public String OwnerId;
     public String MojioId;
     @SerializedName("Name")
-    private String VehicleName;
-    public void setVehicleName(String name) { VehicleName = name; }
-    private String VIN;
-    public String getVIN() { return VIN; }
+    protected String VehicleName;
+
+    public void setVehicleName(String name) {
+        VehicleName = name;
+    }
+
+    protected String VIN;
+
+    public String getVIN() {
+        return VIN;
+    }
+
     public String LicensePlate;
     public boolean IgnitionOn;
     public String VehicleTime;
@@ -35,8 +42,8 @@ public class Vehicle {
     public float LastBatteryVoltage;
     public float LastDistance;
     public float LastHeading;
-    private float LastVirtualOdometer;
-    private float LastOdometer;
+    protected float LastVirtualOdometer;
+    protected float LastOdometer;
     public float LastRpm;
     public float LastFuelEfficiency;
     public String CurrentTrip;
@@ -53,197 +60,4 @@ public class Vehicle {
     public ArrayList<Object> Viewers;
     public String _id;
     public boolean _deleted;
-
-    //===================================================================
-    // Not from Json - apps must set these values if they want to use them
-    //===================================================================
-    public Trip LastTripDetails;
-    public int VehicleImage;
-    public VehicleDetails VehicleDetails;
-    public ArrayList<ServiceNote> ServiceNotes;
-    public Float LastServiceODO;
-
-    //===================================================================
-    // Get methods
-    //===================================================================
-    public String getLastContactTimeDescription() {
-        // TODO time format
-        return this.LastContactTime;
-    }
-
-    public String getNameDescription() {
-        return (VehicleName == null) ? "Unknown Vehicle" : VehicleName;
-    }
-
-    public String getDrivingDescription() {
-        return (IgnitionOn) ? "Driving" : "Parked";
-    }
-
-    public boolean isConnected() {
-        return (this.MojioId != null) && (!this.MojioId.isEmpty());
-    }
-
-    /**
-     * Currently 14V is max
-     */
-    public int getBatteryPercentage() {
-        float result = (this.LastBatteryVoltage / 14f) * 100;
-        return (int)result;
-    }
-
-    public int getFuelPercentage() {
-        return (int)(this.FuelLevel);
-    }
-
-    /**
-     * For now always return 100.
-     * TODO Determine the percentage range for displacement.
-     */
-    public int getDisplacementPercentage() {
-        return 100;
-        /*
-        if (this.VehicleDetails != null) {
-            return (this.VehicleDetails.InstalledEngine.Displacement);
-        }
-        return 0;
-        */
-    }
-
-    //===================================================================
-    // AltVIN
-    // Indicates if the VIN came from the altVin data store or has been entered manually
-    //===================================================================
-    private boolean usingAltVIN = false;
-    public void setAltVIN(String vin) {
-        VIN = vin;
-        usingAltVIN = true;
-    }
-
-    public void clearAltVIN() {
-        VIN = null;
-        usingAltVIN = false;
-        VehicleDetails = null;
-    }
-
-    public boolean isUsingAltVIN() {
-        return usingAltVIN;
-    }
-
-    //===================================================================
-    // Unit conversion helpers
-    // NOTE Currently Distance units are stored per user; we may want to change
-    // this to be stored per vehicle. If stored per vehicle we would not
-    // have to pass in the unit enum to each of these methods.
-    //===================================================================
-    /**
-     * Units from SDK units.Measure class
-     */
-    public float getOdometerForUnits(int units) {
-        // If last odometer is null, then use last virtual odometer
-        Float result = LastOdometer;
-        if (result == null) {
-            result = LastVirtualOdometer;
-        }
-
-        switch (units) {
-            case Measure.IMPERIAL:
-                result = Measure.kmsToMiles(result);
-                break;
-        }
-
-        return result;
-    }
-
-    public void setOdometerForUnits(float odometer, int units) {
-        float result = odometer;
-
-        switch (units) {
-            case Measure.IMPERIAL:
-                result = Measure.kmsToMiles(result);
-                break;
-        }
-
-        LastOdometer = odometer;
-    }
-
-    /**
-     * Can be null if not set
-     */
-    public Float getServiceOdometerForUnits(int units) {
-        // If last odometer is null, then use last virtual odometer
-        Float result = LastServiceODO;
-        if (result == null) {
-            return null;
-        }
-
-        switch (units) {
-            case Measure.IMPERIAL:
-                result = Measure.kmsToMiles(result);
-                break;
-        }
-
-        return result;
-    }
-
-    public String getServiceOdometerStringForUnits(int units) {
-        Float value = getServiceOdometerForUnits(units);
-
-        if (value == null) {
-            return "";
-        }
-
-        return String.valueOf(Math.round(value));
-    }
-
-    public void setServiceOdometerForUnits(float odometer, int units) {
-        float result = odometer;
-
-        switch (units) {
-            case Measure.IMPERIAL:
-                result = Measure.kmsToMiles(result);
-                break;
-        }
-
-        LastServiceODO = odometer;
-    }
-
-    // TODO instead search through list of last speeds?
-    public float getLastMaxSpeedForUnits(int units) {
-        float result = LastTripDetails.MaxSpeed;
-
-        switch (units) {
-            case Measure.IMPERIAL:
-                result = Measure.kmsToMiles(result);
-                break;
-        }
-
-        return result;
-    }
-
-    public float getLastDistanceForUnits(int units) {
-        float result = LastTripDetails.Distance;
-
-        switch (units) {
-            case Measure.IMPERIAL:
-                result = Measure.kmsToMiles(result);
-                break;
-        }
-
-        return result;
-    }
-
-    /**
-     *
-     */
-    public float getFuelEfficiencyForUnits(int units) {
-        float result = LastFuelEfficiency;
-
-        switch (units) {
-            case Measure.IMPERIAL:
-                result = Measure.lp100kmTompg(result);
-                break;
-        }
-
-        return result;
-    }
 }
