@@ -1,1 +1,1 @@
-include ':mojiosdksrc', ':testsdk'
+include ':mojiosdksrc'
