@@ -16,7 +16,7 @@ public class Observer {
     public String ParentId;
     public String Subject;
     public String SubjectId;
-    public int Transports;
+    public String Transports;
     public String Status;
     public ArrayList<ObserverToken> Tokens;
     public String TimeWindow;

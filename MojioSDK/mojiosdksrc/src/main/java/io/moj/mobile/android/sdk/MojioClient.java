@@ -11,15 +11,26 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import io.moj.mobile.android.sdk.models.Observers.Observer;
 import io.moj.mobile.android.sdk.models.User;
 import io.moj.mobile.android.sdk.models.UserToken;
 import io.moj.mobile.android.sdk.networking.MojioImageRequest;
 import io.moj.mobile.android.sdk.networking.MojioRequest;
 import io.moj.mobile.android.sdk.networking.OAuthLoginActivity;
 import io.moj.mobile.android.sdk.networking.VolleyHelper;
+import microsoft.aspnet.signalr.client.Platform;
+import microsoft.aspnet.signalr.client.SignalRFuture;
+import microsoft.aspnet.signalr.client.http.android.AndroidPlatformComponent;
+import microsoft.aspnet.signalr.client.hubs.HubConnection;
+import microsoft.aspnet.signalr.client.hubs.HubProxy;
+import microsoft.aspnet.signalr.client.hubs.SubscriptionHandler1;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by ssawchenko on 15-02-01.
@@ -525,6 +536,44 @@ public class MojioClient {
 
     public void cancelAllRequests() {
         _requestHelper.cancelPendingRequests(REQUEST_TAG);
+    }
+
+    public <T> void subscribeToObserver(final Class<T> modelClass, Observer observer, final ResponseListener<T> listener){
+
+        final Gson mGson = new Gson();
+        Platform.loadPlatformComponent(new AndroidPlatformComponent());
+        String host = "http://api.moj.io:80/v1/signalr";
+        HubConnection connection = new HubConnection( host );
+        HubProxy hub = connection.createHubProxy( "ObserverHub" );
+
+
+
+        SignalRFuture<Void> awaitConnection = connection.start();
+        try {
+            awaitConnection.get();
+            hub.invoke( "Subscribe", observer._id);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+
+        hub.subscribe( this );
+        hub.on("UpdateEntity", new SubscriptionHandler1<JsonObject>() {
+            @Override
+            public void run(JsonObject o) {
+                T result = mGson.fromJson(o.toString(), modelClass);
+                listener.onSuccess(result);
+            }
+        },JsonObject.class);
+
+        hub.on("Error", new SubscriptionHandler1<Object>() {
+            @Override
+            public void run(Object o) {
+            }
+        },Object.class);
+
     }
 
 
