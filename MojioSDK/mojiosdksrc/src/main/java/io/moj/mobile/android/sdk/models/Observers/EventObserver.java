@@ -7,5 +7,5 @@ import java.util.ArrayList;
  */
 public class EventObserver extends ConditionalObserverBase{
 
-    ArrayList<Object> EventTypes;
+    public ArrayList<Object> EventTypes;
 }

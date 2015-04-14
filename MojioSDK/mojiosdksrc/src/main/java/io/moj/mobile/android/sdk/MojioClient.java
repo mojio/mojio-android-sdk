@@ -484,8 +484,36 @@ public class MojioClient {
     }
 
     // Create - POST
-    public <T> void createObserver(final Class<T> modelClass, String entityPath, String contentBody, final ResponseListener<T> listener) {
-        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, _apiBaseUrl + entityPath, modelClass, contentBody,
+    public <T> void createObserver(final Class<T> modelClass, String contentBody, final ResponseListener<T> listener) {
+        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, _apiBaseUrl + "Observers", modelClass, contentBody,
+                new Response.Listener<T>() {
+                    @Override
+                    public void onResponse(T response) {
+                        listener.onSuccess(response);
+                    }
+                },
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        reportVolleyError(error, listener);
+                    }
+                });
+
+        // Run request
+        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+    }
+
+
+    /**
+     * Must provide Name, ObserverType, Timing, Subject, SubjectId, Transport and Condition values
+     */
+    public <T> void createConditionalObserver(final Class<T> modelClass, Object contentBody, final ResponseListener<T> listener) {
+
+        String obj = new Gson().toJson(contentBody);
+        Log.e("testing", "the object looks like: " + obj);
+
+        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, _apiBaseUrl + "Observers", modelClass, obj,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -551,7 +579,7 @@ public class MojioClient {
         SignalRFuture<Void> awaitConnection = connection.start();
         try {
             awaitConnection.get();
-            hub.invoke( "Subscribe", observer._id);
+            hub.invoke( "Subscribe",observer._id);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
