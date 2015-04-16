@@ -460,9 +460,9 @@ public class MojioClient {
     /**
      * Must provide Name, ObserverType, Timing, Subject, SubjectId, Transport and Condition values
      */
-    public <T> void createConditionalObserver(final Class<T> modelClass, Object contentBody, final ResponseListener<T> listener) {
+    public <T> void createConditionalObserver(final Class<T> modelClass, Object conditionalObserverObject, final ResponseListener<T> listener) {
 
-        String obj = new Gson().toJson(contentBody);
+        String obj = new Gson().toJson(conditionalObserverObject);
         Log.e("testing", "the object looks like: " + obj);
 
         MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, _apiBaseUrl + "Observers", modelClass, obj,
