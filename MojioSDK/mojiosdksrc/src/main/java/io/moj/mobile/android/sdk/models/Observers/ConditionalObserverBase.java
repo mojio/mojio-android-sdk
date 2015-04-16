@@ -5,6 +5,6 @@ package io.moj.mobile.android.sdk.models.Observers;
  */
 public class ConditionalObserverBase extends Observer{
 
-    public int Timing;
+    public String Timing;
 
 }
