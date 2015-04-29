@@ -8,6 +8,7 @@ public class Diagnostics {
     public String Type;
     public String Code;
     public String Description;
+    public String Details;
     public String Source;
     public String Category;
     public String Severity;
