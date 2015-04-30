@@ -6,11 +6,13 @@ package io.moj.mobile.android.sdk.models;
 public class VehicleService {
 
     public int DOVehicleId;
+
     public int DOEngineId;
     public String TransNotes;
     public String MaintenanceCategory;
     public String MaintenanceName;
     public String MaintenanceNotes;
+
     public String ScheduleName;
     public String ScheduleDescription;
     public String OperatingParameter;
@@ -18,8 +20,7 @@ public class VehicleService {
     public String ComputerCode;
     public String ServiceEvent;
     public String IntervalType;
-    public Float Value;
+    public float Value;
     public String Units;
-    public Float IntervalValue;
-
+    public float InitialValue;
 }

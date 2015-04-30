@@ -15,6 +15,7 @@ public class VehicleDetails {
     public ServiceBulletin [] ServiceBulletins;
     public Recall [] Recalls;
     public float FuelTankSize;
+    public float EPAFuelEfficiency;
     public String _id;
 
     private String mUnknownData = "--";
