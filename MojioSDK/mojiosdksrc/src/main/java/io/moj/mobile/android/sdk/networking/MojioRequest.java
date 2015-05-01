@@ -13,7 +13,6 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import io.moj.mobile.android.sdk.DataStorageHelper;
 
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
@@ -23,6 +22,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+
+import io.moj.mobile.android.sdk.DataStorageHelper;
 
 /**
  * Writen by Shayla Sawchenko
@@ -268,13 +269,17 @@ public class MojioRequest<T> extends Request<T> {
             return Response.error(new ParseError(e));
 
         } catch (JsonSyntaxException e) {
-            Log.e("MOJIO", "MojioRequest JsonSyntaxException error");
+            Log.e("MOJIO", "MojioRequest JsonSyntaxException error" + e.getMessage());
             return Response.error(new ParseError(e));
 
         } catch (JSONException e) {
-            Log.e("MOJIO", "MojioRequest JSONException error");
+            Log.e("MOJIO", "MojioRequest JSONException error: " + e.getMessage());
             return Response.error(new ParseError(e));
 
+        }
+        catch (com.google.gson.JsonParseException e) {
+            Log.e("MOJIO", "MojioRequest JSONException error: " + e.getMessage());
+            return Response.error(new ParseError(e));
         }
     }
 }

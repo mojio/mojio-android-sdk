@@ -19,12 +19,14 @@ import java.net.CookiePolicy;
 public class VolleyHelper {
 
     private static String TAG = "VolleyHelper";
+    private final int SOCKET_TIMEOUT_MS = 5000;
+
     private RequestQueue _requestQueue;
     private CookieManager _cookieManager;
     private Context _ctx;
 
     private DefaultRetryPolicy _defaultRetryPolicy = new DefaultRetryPolicy(
-            30000,
+            SOCKET_TIMEOUT_MS,
             DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
             DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
 

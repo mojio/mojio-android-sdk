@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
@@ -607,13 +608,25 @@ public class MojioClient {
             listener.onFailure(errorResponse);
 
         } catch (Exception e) {
+
             String result;
-            try {
-                // Report raw volley error
-                result = error.getMessage();
+
+            if (error instanceof TimeoutError) {
+                result = "Server timeout";
             }
-            catch (Exception e2) {
-                // Return unknown
+            else {
+                try {
+                    // Report raw volley error
+                    result = error.getMessage();
+                }
+                catch (Exception e2) {
+                    // Return unknown
+                    result = "Unknown error";
+                }
+            }
+
+            // Last ditch chance to set error; cannot be null
+            if (result == null) {
                 result = "Unknown error";
             }
 
