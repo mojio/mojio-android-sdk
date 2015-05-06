@@ -437,11 +437,12 @@ public class MojioClient {
     }
 
     // Delete - DELETE
-    public <T> void deleteObserver(final Class<T> modelClass, String entityPath, final ResponseListener<T> listener) {
-        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.DELETE, _apiBaseUrl + entityPath, modelClass,
+    public <T> void deleteObserver(final Class<T> modelClass, String observerId, final ResponseListener<T> listener) {
+        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.DELETE, _apiBaseUrl + "Observers/" + observerId, modelClass,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
+                        Log.e("testing", "successfully deleted observer");
                         listener.onSuccess(response);
                     }
                 },
