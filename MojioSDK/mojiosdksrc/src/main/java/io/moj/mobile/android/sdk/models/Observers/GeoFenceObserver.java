@@ -7,6 +7,6 @@ import io.moj.mobile.android.sdk.models.Location;
  */
 public class GeoFenceObserver extends ConditionalObserverBase {
 
-    public io.moj.mobile.android.sdk.models.Location Location;
+    public Location Location;
     public float Radius;
 }
