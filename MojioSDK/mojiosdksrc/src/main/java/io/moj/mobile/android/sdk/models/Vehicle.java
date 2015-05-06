@@ -16,18 +16,8 @@ public class Vehicle {
     public String OwnerId;
     public String MojioId;
     @SerializedName("Name")
-    protected String VehicleName;
-
-    public void setVehicleName(String name) {
-        VehicleName = name;
-    }
-
-    protected String VIN;
-
-    public String getVIN() {
-        return VIN;
-    }
-
+    public String VehicleName;
+    public String VIN;
     public String LicensePlate;
     public boolean IgnitionOn;
     public String VehicleTime;
@@ -37,13 +27,12 @@ public class Vehicle {
     public float LastSpeed;
     public float FuelLevel;
     public float LastAcceleration;
-    //public LastAccelerometer LastAccelerometer;
     public float LastAltitude;
     public float LastBatteryVoltage;
     public float LastDistance;
     public float LastHeading;
-    protected float LastVirtualOdometer;
-    protected float LastOdometer;
+    public float LastVirtualOdometer;
+    public float LastOdometer;
     public float LastRpm;
     public float LastFuelEfficiency;
     public String CurrentTrip;
