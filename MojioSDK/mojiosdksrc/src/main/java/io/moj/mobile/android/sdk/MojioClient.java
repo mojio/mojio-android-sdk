@@ -57,9 +57,29 @@ public class MojioClient {
     //========================================================================
     // Generic response listener interface
     //========================================================================
+    public static int RESPONSE_ERR_UNKNOWN = 0;
+    public static int RESPONSE_ERR_NOT_LOGGED_IN = 1;
+    public static int RESPONSE_ERR_SIGNALR_ERROR = 2;
+    public static int RESPONSE_ERR_VOLLEY_ERROR = 3;
+    public static int RESPONSE_ERR_SERVER_TIMEOUT = 4;
+
+    public static class ResponseError {
+        public String message;
+        public int type;
+
+        public ResponseError(String m, int t) {
+            message = m;
+            type = t;
+        }
+
+        public ResponseError() {
+           this(null, RESPONSE_ERR_UNKNOWN);
+        }
+    }
+
     public interface ResponseListener<T> {
         public void onSuccess(T result);
-        public void onFailure(String error);
+        public void onFailure(ResponseError error);
     }
 
     //========================================================================
@@ -128,7 +148,7 @@ public class MojioClient {
             }
 
             @Override
-            public void onFailure(String error) {
+            public void onFailure(ResponseError error) {
                 responseListener.onFailure(error);
                 // TODO Need a way to pass back failures better (reasons)
             }
@@ -160,7 +180,7 @@ public class MojioClient {
             }
 
             @Override
-            public void onFailure(String error) {
+            public void onFailure(ResponseError error) {
                 responseListener.onFailure(error);
                 // TODO Need a way to pass back failures better (reasons)
             }
@@ -174,7 +194,8 @@ public class MojioClient {
         String currentAccessToken = _oauthHelper.GetAccessToken();
 
         if (currentAccessToken == null) {
-            responseListener.onFailure("Not logged in");
+            ResponseError error = new ResponseError("Not logged in", RESPONSE_ERR_NOT_LOGGED_IN);
+            responseListener.onFailure(error);
             return;
         }
 
@@ -192,7 +213,7 @@ public class MojioClient {
             }
 
             @Override
-            public void onFailure(String error) {
+            public void onFailure(ResponseError error) {
                 responseListener.onFailure(error);
             }
         });
@@ -221,7 +242,7 @@ public class MojioClient {
             }
 
             @Override
-            public void onFailure(String error) {
+            public void onFailure(ResponseError error) {
                 responseListener.onFailure(error);
                 // TODO Need a way to pass back failures better (reasons)
             }
@@ -526,7 +547,10 @@ public class MojioClient {
         hub.on("Error", new SubscriptionHandler1<Object>() {
             @Override
             public void run(Object o) {
-                listener.onFailure("TODO Failed message goes here!"); // NOTE still on handler thread.
+                ResponseError error = new ResponseError(
+                        "Failed to subscribe to signalr hub",
+                        RESPONSE_ERR_SIGNALR_ERROR);
+                listener.onFailure(error); // NOTE still on handler thread.
             }
         },Object.class);
 
@@ -604,36 +628,42 @@ public class MojioClient {
     private void reportVolleyError(final VolleyError error, ResponseListener listener) {
         // Attempt to parse response errors
         try {
-            String errorResponse = new String(error.networkResponse.data, HttpHeaderParser.parseCharset(error.networkResponse.headers));
-            Log.e("MOJIO", errorResponse);
-            listener.onFailure(errorResponse);
-
-        } catch (Exception e) {
-
-            String result;
+            ResponseError respErr = new ResponseError();
+            respErr.message = new String(error.networkResponse.data, HttpHeaderParser.parseCharset(error.networkResponse.headers));
+            respErr.type = RESPONSE_ERR_VOLLEY_ERROR;
+            Log.e("MOJIO", respErr.message);
+            listener.onFailure(respErr);
+        }
+        catch (Exception e) {
+            ResponseError respErr = new ResponseError();
 
             if (error instanceof TimeoutError) {
-                result = "Server timeout";
+                respErr.type = RESPONSE_ERR_SERVER_TIMEOUT;
+                respErr.message = "Server timeout";
             }
             else {
                 try {
                     // Report raw volley error
-                    result = error.getMessage();
+                    respErr.type = RESPONSE_ERR_VOLLEY_ERROR;
+                    respErr.message = error.getMessage();
                 }
                 catch (Exception e2) {
                     // Return unknown
-                    result = "Unknown error";
+                    respErr.type = RESPONSE_ERR_UNKNOWN;
+                    respErr.message = "Unknown error";
                 }
             }
 
             // Last ditch chance to set error; cannot be null
-            if (result == null) {
-                result = "Unknown error";
+            if (respErr.message == null) {
+                respErr.type = RESPONSE_ERR_UNKNOWN;
+                respErr.message = "Unknown error";
             }
 
             e.printStackTrace();
-            Log.e("MOJIO", result);
-            listener.onFailure(result);
+
+            Log.e("MOJIO", respErr.message);
+            listener.onFailure(respErr);
         }
     }
 }
