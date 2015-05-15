@@ -48,7 +48,7 @@ public class DataStorageHelper {
     }
 
     public boolean ShouldRefreshAccessToken() {
-        return ShouldRefreshToken(PREF_ACCESS_TOKEN);
+        return ShouldRefreshToken(PREF_ACCESS_TOKEN_EXPIRES);
     }
 
     //=======================================================
