@@ -3,10 +3,12 @@ package io.moj.mobile.android.sdk.tests;
 import android.content.Context;
 import android.test.AndroidTestCase;
 
+import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 
 import io.moj.mobile.android.sdk.MojioClient;
 import io.moj.mobile.android.sdk.models.User;
+import io.moj.mobile.android.sdk.models.Vehicle;
 
 /**
  * Created by ssawchenko on 15-05-15.
@@ -24,18 +26,15 @@ public class MojioClientTest extends AndroidTestCase {
         super.setUp();
         mCtx = getContext();
 
-        // If still set, logout and then recreate
-        if (mMojioClient != null) {
-            mMojioClient.logout();
-            mMojioClient = null;
-        }
-
         mMojioClient = new MojioClient(mCtx,TestHelper.MOJIO_APP_ID, TestHelper.MOJIO_SECRET_KEY, TestHelper.REDIRECT_URL);
     }
 
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
+
+        mMojioClient.logout();
+        mMojioClient = null;
     }
 
     //==================================================================
@@ -76,8 +75,19 @@ public class MojioClientTest extends AndroidTestCase {
         return loginResult;
     }
 
+    private User loginValidUser() {
+        LoginResult lr = loginUser(mValidUserName, mValidUserPass);
+
+        if (lr.success) {
+            return lr.user;
+        }
+
+        assertTrue("Login failed, test cannot continue", false);
+        return null;
+    }
+
     //==================================================================
-    // Tests
+    // Login Tests
     //==================================================================
 
     /**
@@ -124,4 +134,91 @@ public class MojioClientTest extends AndroidTestCase {
         // Test that isUserLoggedIn is working correctly
         assertEquals("isUserLoggedIn reporting incorrect value", loginResult.success, mMojioClient.isUserLoggedIn());
     }
+
+
+    public void testInvalidUserAndPasswordLogin() {
+        // Login the user
+        LoginResult loginResult = loginUser("idontexist", "idontexist");
+        assertFalse(loginResult.success);
+        assertNotNull(loginResult.error);
+
+        // Test that isUserLoggedIn is working correctly
+        assertEquals("isUserLoggedIn reporting incorrect value", loginResult.success, mMojioClient.isUserLoggedIn());
+    }
+
+    //==================================================================
+    // GET Tests
+    //==================================================================
+    private Vehicle mVehicle;
+    public void testGet() {
+        // Login
+        User user = loginValidUser();
+        if (user == null) { return; }
+        mVehicle = null;
+
+        //---------------------------------
+        // First test get Array
+        //---------------------------------
+        String entityPath = String.format("Users/%s/Vehicles", user._id);
+        HashMap<String, String> queryParams = new HashMap<>();
+        queryParams.put("sortBy", "Name");
+        queryParams.put("desc", "true");
+
+        final CountDownLatch forceSyncArray = new CountDownLatch(1);
+        mMojioClient.get(Vehicle[].class, entityPath, queryParams, new MojioClient.ResponseListener<Vehicle[]>() {
+            @Override
+            public void onSuccess(Vehicle[] result) {
+                assertTrue(result.length > 0);
+                if (result.length > 0) {
+                    Vehicle v = result[0];
+                    assertEquals(v.Type, "Vehicle");
+                    mVehicle = v;
+                }
+                forceSyncArray.countDown();
+            }
+
+            @Override
+            public void onFailure(MojioClient.ResponseError error) {
+                assertTrue("getVehicles should have returned a result", false);
+                forceSyncArray.countDown();
+            }
+        });
+
+        try {
+            forceSyncArray.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        //---------------------------------
+        // Now test single get (non array) using mVehicleID
+        //---------------------------------
+        entityPath = String.format("Vehicles/%s/", mVehicle._id);
+        queryParams = new HashMap<>();
+
+        final CountDownLatch forceSyncSingle = new CountDownLatch(1);
+        mMojioClient.get(Vehicle.class, entityPath, queryParams, new MojioClient.ResponseListener<Vehicle>() {
+            @Override
+            public void onSuccess(Vehicle result) {
+                // Pick a few values to test to see if these are the same car.
+                assertEquals(result._id, mVehicle._id);
+                assertEquals(result.VehicleName, mVehicle.VehicleName);
+                assertEquals(result.LastContactTime, mVehicle.LastContactTime);
+                forceSyncSingle.countDown();
+            }
+
+            @Override
+            public void onFailure(MojioClient.ResponseError error) {
+                assertTrue("getVehicles should have returned a result", false);
+                forceSyncSingle.countDown();
+            }
+        });
+
+        try {
+            forceSyncSingle.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
