@@ -15,9 +15,6 @@ import io.moj.mobile.android.sdk.models.Vehicle;
  */
 public class MojioClientTest extends AndroidTestCase {
 
-    private final String mValidUserName = "shayla.sawchenko@gmail.com";
-    private final String mValidUserPass = "Test1234";
-
     Context mCtx;
     MojioClient mMojioClient;
 
@@ -76,7 +73,7 @@ public class MojioClientTest extends AndroidTestCase {
     }
 
     private User loginValidUser() {
-        LoginResult lr = loginUser(mValidUserName, mValidUserPass);
+        LoginResult lr = loginUser(TestHelper.VALID_USER, TestHelper.VALID_PASS);
 
         if (lr.success) {
             return lr.user;
@@ -95,10 +92,10 @@ public class MojioClientTest extends AndroidTestCase {
      */
     public void testValidLogin() {
         // Login the user
-        LoginResult loginResult = loginUser(mValidUserName, mValidUserPass);
+        LoginResult loginResult = loginUser(TestHelper.VALID_USER, TestHelper.VALID_PASS);
         assertTrue(loginResult.success);
         assertNotNull(loginResult.user);
-        assertEquals(loginResult.user.Email, mValidUserName);
+        assertEquals(loginResult.user.Email, TestHelper.VALID_USER);
 
         // Test that isUserLoggedIn is working correctly
         assertEquals("isUserLoggedIn reporting incorrect value", loginResult.success, mMojioClient.isUserLoggedIn());
@@ -110,12 +107,9 @@ public class MojioClientTest extends AndroidTestCase {
         assertFalse("isUserLoggedIn reporting incorrect value", mMojioClient.isUserLoggedIn());
     }
 
-    /**
-     * Tests login, isUserLoggedIn and logout
-     */
     public void testInvalidPasswordLogin() {
         // Login the user
-        LoginResult loginResult = loginUser(mValidUserName, "wrongpassword");
+        LoginResult loginResult = loginUser(TestHelper.VALID_USER, "wrongpassword");
         assertFalse(loginResult.success);
         assertNotNull(loginResult.error);
 
@@ -127,14 +121,13 @@ public class MojioClientTest extends AndroidTestCase {
 
     public void testInvalidUserLogin() {
         // Login the user
-        LoginResult loginResult = loginUser("idontexist", mValidUserPass);
+        LoginResult loginResult = loginUser("idontexist", TestHelper.VALID_PASS);
         assertFalse(loginResult.success);
         assertNotNull(loginResult.error);
 
         // Test that isUserLoggedIn is working correctly
         assertEquals("isUserLoggedIn reporting incorrect value", loginResult.success, mMojioClient.isUserLoggedIn());
     }
-
 
     public void testInvalidUserAndPasswordLogin() {
         // Login the user
@@ -150,6 +143,7 @@ public class MojioClientTest extends AndroidTestCase {
     // GET Tests
     //==================================================================
     private Vehicle mVehicle;
+
     public void testGet() {
         // Login
         User user = loginValidUser();
@@ -220,5 +214,87 @@ public class MojioClientTest extends AndroidTestCase {
             e.printStackTrace();
         }
     }
+
+    public void testGetWithInvalidURL() {
+        HashMap<String, String> queryParams = new HashMap<>();
+        final CountDownLatch forceSync = new CountDownLatch(1);
+        mMojioClient.get(Vehicle.class, "This/Path/Does/Not/Exist", queryParams, new MojioClient.ResponseListener<Vehicle>() {
+            @Override
+            public void onSuccess(Vehicle result) {
+                assertTrue("get should have failed due to invalid path", false);
+                forceSync.countDown();
+            }
+
+            @Override
+            public void onFailure(MojioClient.ResponseError error) {
+                // We want it to fail. No test asserts here.
+                forceSync.countDown();
+            }
+        });
+
+        try {
+            forceSync.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void testGetWithInvalidParameter() {
+        String entityPath = String.format("Vehicles/%s/", "invalidparameter");
+        HashMap<String, String> queryParams = new HashMap<>();
+
+        final CountDownLatch forceSync = new CountDownLatch(1);
+        mMojioClient.get(Vehicle.class, entityPath, queryParams, new MojioClient.ResponseListener<Vehicle>() {
+            @Override
+            public void onSuccess(Vehicle result) {
+                assertTrue("get should have failed due to invalid parameter", false);
+                forceSync.countDown();
+            }
+
+            @Override
+            public void onFailure(MojioClient.ResponseError error) {
+                // We want it to fail. No test asserts here.
+                forceSync.countDown();
+            }
+        });
+
+        try {
+            forceSync.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void testGetNotLoggedIn() {
+        String entityPath = String.format("Vehicles");
+        HashMap<String, String> queryParams = new HashMap<>();
+        queryParams.put("sortBy", "Name");
+        queryParams.put("desc", "true");
+
+        final CountDownLatch forceSync = new CountDownLatch(1);
+        mMojioClient.get(Vehicle[].class, entityPath, queryParams, new MojioClient.ResponseListener<Vehicle[]>() {
+            @Override
+            public void onSuccess(Vehicle[] result) {
+                assertTrue("getVehicles should have failed due to authentication issues", false);
+                forceSync.countDown();
+            }
+
+            @Override
+            public void onFailure(MojioClient.ResponseError error) {
+                // We want it to fail. No test asserts here.
+                forceSync.countDown();
+            }
+        });
+
+        try {
+            forceSync.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //==================================================================
+    // POST Tests
+    //==================================================================
 
 }
