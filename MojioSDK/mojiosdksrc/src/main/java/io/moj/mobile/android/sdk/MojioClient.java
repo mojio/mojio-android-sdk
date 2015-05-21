@@ -33,7 +33,6 @@ import microsoft.aspnet.signalr.client.hubs.HubConnection;
 import microsoft.aspnet.signalr.client.hubs.HubProxy;
 import microsoft.aspnet.signalr.client.hubs.SubscriptionHandler1;
 
-
 public class MojioClient {
 
     //========================================================================
@@ -268,7 +267,16 @@ public class MojioClient {
     //========================================================================
     // Generic CRUD methods
     //========================================================================
-    // Get - GET
+    //
+
+    /**
+     * GET (GET)
+     * @param modelClass
+     * @param entityPath
+     * @param queryOptions
+     * @param listener
+     * @param <T>
+     */
     public <T> void get(final Class<T> modelClass, String entityPath, Map<String, String> queryOptions, final ResponseListener<T> listener) {
         // Add query options to get url
         String getParams = "";
@@ -298,7 +306,14 @@ public class MojioClient {
         _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
-    // Update - PUT
+    /**
+     * UPDATE (PUT) with string content body
+     * @param modelClass
+     * @param entityPath
+     * @param contentBody
+     * @param listener
+     * @param <T>
+     */
     public <T> void update(final Class<T> modelClass, String entityPath, String contentBody, final ResponseListener<T> listener) {
         MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.PUT, _apiBaseUrl + entityPath, modelClass, contentBody,
                 new Response.Listener<T>() {
@@ -319,7 +334,13 @@ public class MojioClient {
         _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
-    // Delete - DELETE
+    /**
+     * DELETE (DELETE)
+     * @param modelClass
+     * @param entityPath
+     * @param listener
+     * @param <T>
+     */
     public <T> void delete(final Class<T> modelClass, String entityPath, final ResponseListener<T> listener) {
         MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.DELETE, _apiBaseUrl + entityPath, modelClass,
                 new Response.Listener<T>() {
@@ -340,7 +361,13 @@ public class MojioClient {
         _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
-    // Create - POST
+    /**
+     * CREATE (POST) with no content body
+     * @param modelClass
+     * @param entityPath
+     * @param listener
+     * @param <T>
+     */
     public <T> void create(final Class<T> modelClass, String entityPath, final ResponseListener<T> listener) {
 
         String contentBody = null;
@@ -364,7 +391,14 @@ public class MojioClient {
         _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
-    // Create - POST
+    /**
+     * CREATE (POST) with a string content body
+     * @param modelClass
+     * @param entityPath
+     * @param contentBody
+     * @param listener
+     * @param <T>
+     */
     public <T> void create(final Class<T> modelClass, String entityPath, String contentBody, final ResponseListener<T> listener) {
         MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, _apiBaseUrl + entityPath, modelClass, contentBody,
                 new Response.Listener<T>() {
@@ -385,7 +419,14 @@ public class MojioClient {
         _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
-    // Create - POST
+    /**
+     * CREATE (POST) using a Map of key / value pairs
+     * @param modelClass
+     * @param entityPath
+     * @param params
+     * @param listener
+     * @param <T>
+     */
     public <T> void create(final Class<T> modelClass, String entityPath, Map<String, String> params, final ResponseListener<T> listener) {
         MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, _apiBaseUrl + entityPath, modelClass, params,
                 new Response.Listener<T>() {
@@ -409,6 +450,15 @@ public class MojioClient {
     //========================================================================
     // Observer CRUD methods
     //========================================================================
+
+    /**
+     * GET (GET) Observer
+     * @param modelClass
+     * @param entityPath
+     * @param queryOptions
+     * @param listener
+     * @param <T>
+     */
     public <T> void getObservers(final Class<T> modelClass, String entityPath, Map<String, String> queryOptions, final ResponseListener<T> listener){
         String getParams = "";
         if (queryOptions != null) {
@@ -437,7 +487,13 @@ public class MojioClient {
         }
     }
 
-    // Create - POST
+    /**
+     * CREATE (POST) Observer
+     * @param modelClass
+     * @param contentBody
+     * @param listener
+     * @param <T>
+     */
     public <T> void createObserver(final Class<T> modelClass, String contentBody, final ResponseListener<T> listener) {
         MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, _apiBaseUrl + "Observers", modelClass, contentBody,
                 new Response.Listener<T>() {
@@ -458,7 +514,13 @@ public class MojioClient {
         _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
-    // Delete - DELETE
+    /**
+     * DELETE (DELETE) Observer
+     * @param modelClass
+     * @param observerId
+     * @param listener
+     * @param <T>
+     */
     public <T> void deleteObserver(final Class<T> modelClass, String observerId, final ResponseListener<T> listener) {
         MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.DELETE, _apiBaseUrl + "Observers/" + observerId, modelClass,
                 new Response.Listener<T>() {
@@ -481,7 +543,12 @@ public class MojioClient {
     }
 
     /**
+     * CREATE (POST) Conditional Observer
      * Must provide Name, ObserverType, Timing, Subject, SubjectId, Transport and Condition values
+     * @param modelClass
+     * @param conditionalObserverObject
+     * @param listener
+     * @param <T>
      */
     public <T> void createConditionalObserver(final Class<T> modelClass, Object conditionalObserverObject, final ResponseListener<T> listener) {
 
@@ -586,7 +653,6 @@ public class MojioClient {
                 });
 
         addRequestToQueue(imageRequest);
-
     }
 
     public <T> void updateImage(final Class<T> modelClass, String entityPath, Bitmap data, final ResponseListener<T> listener) {
