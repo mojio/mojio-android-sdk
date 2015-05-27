@@ -229,15 +229,11 @@ public class MojioClient {
         this.create(UserToken.class, entityPath, new MojioClient.ResponseListener<UserToken>() {
             @Override
             public void onSuccess(UserToken result) {
-                // Save auth tokens
-                // NOTE THIS IS THE APP AUTH TOKEN
-                // We only want to use the app auth token when we have no stored USER auth token
-                // This may happen when we are creating a new user
-                _oauthHelper.SetAppToken(result._id);
-                _oauthHelper.SetAppExpireTime(result.ValidUntil);
+                // Save user auth token
+                _oauthHelper.SetAccessToken(result._id);
+                _oauthHelper.SetAccessExpireTime(result.ValidUntil);
                 String userID = result.UserId;
                 getUser(userID, responseListener); // Pass along response listener
-
             }
 
             @Override
