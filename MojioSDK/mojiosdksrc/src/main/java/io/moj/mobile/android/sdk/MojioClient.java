@@ -15,6 +15,8 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -155,16 +157,24 @@ public class MojioClient {
     }
 
     /**
-     * @param userNameOrPassword
+     * @param userNameOrEmail
      * @param password
      * @param responseListener
      */
-    public void login(String userNameOrPassword, String password, final ResponseListener<User> responseListener) {
+    public void login(String userNameOrEmail, String password, final ResponseListener<User> responseListener) {
         //String entityPath = String.format("Login/User?userOrEmail=%s&password=%s&minutes=%s",
         //        userNameOrPassword, password, "43829");
+        String urlEncodedUsername = userNameOrEmail;
+        String urlEncodedPassword = password;
+        try {
+            urlEncodedUsername = URLEncoder.encode(userNameOrEmail, "UTF-8");
+            urlEncodedPassword = URLEncoder.encode(password, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
         String entityPath = String.format("Login/%s?secretKey=%s&userOrEmail=%s&password=%s&minutes=%s",
-                _mojioAppID, _mojioAppSecretKey, userNameOrPassword, password, "43829");
+                _mojioAppID, _mojioAppSecretKey, urlEncodedUsername, urlEncodedPassword, "43829");
 
         this.create(UserToken.class, entityPath, new MojioClient.ResponseListener<UserToken>() {
             @Override
