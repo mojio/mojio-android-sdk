@@ -9,4 +9,5 @@ public class ServiceNote {
     public String Time;
     public String Title;
     public String Details;
+    public long DateTimeInMs;
 }

@@ -241,25 +241,14 @@ public class MojioRequest<T> extends Request<T> {
                 return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
             }
 
-            // If here, attempt to parse response into the desired class.
-            // Parse into small test object first to determine if we have an array of objects, or
-            // just a single object.
-            if(responseString.startsWith("{")) {
-                JSONObject testObject = new JSONObject(responseString);
+            JSONObject testObject = new JSONObject(responseString);
 
-                if (testObject.has("Data")) {
-                    // Result contains Data object (array).
-                    result = mGson.fromJson(testObject.getString("Data"), clazz);
-                } else {
-                    // Result does not contain the Data object - assumed to be a single result.
-                    result = mGson.fromJson(responseString, clazz);
-                }
-            }else{
-                String temp = responseString.replace("\\n", "");
-                temp = temp.replace("\\", "");
-                temp = temp.substring(1, temp.length() -1);
-                Log.e("testing", "parced to this:" + temp);
-                result = mGson.fromJson(temp, clazz);
+            if (testObject.has("Data")) {
+                // Result contains Data object (array).
+                result = mGson.fromJson(testObject.getString("Data"), clazz);
+            } else {
+                // Result does not contain the Data object - assumed to be a single result.
+                result = mGson.fromJson(responseString, clazz);
             }
 
             return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
