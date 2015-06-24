@@ -11,6 +11,10 @@ If you are new to the Mojio platform, it may be benificial to fork the example p
 * https://github.com/mojio/mojio-android-example-oAuth2
 * https://github.com/mojio/mojio-android-myFirstMojioApp
 
+##Further Documenation##
+* https://developer.moj.io/reference/documentation: Full suite of available API calls
+* https://developer.moj.io/reference/pushdocumentation: Observer pattern concepts and usage
+
 ##Adding the SDK to your own project##
 To add the SDK to your project you may either (1) use the prebuilt AAR included in this repo, or (2) import the entire SDK project as a module into your application.
 
@@ -82,6 +86,50 @@ mojioClient.login([name], [password], new MojioClient.ResponseListener<User>() {
 });
 ```
 
+
+####OAuth2 Login####
+The MojioSDK also includes a flow for performing OAuth2 login to the platform. If you wish to add OAuth2 into your personal Mojio applications please follow the following steps:
+
+1. Give your application Internet access in the AndroidManifest.xml file; if you do not do this, then the web view will fail to load with a rather undesciptive "Webpage not available" message
+  
+  ```
+  <uses-permission android:name="android.permission.INTERNET" />
+  ```
+
+2. Your application will need the io.moj.mobile.andorid.sdk.networking.OAuthLoginActivity class to handle the OAuth2 login; add it to your app AndroidManifest.xml file:
+  
+  ```
+  <activity android:name="io.moj.mobile.andorid.sdk.networking.OAuthLoginActivity" />
+  ```
+
+3. Create a MojioClient object using your app's keys
+  
+  ```
+  MojioClient mMojio = new MojioClient(this, MOJIO_APP_ID, MOJIO_APP_SECRET_KEY, REDIRECT_URL);
+  ```
+
+4. Call the launchLoginActivity method passing along an Intent resultCode, so that we can correctly listen for the result.
+  
+  ```
+  private static int OAUTH_REQUEST = 0;
+  ...
+  mMojio.launchLoginActivity(this, OAUTH_REQUEST);
+  ```
+
+5. Override the onActivityResult method to listen for a successful login; once we have gotten a successful result, we can move on to getting Mojio data!
+  
+  ```
+    @Override
+    protected void onActivityResult (int requestCode, int resultCode, Intent data) {
+        if (requestCode == OAUTH_REQUEST) {
+            // We now have a stored access token
+            if (resultCode == RESULT_OK) {
+                // The SDK now knows our auth login - continue on to get awesome data!
+            }
+        }
+    }
+  ``` 
+
 ####CRUD API Usage####
 All CRUD operations are generic; they require the developer to indicate the class that they are expecting from the resulting request:
 
@@ -104,8 +152,73 @@ mMojioClient.get(Vehicle[].class, entityPath, queryParams, new MojioClient.Respo
         // Use vehicle data as desired
     }
     @Override
-    public void onFailure(String error) {
+    public void onFailure(ResponseError error) {
         // Respond to error  
     }
 });
+```
+
+####Observer API Usage####
+There are two steps involved in setting up an Observer in your application:
+1. Creation of the Observer object
+2. Subscribing to the Observer object
+
+```   
+     public void setupVehicleObserver() {
+
+        // Here we want to create an Observer on a "Vehicle" using the SignalR transport.
+        // To do this we need to create a JSON string containing the following properties.
+        final JSONObject contentbody = new JSONObject();
+        try {
+            contentbody.put("Name", "Vehicle Observer");
+            contentbody.put("Subject", "Vehicle");
+            contentbody.put("SubjectId", App.dataStore.getUserSelectedVehicleID());
+            contentbody.put("Transports", "1");
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        // Step 1. Call the createObserver
+        App.mojioClient.createObserver(Observer.class, contentbody.toString(), new MojioClient.ResponseListener<Observer>() {
+            @Override
+            public void onSuccess(Observer observer) {
+                // Save Observer info if desired.
+                // Step 2. Subscribe to the observer; to do this we pass along the class we are expecting (Vehicle),
+                // the observer we just created, and a response handler that will listen for Observed changes.
+                App.mojioClient.subscribeToObserver(Vehicle.class, observer, vehicleObserverHandler);
+            }
+
+            @Override
+            public void onFailure(MojioClient.ResponseError responseError) {
+                // Handle error.
+            }
+        });
+
+    }
+
+    // Handler called when Vehicle change Observed; we expect to get a Vehicle object returned.    
+    private MojioClient.ResponseListener vehicleObserverHandler = new MojioClient.ResponseListener<Vehicle>() {
+        @Override
+        public void onSuccess(final Vehicle result) {
+            Log.i(TAG, "vehicleObserverHandler onSuccess called");
+
+            // Pull out vehicle data
+            LatLng newPos = new LatLng(result.LastLocation.Lat, result.LastLocation.Lng);
+
+            // Update UI if required
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    // Update UI   
+                }
+            });
+        }
+
+        @Override
+        public void onFailure(MojioClient.ResponseError error) {
+            // Handle error
+        }
+    };
+
+
 ```
