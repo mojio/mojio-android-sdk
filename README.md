@@ -172,7 +172,7 @@ There are two steps involved in setting up an Observer in your application:
         try {
             contentbody.put("Name", "Vehicle Observer");
             contentbody.put("Subject", "Vehicle");
-            contentbody.put("SubjectId", App.dataStore.getUserSelectedVehicleID());
+            contentbody.put("SubjectId", <Vehicle._id>);
             contentbody.put("Transports", "1");
         }
         catch (JSONException e) {
