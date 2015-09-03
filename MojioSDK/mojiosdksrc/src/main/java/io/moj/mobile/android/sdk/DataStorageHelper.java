@@ -36,15 +36,16 @@ public class DataStorageHelper {
     }
 
     public void SetAccessExpireTime(String expireTime) {
-        SetExpireTime(expireTime, PREF_ACCESS_TOKEN_EXPIRES);
+//        SetExpireTime(expireTime, PREF_ACCESS_TOKEN_EXPIRES);
     }
 
     public String GetAccessToken() {
-        if (ShouldRefreshToken(PREF_ACCESS_TOKEN_EXPIRES)) {
-            return null;
-        } else {
-            return getSharedPreferenceString(PREF_ACCESS_TOKEN);
-        }
+        return getSharedPreferenceString(PREF_ACCESS_TOKEN);
+//        if (ShouldRefreshToken(PREF_ACCESS_TOKEN_EXPIRES)) {
+//            return null;
+//        } else {
+//            return getSharedPreferenceString(PREF_ACCESS_TOKEN);
+//        }
     }
 
     public boolean ShouldRefreshAccessToken() {
@@ -60,15 +61,16 @@ public class DataStorageHelper {
     }
 
     public void SetAppExpireTime(String expireTime) {
-        SetExpireTime(expireTime, PREF_APP_EXPIRES);
+//        SetExpireTime(expireTime, PREF_APP_EXPIRES);
     }
 
     public String GetAppToken() {
-        if (ShouldRefreshToken(PREF_APP_EXPIRES)) {
-            return null;
-        } else {
-            return getSharedPreferenceString(PREF_APP_TOKEN);
-        }
+        return getSharedPreferenceString(PREF_APP_TOKEN);
+//        if (ShouldRefreshToken(PREF_APP_EXPIRES)) {
+//            return null;
+//        } else {
+//            return getSharedPreferenceString(PREF_APP_TOKEN);
+//        }
     }
 
     //=======================================================
