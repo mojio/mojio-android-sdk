@@ -21,6 +21,9 @@ public class DataStorageHelper {
     private static String PREF_APP_TOKEN = "PREF_APP_TOKEN";
     private static String PREF_APP_EXPIRES = "PREF_APP_EXPIRES";
 
+    // Endpoint
+    private static String PREF_APP_ENDPOINT = "PREF_APP_ENDPOINT";
+
     private Context mContext;
 
     public DataStorageHelper(Context context) {
@@ -71,6 +74,25 @@ public class DataStorageHelper {
 //        } else {
 //            return getSharedPreferenceString(PREF_APP_TOKEN);
 //        }
+    }
+
+    //=======================================================
+    // Endpoint
+    //=======================================================
+    /**
+     * Saves the end point with which the app token is valid.
+     *
+     * @param url       The end point URL.
+     */
+    public void setEndpoint(String url) {
+        setSharedPreference(PREF_APP_ENDPOINT, url);
+    }
+
+    /**
+     * @return      The end point with which the app token is valid.
+     */
+    public String getEndpoint() {
+        return getSharedPreferenceString(PREF_APP_ENDPOINT);
     }
 
     //=======================================================
@@ -138,6 +160,11 @@ public class DataStorageHelper {
         sharedPreferences.clear().commit();
     }
     */
+
+    public void clearAppToken() {
+        Editor sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE).edit();
+        sharedPreferences.remove(PREF_APP_TOKEN).commit();
+    }
 
     public void removeAllUserStoredValues() {
         Editor sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE).edit();

@@ -69,6 +69,7 @@ public class MojioClient {
     private String _authPath;               // Authentication path
     private String _apiBaseUrl;             // Base API URL
     private String _signalRHost;            // SignalR Host
+    private boolean _didSwitchEndpoints;    // Defines whether the new endpoint differs from the cached data
 
     //========================================================================
     // Generic response listener interface
@@ -78,13 +79,6 @@ public class MojioClient {
     public static final int RESPONSE_ERR_SIGNALR_ERROR = 2;
     public static final int RESPONSE_ERR_VOLLEY_ERROR = 3;
     public static final int RESPONSE_ERR_SERVER_TIMEOUT = 4;
-
-    //========================================================================
-    // EU Locales
-    //========================================================================
-    private static final String[] EU_LOCALES = { "BE", "BG", "CZ", "DK", "DE", "EE", "IE", "EL",
-            "ES", "FR", "HR", "IT", "CY", "LV", "LT", "LU", "HU", "MT", "NL", "AT", "PL", "PT",
-            "RO", "SI", "SK", "FI", "SE", "UK" };
 
     public static class ResponseError {
         public String message;
@@ -115,6 +109,13 @@ public class MojioClient {
     private Gson subscriberGson;
 
     //========================================================================
+    // EU Locales
+    //========================================================================
+    private static final String[] EU_LOCALES = { "BE", "BG", "CZ", "DK", "DE", "EE", "IE", "EL",
+            "ES", "FR", "HR", "IT", "CY", "LV", "LT", "LU", "HU", "MT", "NL", "AT", "PL", "PT",
+            "RO", "SI", "SK", "FI", "SE", "UK", "GB" };
+
+    //========================================================================
     // Constructors
     //========================================================================
     public MojioClient(Context ctx, String mojioAppID, String mojioSecretkey, String redirectUrl) {
@@ -124,12 +125,72 @@ public class MojioClient {
         _mojioAppID = mojioAppID;
         _mojioAppSecretKey = mojioSecretkey;
         _redirectUrl = redirectUrl;
+        _didSwitchEndpoints = false;
 
-        Locale clientLocale = _ctx.getResources().getConfiguration().locale;
-        String apiUrl = this.isInEu(clientLocale) ? STAGING_API_URL : API_URL;
+        this.updateUrl(API_URL);
+    }
+
+    public MojioClient(Context ctx, String mojioAppID, String mojioSecretkey, String redirectUrl, Locale clientLocale) {
+        _ctx = ctx;
+        _oauthHelper = new DataStorageHelper(_ctx);
+        _requestHelper = new VolleyHelper(_ctx);
+        _mojioAppID = mojioAppID;
+        _mojioAppSecretKey = mojioSecretkey;
+        _redirectUrl = redirectUrl;
+        _didSwitchEndpoints = false;
+
+        this.updateLocale(clientLocale);
+    }
+
+    private void updateUrl(String apiUrl) {
         _authPath = String.format(URL_AUTH_PATH, apiUrl);
         _apiBaseUrl = String.format(URL_BASE_PATH, apiUrl);
         _signalRHost = String.format(URL_SIGNAL_R_HOST, apiUrl);
+
+        if (!_authPath.equals(_oauthHelper.getEndpoint())) {
+            Log.i("MOJIO", "Endpoints have changed from " + _oauthHelper.getEndpoint() + " to " + _authPath);
+            clearEndPointSpecificCache();
+            _didSwitchEndpoints = true;
+        }
+    }
+
+    //========================================================================
+    // Endpoint setup
+    //========================================================================
+    /**
+     * Sets the endpoint depending on the specific locale. European regions will
+     * map to the staging API.
+     *
+     * @param clientLocale      The specified locale.
+     */
+    public void updateLocale(Locale clientLocale) {
+        String apiUrl = this.isInEu(clientLocale) ? STAGING_API_URL : API_URL;
+        this.updateUrl(apiUrl);
+    }
+
+    /**
+     * Determines whether this instance of the MojioClient is connecting to the same
+     * endpoint as the endpoint that has been cached. This call allows the application to make
+     * configuration changes.
+     *
+     * @return          Whether the end point did change.
+     */
+    public boolean endPointDidChange() {
+        return _didSwitchEndpoints;
+    }
+
+    /**
+     * Removes all cache specific to the cached endpoint. This is called when the endpoint changes.
+     */
+    private void clearEndPointSpecificCache() {
+        String api = _oauthHelper.getEndpoint();
+        if (api == null) {
+            _oauthHelper.setEndpoint(_authPath);
+        } else if (!api.equals(_authPath)) {
+            _oauthHelper.clearAppToken();
+            _oauthHelper.removeAllUserStoredValues();
+            _oauthHelper.setEndpoint(_authPath);
+        }
     }
 
     //========================================================================
