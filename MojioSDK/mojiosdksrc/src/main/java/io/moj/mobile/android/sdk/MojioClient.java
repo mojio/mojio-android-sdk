@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -28,12 +30,14 @@ import io.moj.mobile.android.sdk.networking.MojioImageRequest;
 import io.moj.mobile.android.sdk.networking.MojioRequest;
 import io.moj.mobile.android.sdk.networking.OAuthLoginActivity;
 import io.moj.mobile.android.sdk.networking.VolleyHelper;
+import microsoft.aspnet.signalr.client.NullLogger;
 import microsoft.aspnet.signalr.client.Platform;
 import microsoft.aspnet.signalr.client.SignalRFuture;
 import microsoft.aspnet.signalr.client.http.android.AndroidPlatformComponent;
 import microsoft.aspnet.signalr.client.hubs.HubConnection;
 import microsoft.aspnet.signalr.client.hubs.HubProxy;
 import microsoft.aspnet.signalr.client.hubs.SubscriptionHandler1;
+import microsoft.aspnet.signalr.client.transport.LongPollingTransport;
 
 public class MojioClient {
 
@@ -43,7 +47,7 @@ public class MojioClient {
     private static String REQUEST_TAG = "MojioRequest";
     private static String URL_AUTH_PATH = "https://api.moj.io/OAuth2/authorize?response_type=token&client_id=%s";
     private String _apiBaseUrl = "https://api.moj.io/v1/";
-    private String _signalRHost = "http://api.moj.io:80/v1/signalr";
+    private String _signalRHost = "https://api.moj.io/v1/signalr";
 
     //========================================================================
     // MojioClient private properties
@@ -82,6 +86,15 @@ public class MojioClient {
         public void onSuccess(T result);
         public void onFailure(ResponseError error);
     }
+
+    //========================================================================
+    // Observer subscription data
+    //========================================================================
+    private HubConnection connection;
+    private HubProxy hub;
+    private SignalRFuture<Void> awaitConnection;
+    private boolean connectionEstablished = false;
+    private Gson subscriberGson;
 
     //========================================================================
     // Constructors
@@ -590,32 +603,68 @@ public class MojioClient {
      * @param listener
      * @param <T>
      */
-    public <T> void subscribeToObserver(final Class<T> modelClass, Observer observer, final ResponseListener<T> listener){
+    public <T> void subscribeToObserver(final Class<T> modelClass, final Observer observer, final ResponseListener<T> listener){
 
-        final Gson mGson = new Gson();
+        subscriberGson = new Gson();
         Platform.loadPlatformComponent(new AndroidPlatformComponent());
 
-        HubConnection connection = new HubConnection( _signalRHost );
-        HubProxy hub = connection.createHubProxy( "ObserverHub" );
 
-        SignalRFuture<Void> awaitConnection = connection.start();
+        connection = new HubConnection( _signalRHost );
+        hub = connection.createHubProxy("ObserverHub");
+        awaitConnection = connection.start();
+
+        //create a handler that waits to check if we can subscribe using web sockets.  if we can't
+        //switch to long polling to subscribe
+        Handler mHandler = new Handler(Looper.getMainLooper());
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
+                if (!connectionEstablished) {
+                    Log.e("SignalR", "Websockets failed. switching to long polling");
+                    LongPollingTransport transport = new LongPollingTransport(new NullLogger());
+                    connection.disconnect();
+                    connection = new HubConnection(_signalRHost);
+                    hub = connection.createHubProxy("ObserverHub");
+                    awaitConnection = connection.start(transport);
+                    connectToObserver(awaitConnection, hub, observer);
+                    subscribe(modelClass, listener);
+                }
+            }
+        }, 2000);
+
+        //connect on seperate thread as to not hang the UI thread
+        new Thread(new Runnable() {
+            public void run() {
+                connectToObserver(awaitConnection, hub, observer);
+                subscribe(modelClass, listener);
+            }
+        }).start();
+
+
+
+
+    }
+
+    private void connectToObserver(SignalRFuture<Void> awaitConnection, HubProxy hub, Observer observer){
         try {
             awaitConnection.get();
+            connectionEstablished = true;
             hub.invoke( "Subscribe",observer._id);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+    }
 
-        hub.subscribe( this );
+    private <T> void subscribe(final Class<T> modelClass, final ResponseListener<T> listener){
+        hub.subscribe(this );
         hub.on("UpdateEntity", new SubscriptionHandler1<JsonObject>() {
             @Override
             public void run(JsonObject o) {
-                T result = mGson.fromJson(o.toString(), modelClass);
+                T result = subscriberGson.fromJson(o.toString(), modelClass);
                 listener.onSuccess(result); // NOTE still on handler thread.
             }
-        },JsonObject.class);
+        }, JsonObject.class);
 
         hub.on("Error", new SubscriptionHandler1<Object>() {
             @Override
@@ -625,8 +674,7 @@ public class MojioClient {
                         RESPONSE_ERR_SIGNALR_ERROR);
                 listener.onFailure(error); // NOTE still on handler thread.
             }
-        },Object.class);
-
+        }, Object.class);
     }
 
     //========================================================================
