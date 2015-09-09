@@ -52,7 +52,7 @@ public class MojioClient {
     private static final String REQUEST_TAG = "MojioRequest";
     private static final String URL_AUTH_PATH = "https://%s/OAuth2/authorize?response_type=token&client_id=%%s";
     private static final String URL_BASE_PATH = "https://%s/v1/";
-    private static final String URL_SIGNAL_R_HOST = "http://%s:80/v1/signalr";
+    private static final String URL_SIGNAL_R_HOST = "https://%s/v1/signalr";
     private static final String API_URL = "api.moj.io";
     private static final String STAGING_API_URL = "staging-api.moj.io";
 
