@@ -19,8 +19,12 @@ import com.google.gson.JsonObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import io.moj.mobile.android.sdk.models.Observers.Observer;
@@ -44,10 +48,14 @@ public class MojioClient {
     //========================================================================
     // Server Config - DO NOT CHANGE
     //========================================================================
-    private static String REQUEST_TAG = "MojioRequest";
-    private static String URL_AUTH_PATH = "https://api.moj.io/OAuth2/authorize?response_type=token&client_id=%s";
-    private String _apiBaseUrl = "https://api.moj.io/v1/";
-    private String _signalRHost = "https://api.moj.io/v1/signalr";
+
+    private static final String REQUEST_TAG = "MojioRequest";
+    private static final String URL_AUTH_PATH = "https://%s/OAuth2/authorize?response_type=token&client_id=%%s";
+    private static final String URL_BASE_PATH = "https://%s/v1/";
+    private static final String URL_SIGNAL_R_HOST = "http://%s:80/v1/signalr";
+    private static final String API_URL = "api.moj.io";
+    private static final String STAGING_API_URL = "staging-api.moj.io";
+
 
     //========================================================================
     // MojioClient private properties
@@ -58,15 +66,25 @@ public class MojioClient {
     private Context _ctx;                   // Client context
     private DataStorageHelper _oauthHelper; // OAuth cache / helper
     private VolleyHelper _requestHelper;    // Network requests
+    private String _authPath;               // Authentication path
+    private String _apiBaseUrl;             // Base API URL
+    private String _signalRHost;            // SignalR Host
 
     //========================================================================
     // Generic response listener interface
     //========================================================================
-    public static int RESPONSE_ERR_UNKNOWN = 0;
-    public static int RESPONSE_ERR_NOT_LOGGED_IN = 1;
-    public static int RESPONSE_ERR_SIGNALR_ERROR = 2;
-    public static int RESPONSE_ERR_VOLLEY_ERROR = 3;
-    public static int RESPONSE_ERR_SERVER_TIMEOUT = 4;
+    public static final int RESPONSE_ERR_UNKNOWN = 0;
+    public static final int RESPONSE_ERR_NOT_LOGGED_IN = 1;
+    public static final int RESPONSE_ERR_SIGNALR_ERROR = 2;
+    public static final int RESPONSE_ERR_VOLLEY_ERROR = 3;
+    public static final int RESPONSE_ERR_SERVER_TIMEOUT = 4;
+
+    //========================================================================
+    // EU Locales
+    //========================================================================
+    private static final String[] EU_LOCALES = { "BE", "BG", "CZ", "DK", "DE", "EE", "IE", "EL",
+            "ES", "FR", "HR", "IT", "CY", "LV", "LT", "LU", "HU", "MT", "NL", "AT", "PL", "PT",
+            "RO", "SI", "SK", "FI", "SE", "UK" };
 
     public static class ResponseError {
         public String message;
@@ -106,6 +124,12 @@ public class MojioClient {
         _mojioAppID = mojioAppID;
         _mojioAppSecretKey = mojioSecretkey;
         _redirectUrl = redirectUrl;
+
+        Locale clientLocale = _ctx.getResources().getConfiguration().locale;
+        String apiUrl = this.isInEu(clientLocale) ? STAGING_API_URL : API_URL;
+        _authPath = String.format(URL_AUTH_PATH, apiUrl);
+        _apiBaseUrl = String.format(URL_BASE_PATH, apiUrl);
+        _signalRHost = String.format(URL_SIGNAL_R_HOST, apiUrl);
     }
 
     //========================================================================
@@ -131,7 +155,7 @@ public class MojioClient {
     public void launchLoginActivity(Activity activity, int requestCode) {
         Intent intent = new Intent(activity, OAuthLoginActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putString("URL_AUTH_PATH", String.format(URL_AUTH_PATH, _mojioAppID));
+        bundle.putString("URL_AUTH_PATH", String.format(_authPath, _mojioAppID));
         bundle.putString("USER_AUTH_TOKEN", _oauthHelper.GetAccessToken());
         bundle.putString("REDIRECT_URL",  _redirectUrl);
         intent.putExtras(bundle);
@@ -675,6 +699,7 @@ public class MojioClient {
                 listener.onFailure(error); // NOTE still on handler thread.
             }
         }, Object.class);
+
     }
 
     //========================================================================
@@ -785,5 +810,13 @@ public class MojioClient {
             Log.e("MOJIO", respErr.message);
             listener.onFailure(respErr);
         }
+    }
+
+    //========================================================================
+    // Locale-Specific Endpoints
+    //========================================================================
+    private boolean isInEu(Locale locale) {
+        Set<String> euLocales = new HashSet<>(Arrays.asList(EU_LOCALES));
+        return euLocales.contains(locale.getCountry());
     }
 }
