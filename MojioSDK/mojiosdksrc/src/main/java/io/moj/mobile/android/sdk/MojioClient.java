@@ -314,7 +314,7 @@ public class MojioClient {
         this.update(UserToken.class, entityPath, null, new MojioClient.ResponseListener<UserToken>() {
             @Override
             public void onSuccess(UserToken result) {
-                Log.e("testing", "success.  sandboxmode is now: " + result.Sandboxed);
+                Log.d(TAG, "Successfully updated Sandboxed to: " + result.Sandboxed);
                 // Update access tokens
                 _oauthHelper.SetAccessToken(result._id);
                 _oauthHelper.SetAccessExpireTime(result.ValidUntil);
@@ -627,12 +627,12 @@ public class MojioClient {
      * @param listener
      * @param <T>
      */
-    public <T> void deleteObserver(final Class<T> modelClass, String observerId, final ResponseListener<T> listener) {
+    public <T> void deleteObserver(final Class<T> modelClass, final String observerId, final ResponseListener<T> listener) {
         MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.DELETE, _apiBaseUrl + "Observers/" + observerId, modelClass,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
-                        Log.e("testing", "successfully deleted observer");
+                        Log.d(TAG, "Observer " + observerId + " successfully deleted");
                         listener.onSuccess(response);
                     }
                 },
