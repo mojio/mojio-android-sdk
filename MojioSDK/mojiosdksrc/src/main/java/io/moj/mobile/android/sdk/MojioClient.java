@@ -58,7 +58,6 @@ public class MojioClient {
     private static final String API_URL = "api.moj.io";
     private static final String STAGING_API_URL = "staging-api.moj.io";
 
-
     //========================================================================
     // MojioClient private properties
     //========================================================================
@@ -108,6 +107,7 @@ public class MojioClient {
     private HubProxy hub;
     private SignalRFuture<Void> awaitConnection;
     private boolean connectionEstablished = false;
+    private boolean sandboxAvailable = true;
     private Gson subscriberGson;
 
     //========================================================================
@@ -166,7 +166,14 @@ public class MojioClient {
      * @param clientLocale      The specified locale.
      */
     public void updateLocale(Locale clientLocale) {
-        String apiUrl = this.isInEu(clientLocale) ? STAGING_API_URL : API_URL;
+        final String apiUrl;
+        if (isInEu(clientLocale)) {
+            sandboxAvailable = false;
+            apiUrl = STAGING_API_URL;
+        } else {
+            sandboxAvailable = true;
+            apiUrl = API_URL;
+        }
         this.updateUrl(apiUrl);
     }
 
@@ -179,6 +186,15 @@ public class MojioClient {
      */
     public boolean endPointDidChange() {
         return _didSwitchEndpoints;
+    }
+
+    /**
+     * Returns true if the API supports a sandboxed environment. Note that the V2 APIs no longer
+     * support the sandbox.
+     * @return
+     */
+    public boolean isSandboxAvailable() {
+        return sandboxAvailable;
     }
 
     /**
@@ -740,7 +756,7 @@ public class MojioClient {
             @Override
             public void run(JsonObject o) {
                 String json = o.toString();
-                Log.d(TAG, "Received update at " + System.currentTimeMillis() + ": " + json);
+                Log.d(TAG, "Received " + modelClass + " update: " + json);
                 T result = subscriberGson.fromJson(json, modelClass);
                 listener.onSuccess(result); // NOTE still on handler thread.
             }
