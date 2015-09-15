@@ -45,6 +45,8 @@ import microsoft.aspnet.signalr.client.transport.LongPollingTransport;
 
 public class MojioClient {
 
+    private static final String TAG = MojioClient.class.getSimpleName();
+
     //========================================================================
     // Server Config - DO NOT CHANGE
     //========================================================================
@@ -148,7 +150,7 @@ public class MojioClient {
         _signalRHost = String.format(URL_SIGNAL_R_HOST, apiUrl);
 
         if (!_authPath.equals(_oauthHelper.getEndpoint())) {
-            Log.i("MOJIO", "Endpoints have changed from " + _oauthHelper.getEndpoint() + " to " + _authPath);
+            Log.i(TAG, "Endpoints have changed from " + _oauthHelper.getEndpoint() + " to " + _authPath);
             clearEndPointSpecificCache();
             _didSwitchEndpoints = true;
         }
@@ -655,10 +657,7 @@ public class MojioClient {
      * @param <T>
      */
     public <T> void createConditionalObserver(final Class<T> modelClass, Object conditionalObserverObject, final ResponseListener<T> listener) {
-
         String obj = new Gson().toJson(conditionalObserverObject);
-        Log.e("testing", "the object looks like: " + obj);
-
         MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, _apiBaseUrl + "Observers", modelClass, obj,
                 new Response.Listener<T>() {
                     @Override
@@ -688,13 +687,12 @@ public class MojioClient {
      * @param listener
      * @param <T>
      */
-    public <T> void subscribeToObserver(final Class<T> modelClass, final Observer observer, final ResponseListener<T> listener){
-
+    public <T> void subscribeToObserver(final Class<T> modelClass, final Observer observer, final ResponseListener<T> listener) {
+        Log.d(TAG, "Subscribing to observer " + observer._id + "...");
         subscriberGson = new Gson();
         Platform.loadPlatformComponent(new AndroidPlatformComponent());
 
-
-        connection = new HubConnection( _signalRHost );
+        connection = new HubConnection(_signalRHost);
         hub = connection.createHubProxy("ObserverHub");
         awaitConnection = connection.start();
 
@@ -704,7 +702,7 @@ public class MojioClient {
         mHandler.postDelayed(new Runnable() {
             public void run() {
                 if (!connectionEstablished) {
-                    Log.e("SignalR", "Websockets failed. switching to long polling");
+                    Log.e(TAG, "Websockets failed. switching to long polling");
                     LongPollingTransport transport = new LongPollingTransport(new NullLogger());
                     connection.disconnect();
                     connection = new HubConnection(_signalRHost);
@@ -723,30 +721,27 @@ public class MojioClient {
                 subscribe(modelClass, listener);
             }
         }).start();
-
-
-
-
     }
 
-    private void connectToObserver(SignalRFuture<Void> awaitConnection, HubProxy hub, Observer observer){
+    private void connectToObserver(SignalRFuture<Void> awaitConnection, HubProxy hub, Observer observer) {
         try {
             awaitConnection.get();
             connectionEstablished = true;
-            hub.invoke( "Subscribe",observer._id);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+            hub.invoke("Subscribe", observer._id);
+        } catch (InterruptedException | ExecutionException e) {
+            Log.e(TAG, "Error connecting to observer " + observer._id, e);
         }
     }
 
-    private <T> void subscribe(final Class<T> modelClass, final ResponseListener<T> listener){
-        hub.subscribe(this );
+    private <T> void subscribe(final Class<T> modelClass, final ResponseListener<T> listener) {
+        Log.d(TAG, "Subscribing " + modelClass.getSimpleName() + " listeners to hub...");
+        hub.subscribe(this);
         hub.on("UpdateEntity", new SubscriptionHandler1<JsonObject>() {
             @Override
             public void run(JsonObject o) {
-                T result = subscriberGson.fromJson(o.toString(), modelClass);
+                String json = o.toString();
+                Log.d(TAG, "Received update at " + System.currentTimeMillis() + ": " + json);
+                T result = subscriberGson.fromJson(json, modelClass);
                 listener.onSuccess(result); // NOTE still on handler thread.
             }
         }, JsonObject.class);
@@ -760,7 +755,6 @@ public class MojioClient {
                 listener.onFailure(error); // NOTE still on handler thread.
             }
         }, Object.class);
-
     }
 
     //========================================================================
@@ -768,7 +762,6 @@ public class MojioClient {
     //========================================================================
     // Get image
     public void getImage(String entityPath, Map<String, String> queryOptions,  final ResponseListener<Bitmap> listener){
-
         String getParams = "";
         if (queryOptions != null) {
             for (String key : queryOptions.keySet()) {
@@ -819,7 +812,7 @@ public class MojioClient {
     // Manual Volley requests
     //========================================================================
     public void addRequestToQueue(Request request) {
-        Log.i("MOJIO", "Adding to request queue: " + request.getUrl());
+        Log.i(TAG, "Adding to request queue: " + request.getUrl());
         _requestHelper.addToRequestQueue(request, REQUEST_TAG);
     }
 
@@ -837,7 +830,7 @@ public class MojioClient {
             ResponseError respErr = new ResponseError();
             respErr.message = new String(error.networkResponse.data, HttpHeaderParser.parseCharset(error.networkResponse.headers));
             respErr.type = RESPONSE_ERR_VOLLEY_ERROR;
-            Log.e("MOJIO", respErr.message);
+            Log.e(TAG, respErr.message);
             listener.onFailure(respErr);
         }
         catch (Exception e) {
@@ -868,7 +861,7 @@ public class MojioClient {
 
             e.printStackTrace();
 
-            Log.e("MOJIO", respErr.message);
+            Log.e(TAG, respErr.message);
             listener.onFailure(respErr);
         }
     }
