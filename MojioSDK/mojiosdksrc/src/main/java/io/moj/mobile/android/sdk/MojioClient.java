@@ -56,7 +56,7 @@ public class MojioClient {
     private static final String URL_BASE_PATH = "https://%s/v1/";
     private static final String URL_SIGNAL_R_HOST = "https://%s/v1/signalr";
     private static final String API_URL = "api.moj.io";
-    private static final String STAGING_API_URL = "staging-api.moj.io";
+    private static final String EU_API_URL = "cz-api.moj.io";
 
     //========================================================================
     // MojioClient private properties
@@ -161,7 +161,7 @@ public class MojioClient {
     //========================================================================
     /**
      * Sets the endpoint depending on the specific locale. European regions will
-     * map to the staging API.
+     * map to the Czech API.
      *
      * @param clientLocale      The specified locale.
      */
@@ -169,7 +169,7 @@ public class MojioClient {
         final String apiUrl;
         if (isInEu(clientLocale)) {
             sandboxAvailable = false;
-            apiUrl = STAGING_API_URL;
+            apiUrl = EU_API_URL;
         } else {
             sandboxAvailable = true;
             apiUrl = API_URL;
