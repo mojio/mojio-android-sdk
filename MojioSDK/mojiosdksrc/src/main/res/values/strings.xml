@@ -1,3 +1,112 @@
 <resources>
     <string name="app_name">MojioSDK</string>
+
+    <!-- http://europa.eu/about-eu/countries/member-countries/ -->
+    <string-array name="iso3166_alpha3_eu">
+        <item>AUT</item>
+        <item>BEL</item>
+        <item>BGR</item>
+        <item>CYP</item>
+        <item>CZE</item>
+        <item>DEU</item>
+        <item>DNK</item>
+        <item>EST</item>
+        <item>FIN</item>
+        <item>FRA</item>
+        <item>DEU</item>
+        <item>GRC</item>
+        <item>HRV</item>
+        <item>HUN</item>
+        <item>IRL</item>
+        <item>ITA</item>
+        <item>LVA</item>
+        <item>LTU</item>
+        <item>LUX</item>
+        <item>MLT</item>
+        <item>NLD</item>
+        <item>POL</item>
+        <item>PRT</item>
+        <item>ROU</item>
+        <item>SVK</item>
+        <item>SVN</item>
+        <item>ESP</item>
+        <item>SWE</item>
+        <item>GBR</item>
+    </string-array>
+
+    <string-array name="iso3166_alpha3_na">
+        <item>CAN</item>
+        <item>USA</item>
+        <item>MEX</item>
+    </string-array>
+
+    <string-array name="iso3166_alpha2_na">
+        <item>CA</item>
+        <item>US</item>
+        <item>MX</item>
+    </string-array>
+
+    <string-array name="iso3166_alpha2_eu">
+        <item>BE</item>
+        <item>BG</item>
+        <item>CZ</item>
+        <item>DK</item>
+        <item>DE</item>
+        <item>EE</item>
+        <item>IE</item>
+        <item>EL</item>
+        <item>ES</item>
+        <item>FR</item>
+        <item>HR</item>
+        <item>IT</item>
+        <item>CY</item>
+        <item>LV</item>
+        <item>LT</item>
+        <item>LU</item>
+        <item>HU</item>
+        <item>MT</item>
+        <item>NL</item>
+        <item>AT</item>
+        <item>PL</item>
+        <item>PT</item>
+        <item>RO</item>
+        <item>SI</item>
+        <item>SK</item>
+        <item>FI</item>
+        <item>SE</item>
+        <item>UK</item>
+        <item>GB</item>
+    </string-array>
+
+    <string-array name="iso639_1_na">
+        <!-- Don't assume any language is for NA -->
+    </string-array>
+
+    <string-array name="iso639_1_eu">
+        <item>nl</item>
+        <item>de</item>
+        <item>da</item>
+        <item>el</item>
+        <item>tr</item>
+        <item>et</item>
+        <item>cs</item>
+        <item>sv</item>
+        <item>fi</item>
+        <!-- <item>fr</item> --> <!-- might conflict with Quebec -->
+        <item>hr</item>
+        <item>hu</item>
+        <item>ga</item>
+        <item>it</item>
+        <item>lv</item>
+        <item>lt</item>
+        <item>lb</item>
+        <item>mt</item>
+        <item>pl</item>
+        <item>pt</item>
+        <item>ro</item>
+        <item>sk</item>
+        <item>sl</item>
+        <!-- <item>es</item> --> <!-- might conflict with US/Mexico -->
+        <item>sv</item>
+    </string-array>
 </resources>

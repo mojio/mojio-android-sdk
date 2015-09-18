@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -24,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -55,8 +57,6 @@ public class MojioClient {
     private static final String URL_AUTH_PATH = "https://%s/OAuth2/authorize?response_type=token&client_id=%%s";
     private static final String URL_BASE_PATH = "https://%s/v1/";
     private static final String URL_SIGNAL_R_HOST = "https://%s/v1/signalr";
-    private static final String API_URL = "api.moj.io";
-    private static final String EU_API_URL = "cz-api.moj.io";
 
     //========================================================================
     // MojioClient private properties
@@ -71,6 +71,7 @@ public class MojioClient {
     private String _apiBaseUrl;             // Base API URL
     private String _signalRHost;            // SignalR Host
     private boolean _didSwitchEndpoints;    // Defines whether the new endpoint differs from the cached data
+    private Locale _configuredLocale;       // The most recently configured locale
 
     //========================================================================
     // Generic response listener interface
@@ -110,16 +111,6 @@ public class MojioClient {
     private boolean sandboxAvailable = true;
     private Gson subscriberGson;
 
-    //========================================================================
-    // EU Locales
-    //========================================================================
-    private static final String[] EU_LOCALES = { "BE", "BG", "CZ", "DK", "DE", "EE", "IE", "EL",
-            "ES", "FR", "HR", "IT", "CY", "LV", "LT", "LU", "HU", "MT", "NL", "AT", "PL", "PT",
-            "RO", "SI", "SK", "FI", "SE", "UK", "GB" };
-
-    //========================================================================
-    // Constructors
-    //========================================================================
     public MojioClient(Context ctx, String mojioAppID, String mojioSecretkey, String redirectUrl) {
         _ctx = ctx;
         _oauthHelper = new DataStorageHelper(_ctx);
@@ -128,20 +119,124 @@ public class MojioClient {
         _mojioAppSecretKey = mojioSecretkey;
         _redirectUrl = redirectUrl;
         _didSwitchEndpoints = false;
-
-        this.updateUrl(API_URL);
+        updateLocale(ctx.getResources().getConfiguration().locale);
     }
 
-    public MojioClient(Context ctx, String mojioAppID, String mojioSecretkey, String redirectUrl, Locale clientLocale) {
-        _ctx = ctx;
-        _oauthHelper = new DataStorageHelper(_ctx);
-        _requestHelper = new VolleyHelper(_ctx);
-        _mojioAppID = mojioAppID;
-        _mojioAppSecretKey = mojioSecretkey;
-        _redirectUrl = redirectUrl;
-        _didSwitchEndpoints = false;
+    private enum Endpoint {
+        NA("api.moj.io", true, R.array.iso3166_alpha3_na, R.array.iso3166_alpha2_na, R.array.iso639_1_na),
+        EU("cz-api.moj.io", false, R.array.iso3166_alpha3_eu, R.array.iso3166_alpha2_eu, R.array.iso639_1_eu);
 
-        this.updateLocale(clientLocale);
+        private final String apiUrl;
+        private final boolean sandboxAvailable;
+        private final int iso3CountriesResId;
+        private final int iso2CountriesResId;
+        private final int iso2LanguagesResId;
+
+        Endpoint(String apiUrl, boolean sandboxAvailable, int iso3CountriesResId, int iso2CountriesResId, int iso2LanguagesResId) {
+            this.apiUrl = apiUrl;
+            this.sandboxAvailable = sandboxAvailable;
+            this.iso3CountriesResId = iso3CountriesResId;
+            this.iso2CountriesResId = iso2CountriesResId;
+            this.iso2LanguagesResId = iso2LanguagesResId;
+        }
+
+        public boolean isSandboxAvailable() {
+            return sandboxAvailable;
+        }
+
+        public String getApiUrl() {
+            return apiUrl;
+        }
+
+        public int getIso3CountriesResId() {
+            return iso3CountriesResId;
+        }
+
+        public int getIso2CountriesResId() {
+            return iso2CountriesResId;
+        }
+
+        public int getIso2LanguagesResId() {
+            return iso2LanguagesResId;
+        }
+    }
+
+    //========================================================================
+    // Endpoint setup
+    //========================================================================
+    /**
+     * Sets the endpoint depending on the specific locale.
+     *
+     * @param clientLocale      The specified locale.
+     */
+    public synchronized void updateLocale(Locale clientLocale) {
+        if (_configuredLocale != null && clientLocale.equals(_configuredLocale)) {
+            return;
+        }
+        Log.i(TAG, "Configuring SDK for locale '" + clientLocale + "'...");
+
+        Endpoint endpoint = null;
+        // first check the ISO3166 Alpha-3 country code
+        try {
+            String iso3Code = clientLocale.getISO3Country();
+            if (!TextUtils.isEmpty(iso3Code)) {
+                for (Endpoint e : Endpoint.values()) {
+                    Set<String> iso3Set = new HashSet<>(Arrays.asList(_ctx.getResources().getStringArray(e.getIso3CountriesResId())));
+                    if (iso3Set.contains(iso3Code)) {
+                        endpoint = e;
+                        break;
+                    }
+                }
+            }
+        } catch (final MissingResourceException e) {
+            Log.e(TAG, "Device is missing ISO 3166-1 alpha-3 country code resource", e);
+        }
+
+        // if no Alpha-3 code, check the Alpha-2 code
+        if (endpoint == null) {
+            Log.w(TAG, "Device did not report an ISO 3166-1 alpha-3 country code");
+            // fallback to checking alpha2 code
+            String iso2Code = clientLocale.getCountry();
+            if (!TextUtils.isEmpty(iso2Code)) {
+                // we're getting desperate, try the device's default country
+                iso2Code = clientLocale.getDisplayCountry();
+            }
+
+            if (!TextUtils.isEmpty(iso2Code)) {
+                for (Endpoint e : Endpoint.values()) {
+                    Set<String> iso2Set = new HashSet<>(Arrays.asList(_ctx.getResources().getStringArray(e.getIso2CountriesResId())));
+                    if (iso2Set.contains(iso2Code)) {
+                        endpoint = e;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // If still no country code, use the device language
+        if (endpoint == null) {
+            Log.w(TAG, "Device did not report an ISO 3166-1 alpha-2 country code");
+            // fallback to checking language
+            String languageCode = clientLocale.getLanguage();
+            if (!TextUtils.isEmpty(languageCode)) {
+                for (Endpoint e : Endpoint.values()) {
+                    Set<String> languageSet = new HashSet<>(Arrays.asList(_ctx.getResources().getStringArray(e.getIso2LanguagesResId())));
+                    if (languageSet.contains(languageCode)) {
+                        endpoint = e;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (endpoint == null) {
+            Log.w(TAG, "Could not determine device locale, defaulting to NA endpoints");
+            endpoint = Endpoint.NA;
+        }
+
+        this.sandboxAvailable = endpoint.isSandboxAvailable();
+        this.updateUrl(endpoint.getApiUrl());
+        this._configuredLocale = clientLocale;
     }
 
     private void updateUrl(String apiUrl) {
@@ -154,27 +249,6 @@ public class MojioClient {
             clearEndPointSpecificCache();
             _didSwitchEndpoints = true;
         }
-    }
-
-    //========================================================================
-    // Endpoint setup
-    //========================================================================
-    /**
-     * Sets the endpoint depending on the specific locale. European regions will
-     * map to the Czech API.
-     *
-     * @param clientLocale      The specified locale.
-     */
-    public void updateLocale(Locale clientLocale) {
-        final String apiUrl;
-        if (isInEu(clientLocale)) {
-            sandboxAvailable = false;
-            apiUrl = EU_API_URL;
-        } else {
-            sandboxAvailable = true;
-            apiUrl = API_URL;
-        }
-        this.updateUrl(apiUrl);
     }
 
     /**
@@ -880,13 +954,5 @@ public class MojioClient {
             Log.e(TAG, respErr.message);
             listener.onFailure(respErr);
         }
-    }
-
-    //========================================================================
-    // Locale-Specific Endpoints
-    //========================================================================
-    private boolean isInEu(Locale locale) {
-        Set<String> euLocales = new HashSet<>(Arrays.asList(EU_LOCALES));
-        return euLocales.contains(locale.getCountry());
     }
 }
