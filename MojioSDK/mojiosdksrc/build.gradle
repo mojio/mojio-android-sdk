@@ -2,8 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1.1"
-
+    buildToolsVersion "21.1.2"
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 21
@@ -16,6 +15,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+        beta { }
+        prod { }
+    }
 }
 
 repositories{
@@ -25,12 +28,11 @@ repositories{
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'com.mcxiaoke.volley:library:1.0.6'
     compile 'joda-time:joda-time:2.5'
-
     compile project(':libraries')
     compile 'client.signalr.aspnet.microsoft.signalr_client_sdk_android:signalr-client-sdk-android-release:1.0@aar'
 }
