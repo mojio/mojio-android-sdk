@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -20,15 +19,12 @@ import com.google.gson.JsonObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import io.moj.mobile.android.sdk.enums.Endpoint;
 import io.moj.mobile.android.sdk.models.Observers.Observer;
 import io.moj.mobile.android.sdk.models.User;
 import io.moj.mobile.android.sdk.models.UserToken;
@@ -122,45 +118,6 @@ public class MojioClient {
         updateLocale(ctx.getResources().getConfiguration().locale);
     }
 
-    private enum Endpoint {
-        NA("api.moj.io", true, R.array.iso3166_alpha3_na, R.array.iso3166_alpha2_na, R.array.iso639_1_na),
-        EU("cz-api.moj.io", false, R.array.iso3166_alpha3_eu, R.array.iso3166_alpha2_eu, R.array.iso639_1_eu);
-
-        private final String apiUrl;
-        private final boolean sandboxAvailable;
-        private final int iso3CountriesResId;
-        private final int iso2CountriesResId;
-        private final int iso2LanguagesResId;
-
-        Endpoint(String apiUrl, boolean sandboxAvailable, int iso3CountriesResId, int iso2CountriesResId, int iso2LanguagesResId) {
-            this.apiUrl = apiUrl;
-            this.sandboxAvailable = sandboxAvailable;
-            this.iso3CountriesResId = iso3CountriesResId;
-            this.iso2CountriesResId = iso2CountriesResId;
-            this.iso2LanguagesResId = iso2LanguagesResId;
-        }
-
-        public boolean isSandboxAvailable() {
-            return sandboxAvailable;
-        }
-
-        public String getApiUrl() {
-            return apiUrl;
-        }
-
-        public int getIso3CountriesResId() {
-            return iso3CountriesResId;
-        }
-
-        public int getIso2CountriesResId() {
-            return iso2CountriesResId;
-        }
-
-        public int getIso2LanguagesResId() {
-            return iso2LanguagesResId;
-        }
-    }
-
     //========================================================================
     // Endpoint setup
     //========================================================================
@@ -170,73 +127,12 @@ public class MojioClient {
      * @param clientLocale      The specified locale.
      */
     public synchronized void updateLocale(Locale clientLocale) {
-        /*
         if (_configuredLocale != null && clientLocale.equals(_configuredLocale)) {
             return;
         }
+
         Log.i(TAG, "Configuring SDK for locale '" + clientLocale + "'...");
-
-        Endpoint endpoint = null;
-        // first check the ISO3166 Alpha-3 country code
-        try {
-            String iso3Code = clientLocale.getISO3Country();
-            if (!TextUtils.isEmpty(iso3Code)) {
-                for (Endpoint e : Endpoint.values()) {
-                    Set<String> iso3Set = new HashSet<>(Arrays.asList(_ctx.getResources().getStringArray(e.getIso3CountriesResId())));
-                    if (iso3Set.contains(iso3Code)) {
-                        endpoint = e;
-                        break;
-                    }
-                }
-            }
-        } catch (final MissingResourceException e) {
-            Log.e(TAG, "Device is missing ISO 3166-1 alpha-3 country code resource", e);
-        }
-
-        // if no Alpha-3 code, check the Alpha-2 code
-        if (endpoint == null) {
-            Log.w(TAG, "Device did not report an ISO 3166-1 alpha-3 country code");
-            // fallback to checking alpha2 code
-            String iso2Code = clientLocale.getCountry();
-            if (!TextUtils.isEmpty(iso2Code)) {
-                // we're getting desperate, try the device's default country
-                iso2Code = clientLocale.getDisplayCountry();
-            }
-
-            if (!TextUtils.isEmpty(iso2Code)) {
-                for (Endpoint e : Endpoint.values()) {
-                    Set<String> iso2Set = new HashSet<>(Arrays.asList(_ctx.getResources().getStringArray(e.getIso2CountriesResId())));
-                    if (iso2Set.contains(iso2Code)) {
-                        endpoint = e;
-                        break;
-                    }
-                }
-            }
-        }
-
-        // If still no country code, use the device language
-        if (endpoint == null) {
-            Log.w(TAG, "Device did not report an ISO 3166-1 alpha-2 country code");
-            // fallback to checking language
-            String languageCode = clientLocale.getLanguage();
-            if (!TextUtils.isEmpty(languageCode)) {
-                for (Endpoint e : Endpoint.values()) {
-                    Set<String> languageSet = new HashSet<>(Arrays.asList(_ctx.getResources().getStringArray(e.getIso2LanguagesResId())));
-                    if (languageSet.contains(languageCode)) {
-                        endpoint = e;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (endpoint == null) {
-            Log.w(TAG, "Could not determine device locale, defaulting to NA endpoints");
-            endpoint = Endpoint.NA;
-        }
-        */
-        // TODO for beta always use EU
-        Endpoint endpoint = Endpoint.EU;
+        Endpoint endpoint = Endpoint.fromLocale(_ctx, clientLocale);
         this.sandboxAvailable = endpoint.isSandboxAvailable();
         this.updateUrl(endpoint.getApiUrl());
         this._configuredLocale = clientLocale;
