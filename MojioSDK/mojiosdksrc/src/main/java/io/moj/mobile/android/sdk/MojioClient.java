@@ -170,6 +170,7 @@ public class MojioClient {
      * @param clientLocale      The specified locale.
      */
     public synchronized void updateLocale(Locale clientLocale) {
+        /*
         if (_configuredLocale != null && clientLocale.equals(_configuredLocale)) {
             return;
         }
@@ -233,7 +234,9 @@ public class MojioClient {
             Log.w(TAG, "Could not determine device locale, defaulting to NA endpoints");
             endpoint = Endpoint.NA;
         }
-
+        */
+        // TODO for beta always use EU
+        Endpoint endpoint = Endpoint.EU;
         this.sandboxAvailable = endpoint.isSandboxAvailable();
         this.updateUrl(endpoint.getApiUrl());
         this._configuredLocale = clientLocale;
