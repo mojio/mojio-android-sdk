@@ -1,5 +1,7 @@
 package io.moj.mobile.android.sdk.models;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by ssawchenko on 15-03-19.
  */
@@ -29,8 +31,32 @@ Notes (string, optional),
 RecalledComponentId (string, optional)
 }*/
 
-    public String DefectSummary;
+    @SerializedName("NHTSACampaignNumber")
+    private String nhtsaCampaignNumber;
 
+    @SerializedName("MFRCampaignNumber")
+    private String mfrCampaignNumber;
 
+    // TODO here
+    private String componentDescription;
+    private String reportManufacturer;
+    private String manufacturingStartDate;
+    private String manufacturingEndDate;
+
+    @SerializedName("RecallTypeCode")
+    private String typeCode;
+
+    private String potentialUnitsAffected;
+    private String ownerNotificationDate;
+    private String recallInitiator;
+    private String productManufacturer;
+    private String reportReceivedDate;
+    private String regulationPartNumber;
+    private String fmvvsNumber;
+    private String defectSummary;
+    private String consequenceSummary;
+    private String correctiveAction;
+    private String notes;
+    private String recalledComponentId;
 
 }

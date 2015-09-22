@@ -1,22 +1,168 @@
 package io.moj.mobile.android.sdk.models;
 
-import android.graphics.Bitmap;
-
 import com.google.gson.annotations.SerializedName;
 
 public class User {
-    public String UserName;
-    public String FirstName;
-    public String LastName;
-    public String Email;
-    public String LastActivityDate;
-    public String LastLoginDate;
-    public String Locale;
-    @SerializedName("Name")
-    public String AnotherName;
-    public String _id;
 
-    // Not from JSON - set by applications
-    // TODO move out of SDK
-    public Bitmap downloadedImage;
+    @SerializedName("UserName")
+    private String userName;
+
+    @SerializedName("FirstName")
+    private String firstName;
+
+    @SerializedName("LastName")
+    private String lastName;
+
+    @SerializedName("Email")
+    private String Email;
+
+    @SerializedName("CreationDate")
+    private String creationDate;
+
+    @SerializedName("LastActivityDate")
+    private String lastActivityDate;
+
+    @SerializedName("LastLoginDate")
+    private String lastLoginDate;
+
+    @SerializedName("Locale")
+    private String locale;
+
+    @SerializedName("LastActivityDate")
+    private String LastActivityDate;
+
+    @SerializedName("LastLoginDate")
+    private String LastLoginDate;
+
+    @SerializedName("Locale")
+    private String Locale;
+
+    @SerializedName("PhoneNumber")
+    private String PhoneNumber;
+
+    @SerializedName("Name")
+    private String Name;
+
+    @SerializedName("_id")
+    private String id;
+
+    @SerializedName("_deleted")
+    private boolean deleted;
+
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public String getEmail() {
+        return Email;
+    }
+
+    public void setEmail(String email) {
+        Email = email;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getLastActivityDate() {
+        return lastActivityDate;
+    }
+
+    public void setLastActivityDate(String lastActivityDate) {
+        this.lastActivityDate = lastActivityDate;
+    }
+
+    public String getLastLoginDate() {
+        return lastLoginDate;
+    }
+
+    public void setLastLoginDate(String lastLoginDate) {
+        this.lastLoginDate = lastLoginDate;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+
+    public String getName() {
+        return Name;
+    }
+
+    public void setName(String name) {
+        Name = name;
+    }
+
+    public String getPhoneNumber() {
+        return PhoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        PhoneNumber = phoneNumber;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "creationDate='" + creationDate + '\'' +
+                ", userName='" + userName + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", Email='" + Email + '\'' +
+                ", lastActivityDate='" + lastActivityDate + '\'' +
+                ", lastLoginDate='" + lastLoginDate + '\'' +
+                ", locale='" + locale + '\'' +
+                ", LastActivityDate='" + LastActivityDate + '\'' +
+                ", LastLoginDate='" + LastLoginDate + '\'' +
+                ", Locale='" + Locale + '\'' +
+                ", PhoneNumber='" + PhoneNumber + '\'' +
+                ", Name='" + Name + '\'' +
+                ", id='" + id + '\'' +
+                ", deleted=" + deleted +
+                '}';
+    }
 }

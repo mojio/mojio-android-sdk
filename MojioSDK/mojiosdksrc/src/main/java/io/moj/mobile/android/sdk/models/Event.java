@@ -1,21 +1,136 @@
 package io.moj.mobile.android.sdk.models;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
+ * Model class for an event.
  * Created by ssawchenko on 15-02-20.
  */
 public class Event {
-    public String MojioId;
-    public String VehicleId;
-    public String OwnerId;
-    public String EventType;
-    public String Time;
-    public Location Location;
-    //public String Accelerometer;
-    public boolean TimeIsApprox;
-    public boolean BatteryVoltage;
-    public boolean ConnectionLost;
-    public String _id;
 
-    public Diagnostics[] DTCs;
+    @SerializedName("MojioId")
+    private String mojioId;
 
+    @SerializedName("VehicleId")
+    private String vehicleId;
+
+    @SerializedName("OwnerId")
+    private String ownerId;
+
+    @SerializedName("EventType")
+    private String type;
+
+    @SerializedName("Time")
+    private String time;
+
+    @SerializedName("Location")
+    private Location location;
+
+    @SerializedName("TimeIsApprox")
+    private boolean timeIsApprox;
+
+    @SerializedName("BatteryVoltage")
+    private float batteryVoltage;
+
+    @SerializedName("ConnectionLost")
+    private boolean connectionLost;
+
+    @SerializedName("_id")
+    private String id;
+
+    public float getBatteryVoltage() {
+        return batteryVoltage;
+    }
+
+    public void setBatteryVoltage(float batteryVoltage) {
+        this.batteryVoltage = batteryVoltage;
+    }
+
+    public boolean isConnectionLost() {
+        return connectionLost;
+    }
+
+    public void setConnectionLost(boolean connectionLost) {
+        this.connectionLost = connectionLost;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public String getMojioId() {
+        return mojioId;
+    }
+
+    public void setMojioId(String mojioId) {
+        this.mojioId = mojioId;
+    }
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public boolean isTimeIsApprox() {
+        return timeIsApprox;
+    }
+
+    public void setTimeIsApprox(boolean timeIsApprox) {
+        this.timeIsApprox = timeIsApprox;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getVehicleId() {
+        return vehicleId;
+    }
+
+    public void setVehicleId(String vehicleId) {
+        this.vehicleId = vehicleId;
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "batteryVoltage=" + batteryVoltage +
+                ", mojioId='" + mojioId + '\'' +
+                ", vehicleId='" + vehicleId + '\'' +
+                ", ownerId='" + ownerId + '\'' +
+                ", type='" + type + '\'' +
+                ", time='" + time + '\'' +
+                ", location=" + location +
+                ", timeIsApprox=" + timeIsApprox +
+                ", connectionLost=" + connectionLost +
+                ", id='" + id + '\'' +
+                '}';
+    }
 }

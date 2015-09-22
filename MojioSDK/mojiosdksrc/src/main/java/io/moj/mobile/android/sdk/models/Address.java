@@ -1,65 +1,88 @@
 package io.moj.mobile.android.sdk.models;
 
+import com.google.gson.annotations.SerializedName;
+
+/**
+ * Model class for an address.
+ * Created by skidson on 15-09-21.
+ */
 public class Address {
-	
-	
-	private String Address1;
-	private String Address2;
-	private String City;
-	private String State;
-	private String Zip;
-	private String Country;
-	
-	public Address(){
-		
-	}
 
-	public String getAddress1() {
-		return Address1;
-	}
+    @SerializedName("Address1")
+    private String addressOne;
 
-	public void setAddress1(String address1) {
-		Address1 = address1;
-	}
+    @SerializedName("Address2")
+    private String addressTwo;
 
-	public String getAddress2() {
-		return Address2;
-	}
+    @SerializedName("City")
+    private String city;
 
-	public void setAddress2(String address2) {
-		Address2 = address2;
-	}
+    @SerializedName("State")
+    private String state;
 
-	public String getCity() {
-		return City;
-	}
+    @SerializedName("Zip")
+    private String zip;
 
-	public void setCity(String city) {
-		City = city;
-	}
+    @SerializedName("Country")
+    private String country;
 
-	public String getState() {
-		return State;
-	}
+    public String getCountry() {
+        return country;
+    }
 
-	public void setState(String state) {
-		State = state;
-	}
+    public void setCountry(String country) {
+        this.country = country;
+    }
 
-	public String getZip() {
-		return Zip;
-	}
+    public String getAddressOne() {
+        return addressOne;
+    }
 
-	public void setZip(String zip) {
-		Zip = zip;
-	}
+    public void setAddressOne(String addressOne) {
+        this.addressOne = addressOne;
+    }
 
-	public String getCountry() {
-		return Country;
-	}
+    public String getAddressTwo() {
+        return addressTwo;
+    }
 
-	public void setCountry(String country) {
-		Country = country;
-	}
+    public void setAddressTwo(String addressTwo) {
+        this.addressTwo = addressTwo;
+    }
 
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getZip() {
+        return zip;
+    }
+
+    public void setZip(String zip) {
+        this.zip = zip;
+    }
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "addressOne='" + addressOne + '\'' +
+                ", addressTwo='" + addressTwo + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", zip='" + zip + '\'' +
+                ", country='" + country + '\'' +
+                '}';
+    }
 }

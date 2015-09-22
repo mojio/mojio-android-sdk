@@ -1,101 +1,98 @@
 package io.moj.mobile.android.sdk.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class App {
-	
-	private int Type;
-	private String Name;
-	private String Description;
-	private String Downloads;
-	private ArrayList<String> RedirectUris;
-	private int ApplicationType;
-	private String _id;
-	private boolean _delete;
-	
-	
-	public App(){
-		
-	}
 
+    @SerializedName("Name")
+    private String name;
 
-	public int getType() {
-		return Type;
-	}
+    @SerializedName("Description")
+    private String description;
 
+    @SerializedName("Downloads")
+    private long downloads;
 
-	public void setType(int type) {
-		Type = type;
-	}
+    @SerializedName("RedirectUris")
+    private ArrayList<String> redirectUris;
 
+    @SerializedName("ApplicationType")
+    private int type;
 
-	public String getName() {
-		return Name;
-	}
+    @SerializedName("_id")
+    private String id;
 
+    @SerializedName("_deleted")
+    private boolean deleted;
 
-	public void setName(String name) {
-		Name = name;
-	}
+    public boolean isDeleted() {
+        return deleted;
+    }
 
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
 
-	public String getDescription() {
-		return Description;
-	}
+    public String getName() {
+        return name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setDescription(String description) {
-		Description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getDownloads() {
-		return Downloads;
-	}
+    public long getDownloads() {
+        return downloads;
+    }
 
+    public void setDownloads(long downloads) {
+        this.downloads = downloads;
+    }
 
-	public void setDownloads(String downloads) {
-		Downloads = downloads;
-	}
+    public ArrayList<String> getRedirectUris() {
+        return redirectUris;
+    }
 
+    public void setRedirectUris(ArrayList<String> redirectUris) {
+        this.redirectUris = redirectUris;
+    }
 
-	public ArrayList<String> getRedirectUris() {
-		return RedirectUris;
-	}
+    public int getType() {
+        return type;
+    }
 
+    public void setType(int type) {
+        this.type = type;
+    }
 
-	public void setRedirectUris(ArrayList<String> redirectUris) {
-		RedirectUris = redirectUris;
-	}
+    public String getId() {
+        return id;
+    }
 
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public int getApplicationType() {
-		return ApplicationType;
-	}
-
-
-	public void setApplicationType(int applicationType) {
-		ApplicationType = applicationType;
-	}
-
-
-	public String get_id() {
-		return _id;
-	}
-
-
-	public void set_id(String _id) {
-		this._id = _id;
-	}
-
-
-	public boolean is_delete() {
-		return _delete;
-	}
-
-
-	public void set_delete(boolean _delete) {
-		this._delete = _delete;
-	}
-	
+    @Override
+    public String toString() {
+        return "App{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", downloads=" + downloads +
+                ", redirectUris=" + redirectUris +
+                ", type=" + type +
+                ", id='" + id + '\'' +
+                ", deleted=" + deleted +
+                '}';
+    }
 }

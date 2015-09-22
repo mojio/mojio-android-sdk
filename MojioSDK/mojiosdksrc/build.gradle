@@ -35,4 +35,6 @@ dependencies {
     compile 'joda-time:joda-time:2.5'
     compile project(':libraries')
     compile 'client.signalr.aspnet.microsoft.signalr_client_sdk_android:signalr-client-sdk-android-release:1.0@aar'
+
+    compile 'com.squareup.retrofit:retrofit:2.0.0-beta1'
 }

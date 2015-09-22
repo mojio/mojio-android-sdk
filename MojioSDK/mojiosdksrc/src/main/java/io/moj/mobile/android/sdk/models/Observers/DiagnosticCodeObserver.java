@@ -1,7 +1,5 @@
 package io.moj.mobile.android.sdk.models.Observers;
 
-import io.moj.mobile.android.sdk.models.Diagnostics;
-
 import java.util.ArrayList;
 
 /**

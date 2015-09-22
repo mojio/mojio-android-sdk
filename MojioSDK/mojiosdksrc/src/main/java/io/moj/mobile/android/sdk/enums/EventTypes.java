@@ -203,7 +203,7 @@ public enum EventTypes {
     HeartBeat (100021),
 
     /// <summary>
-    /// Mojio Diagnostic Data
+    /// Mojio DiagnosticCode Data
     /// </summary>
     DeviceDiagnostic (100022),
 
