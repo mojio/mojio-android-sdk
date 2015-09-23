@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat;
  * Created by ssawchenko on 15-01-27.
  */
 public class TimeFormatHelpers {
-    private static DateTimeFormatter FORMATTER_FROM_SERVER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSZ");
+    private static DateTimeFormatter FORMATTER_FROM_SERVER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ssZ");
     private static DateTimeFormatter FORMATTER_VERBOSE_DATE = DateTimeFormat.forPattern("MMMM dd, YYYY hh:mma"); // Feb 1st, 2015 5:00pm
     private static DateTimeFormatter FORMATTER_TIME_CRITERIA = DateTimeFormat.forPattern("YYYY.MM.dd");
 

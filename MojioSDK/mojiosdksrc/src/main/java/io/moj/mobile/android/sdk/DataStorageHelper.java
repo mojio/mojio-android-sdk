@@ -31,9 +31,11 @@ public class DataStorageHelper {
 
     @SuppressLint("CommitPrefEdits")
     public void setAccessToken(String accessToken, String expirationTime, boolean isUserToken) {
+        long expirationTimestamp = TimeFormatHelpers.fromServerFormatted(expirationTime).getMillis();
+
         Editor sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE).edit();
         sharedPreferences.putString(PREF_ACCESS_TOKEN, accessToken);
-        sharedPreferences.putString(PREF_ACCESS_TOKEN_EXPIRES, expirationTime);
+        sharedPreferences.putLong(PREF_ACCESS_TOKEN_EXPIRES, expirationTimestamp);
         sharedPreferences.putBoolean(PREF_ACCESS_TOKEN_IS_USER, isUserToken);
         sharedPreferences.commit();
     }
@@ -54,7 +56,9 @@ public class DataStorageHelper {
             Log.w(TAG, PREF_ACCESS_TOKEN_EXPIRES + " was of an unexpected type", e);
             expirationTimestamp = 0;
         }
-        return (expirationTimestamp - System.currentTimeMillis()) < TOKEN_REFRESH_MS;
+        long msToExpiration = expirationTimestamp - System.currentTimeMillis();
+        Log.d(TAG, "Access token expires in: " + msToExpiration + "ms");
+        return msToExpiration < TOKEN_REFRESH_MS;
     }
 
     public boolean isUserToken() {

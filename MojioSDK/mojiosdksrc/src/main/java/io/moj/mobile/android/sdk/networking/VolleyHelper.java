@@ -22,7 +22,6 @@ public class VolleyHelper {
     private final int SOCKET_TIMEOUT_MS = 5000;
 
     private RequestQueue _requestQueue;
-    private CookieManager _cookieManager;
     private Context _ctx;
 
     private DefaultRetryPolicy _defaultRetryPolicy = new DefaultRetryPolicy(
@@ -41,11 +40,10 @@ public class VolleyHelper {
         // Lazy initialize the request queue, the queue instance will be
         // created when it is accessed for the first time
         if (_requestQueue == null) {
-
             // Set default cookie manager
-            _cookieManager = new CookieManager();
-            _cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-            CookieHandler.setDefault(_cookieManager);
+            CookieManager cookieManager = new CookieManager();
+            cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+            CookieHandler.setDefault(cookieManager);
 
             // newRequestQueue uses volley's BasicNetwork, which uses an underlying HttpURLConnection object
             // SHOULD automatically query the CookieManager
@@ -70,7 +68,7 @@ public class VolleyHelper {
         // set the default tag if tag is empty
         req.setTag(tag == null || TextUtils.isEmpty(tag) ? TAG : tag);
         req.setRetryPolicy(_defaultRetryPolicy);
-        Log.i(TAG, String.format("VolleyHelper adding request to queue: %s", req.getUrl()));
+        Log.i(TAG, "Request [" + parseMethodString(req.getMethod()) + ": " + req.getUrl() + "]");
 
         getRequestQueue().add(req);
     }
@@ -80,7 +78,7 @@ public class VolleyHelper {
      *
      * @param req
      */
-    public <T> void addToRequestQueue(Request<T> req) {
+    public <T> void addToRequestQueue(MojioRequest<T> req) {
         // set the default tag if tag is empty
         addToRequestQueue(req, null);
     }
@@ -94,6 +92,34 @@ public class VolleyHelper {
     public void cancelPendingRequests(Object tag) {
         if (_requestQueue != null) {
             _requestQueue.cancelAll(tag);
+        }
+    }
+
+    /**
+     * Returns the string method name given a Volley integer {@link com.android.volley.Request.Method}.
+     * @param method
+     * @return
+     */
+    public static String parseMethodString(int method) {
+        switch (method) {
+            case Request.Method.GET:
+                return "GET";
+            case Request.Method.POST:
+                return "POST";
+            case Request.Method.PUT:
+                return "PUT";
+            case Request.Method.DELETE:
+                return "DELETE";
+            case Request.Method.HEAD:
+                return "HEAD";
+            case Request.Method.OPTIONS:
+                return "OPTIONS";
+            case Request.Method.TRACE:
+                return "TRACE";
+            case Request.Method.PATCH:
+                return "PATCH";
+            default:
+                return null;
         }
     }
 }

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.moj.mobile.android.sdk.enums.Endpoint;
 import io.moj.mobile.android.sdk.models.Observers.Observer;
@@ -68,7 +69,7 @@ public class MojioClient {
     private String _signalRHost;            // SignalR Host
     private boolean _didSwitchEndpoints;    // Defines whether the new endpoint differs from the cached data
     private Locale _configuredLocale;       // The most recently configured locale
-    private final Object refreshTokenLock = new Object();
+    private AtomicBoolean refreshTokenLock = new AtomicBoolean(false);
 
     //========================================================================
     // Generic response listener interface
@@ -291,7 +292,7 @@ public class MojioClient {
     public void refreshAccessToken(final ResponseListener<UserToken> responseListener) {
         String accessToken = _oauthHelper.getAccessToken();
         String entityPath = String.format("Login/%s/Session?minutes=%d", accessToken, SESSION_LENGTH_MIN);
-        this.update(UserToken.class, entityPath, null, new ResponseListener<UserToken>() {
+        this.create(UserToken.class, entityPath, new ResponseListener<UserToken>() {
             @Override
             public void onSuccess(UserToken result) {
                 _oauthHelper.setAccessToken(result._id, result.ValidUntil);
@@ -417,7 +418,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        addRequestToQueue(apiRequest);
     }
 
     /**
@@ -446,7 +447,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        addRequestToQueue(apiRequest);
     }
 
     /**
@@ -474,7 +475,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        addRequestToQueue(apiRequest);
     }
 
     /**
@@ -515,7 +516,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        addRequestToQueue(apiRequest);
     }
 
     /**
@@ -544,7 +545,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        addRequestToQueue(apiRequest);
     }
 
     //========================================================================
@@ -584,7 +585,7 @@ public class MojioClient {
                     });
 
             // Run request
-            _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+            addRequestToQueue(apiRequest);
         }
     }
 
@@ -613,7 +614,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        addRequestToQueue(apiRequest);
     }
 
     /**
@@ -642,7 +643,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        addRequestToQueue(apiRequest);
     }
 
     /**
@@ -672,7 +673,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        addRequestToQueue(apiRequest);
     }
 
     /**
@@ -803,40 +804,34 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        addRequestToQueue(apiRequest);
     }
 
     public <T> void addRequestToQueue(final Request<T> request) {
-        boolean shouldQueue = true;
-        if (_oauthHelper.shouldRefreshAccessToken()) {
-            // wait if someone else is refreshing the token
-            synchronized (refreshTokenLock) {
-                // we've finished waiting, now check again in case someone else just refreshed it
-                if (_oauthHelper.shouldRefreshAccessToken()) {
-                    shouldQueue = false;
-                    Log.i(TAG, "Access token is about to expire, refreshing before queuing request");
-                    refreshAccessToken(new ResponseListener<UserToken>() {
-                        @Override
-                        public void onSuccess(UserToken result) {
-                            Log.i(TAG, "Successfully refreshed access token");
-                            _requestHelper.addToRequestQueue(request, REQUEST_TAG);
-                        }
+        // Login requests shouldn't get blocked checking the access token
+        addRequestToQueue(request, !request.getUrl().contains("Login"));
+    }
 
-                        @Override
-                        public void onFailure(ResponseError error) {
-                            Log.e(TAG, "Failed to refresh access token: " + error.message);
-                            // TODO need some way to communicate this to the user, for now this
-                            // request will just fail and UI should already handle that
-                            _requestHelper.addToRequestQueue(request, REQUEST_TAG);
-                        }
-                    });
+    public <T> void addRequestToQueue(final Request<T> request, boolean checkAccessToken) {
+        // Note we use an AtomicBoolean for refreshTokenLock as locks give ownership to threads
+        // and it's possible for the same thread to get in here more than once before listener returns
+        if (checkAccessToken && _oauthHelper.shouldRefreshAccessToken() && refreshTokenLock.compareAndSet(false, true)) {
+            Log.i(TAG, "Access token is about to expire, refreshing...");
+            refreshAccessToken(new ResponseListener<UserToken>() {
+                @Override
+                public void onSuccess(UserToken result) {
+                    Log.i(TAG, "Successfully refreshed access token");
+                    refreshTokenLock.set(false);
                 }
-            }
-        }
 
-        if (shouldQueue) {
-            _requestHelper.addToRequestQueue(request, REQUEST_TAG);
+                @Override
+                public void onFailure(ResponseError error) {
+                    Log.e(TAG, "Failed to refresh access token: " + error.message);
+                    refreshTokenLock.set(false);
+                }
+            });
         }
+        _requestHelper.addToRequestQueue(request, REQUEST_TAG);
     }
 
     public void cancelAllRequests() {
