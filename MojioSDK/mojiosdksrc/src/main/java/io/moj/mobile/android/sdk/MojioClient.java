@@ -43,40 +43,29 @@ import microsoft.aspnet.signalr.client.transport.LongPollingTransport;
 
 public class MojioClient {
 
-    private static final String TAG = MojioClient.class.getSimpleName();
-
-    //========================================================================
-    // Server Config - DO NOT CHANGE
-    //========================================================================
-
-    private static final String REQUEST_TAG = "MojioRequest";
-    private static final String URL_AUTH_PATH = "https://%s/OAuth2/authorize?response_type=token&client_id=%%s";
-    private static final String URL_BASE_PATH = "https://%s/v1/";
-    private static final String URL_SIGNAL_R_HOST = "https://%s/v1/signalr";
-
-    //========================================================================
-    // MojioClient private properties
-    //========================================================================
-    private String _mojioAppID;             // Mojio app id
-    private String _mojioAppSecretKey;      // Mojio app secret key
-    private String _redirectUrl;            // Mojio redirect url
-    private Context _ctx;                   // Client context
-    private DataStorageHelper _oauthHelper; // OAuth cache / helper
-    private VolleyHelper _requestHelper;    // Network requests
-    private String _authPath;               // Authentication path
-    private String _apiBaseUrl;             // Base API URL
-    private String _signalRHost;            // SignalR Host
-    private boolean _didSwitchEndpoints;    // Defines whether the new endpoint differs from the cached data
-    private Locale _configuredLocale;       // The most recently configured locale
-
-    //========================================================================
-    // Generic response listener interface
-    //========================================================================
     public static final int RESPONSE_ERR_UNKNOWN = 0;
     public static final int RESPONSE_ERR_NOT_LOGGED_IN = 1;
     public static final int RESPONSE_ERR_SIGNALR_ERROR = 2;
     public static final int RESPONSE_ERR_VOLLEY_ERROR = 3;
     public static final int RESPONSE_ERR_SERVER_TIMEOUT = 4;
+
+    private static final String TAG = MojioClient.class.getSimpleName();
+    private static final String REQUEST_TAG = "MojioRequest";
+    private static final String URL_AUTH_PATH = "https://%s/OAuth2/authorize?response_type=token&client_id=%%s";
+    private static final String URL_BASE_PATH = "https://%s/v1/";
+    private static final String URL_SIGNAL_R_HOST = "https://%s/v1/signalr";
+
+    private String mojioAppID;             // Mojio app id
+    private String mojioAppSecretKey;      // Mojio app secret key
+    private String redirectUrl;            // Mojio redirect url
+    private Context context;               // Client context
+    private DataStorageHelper oauthHelper; // OAuth cache / helper
+    private VolleyHelper requestHelper;    // Network requests
+    private String authPath;               // Authentication path
+    private String apiBaseUrl;             // Base API URL
+    private String signalRHost;            // SignalR Host
+    private boolean didSwitchEndpoints;    // Defines whether the new endpoint differs from the cached data
+    private Locale configuredLocale;       // The most recently configured locale
 
     public static class ResponseError {
         public String message;
@@ -93,29 +82,26 @@ public class MojioClient {
     }
 
     public interface ResponseListener<T> {
-        public void onSuccess(T result);
-        public void onFailure(ResponseError error);
+        void onSuccess(T result);
+        void onFailure(ResponseError error);
     }
 
-    //========================================================================
-    // Observer subscription data
-    //========================================================================
     private HubConnection connection;
     private HubProxy hub;
     private SignalRFuture<Void> awaitConnection;
+    private Gson subscriberGson;
     private boolean connectionEstablished = false;
     private boolean sandboxAvailable = true;
-    private Gson subscriberGson;
 
-    public MojioClient(Context ctx, String mojioAppID, String mojioSecretkey, String redirectUrl) {
-        _ctx = ctx;
-        _oauthHelper = new DataStorageHelper(_ctx);
-        _requestHelper = new VolleyHelper(_ctx);
-        _mojioAppID = mojioAppID;
-        _mojioAppSecretKey = mojioSecretkey;
-        _redirectUrl = redirectUrl;
-        _didSwitchEndpoints = false;
-        updateLocale(ctx.getResources().getConfiguration().locale);
+    public MojioClient(Context context, String mojioAppID, String mojioSecretkey, String redirectUrl) {
+        this.context = context;
+        this.oauthHelper = new DataStorageHelper(context);
+        this.requestHelper = new VolleyHelper(context);
+        this.mojioAppID = mojioAppID;
+        this.mojioAppSecretKey = mojioSecretkey;
+        this.redirectUrl = redirectUrl;
+        didSwitchEndpoints = false;
+        updateLocale(context.getResources().getConfiguration().locale);
     }
 
     //========================================================================
@@ -127,26 +113,28 @@ public class MojioClient {
      * @param clientLocale      The specified locale.
      */
     public synchronized void updateLocale(Locale clientLocale) {
-        if (_configuredLocale != null && clientLocale.equals(_configuredLocale)) {
+        if (configuredLocale != null && clientLocale.equals(configuredLocale)) {
             return;
         }
 
         Log.i(TAG, "Configuring SDK for locale '" + clientLocale + "'...");
-        Endpoint endpoint = Endpoint.fromLocale(_ctx, clientLocale);
-        this.sandboxAvailable = endpoint.isSandboxAvailable();
+        Endpoint endpoint = Endpoint.fromLocale(context, clientLocale);
         this.updateUrl(endpoint.getApiUrl());
-        this._configuredLocale = clientLocale;
+        this.sandboxAvailable = endpoint.isSandboxAvailable();
+        this.requestHelper.setGlobalHeader("Accept-Language", clientLocale.getLanguage());
+
+        this.configuredLocale = clientLocale;
     }
 
     private void updateUrl(String apiUrl) {
-        _authPath = String.format(URL_AUTH_PATH, apiUrl);
-        _apiBaseUrl = String.format(URL_BASE_PATH, apiUrl);
-        _signalRHost = String.format(URL_SIGNAL_R_HOST, apiUrl);
+        authPath = String.format(URL_AUTH_PATH, apiUrl);
+        apiBaseUrl = String.format(URL_BASE_PATH, apiUrl);
+        signalRHost = String.format(URL_SIGNAL_R_HOST, apiUrl);
 
-        if (!_authPath.equals(_oauthHelper.getEndpoint())) {
-            Log.i(TAG, "Endpoints have changed from " + _oauthHelper.getEndpoint() + " to " + _authPath);
+        if (!authPath.equals(oauthHelper.getEndpoint())) {
+            Log.i(TAG, "Endpoints have changed from " + oauthHelper.getEndpoint() + " to " + authPath);
             clearEndPointSpecificCache();
-            _didSwitchEndpoints = true;
+            didSwitchEndpoints = true;
         }
     }
 
@@ -158,7 +146,7 @@ public class MojioClient {
      * @return          Whether the end point did change.
      */
     public boolean endPointDidChange() {
-        return _didSwitchEndpoints;
+        return didSwitchEndpoints;
     }
 
     /**
@@ -174,13 +162,13 @@ public class MojioClient {
      * Removes all cache specific to the cached endpoint. This is called when the endpoint changes.
      */
     private void clearEndPointSpecificCache() {
-        String api = _oauthHelper.getEndpoint();
+        String api = oauthHelper.getEndpoint();
         if (api == null) {
-            _oauthHelper.setEndpoint(_authPath);
-        } else if (!api.equals(_authPath)) {
-            _oauthHelper.clearAppToken();
-            _oauthHelper.removeAllUserStoredValues();
-            _oauthHelper.setEndpoint(_authPath);
+            oauthHelper.setEndpoint(authPath);
+        } else if (!api.equals(authPath)) {
+            oauthHelper.clearAppToken();
+            oauthHelper.removeAllUserStoredValues();
+            oauthHelper.setEndpoint(authPath);
         }
     }
 
@@ -195,7 +183,7 @@ public class MojioClient {
     public boolean isUserLoggedIn() {
         // Currently we determine if a user is logged in by checking the remaining time on
         // an access token (ie. if it has to be refreshed or not).
-        return !_oauthHelper.ShouldRefreshAccessToken();
+        return !oauthHelper.ShouldRefreshAccessToken();
     }
 
     /**
@@ -207,9 +195,9 @@ public class MojioClient {
     public void launchLoginActivity(Activity activity, int requestCode) {
         Intent intent = new Intent(activity, OAuthLoginActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putString("URL_AUTH_PATH", String.format(_authPath, _mojioAppID));
-        bundle.putString("USER_AUTH_TOKEN", _oauthHelper.GetAccessToken());
-        bundle.putString("REDIRECT_URL",  _redirectUrl);
+        bundle.putString("URL_AUTH_PATH", String.format(authPath, mojioAppID));
+        bundle.putString("USER_AUTH_TOKEN", oauthHelper.GetAccessToken());
+        bundle.putString("REDIRECT_URL", redirectUrl);
         intent.putExtras(bundle);
         activity.startActivityForResult(intent, requestCode);
     }
@@ -223,7 +211,7 @@ public class MojioClient {
      */
     public void authenticateApp(final ResponseListener<UserToken> responseListener) {
         String entityPath = String.format("Login/%s?secretKey=%s&minutes=%s",
-                _mojioAppID, _mojioAppSecretKey, "43829");
+                mojioAppID, mojioAppSecretKey, "43829");
 
         this.create(UserToken.class, entityPath, new MojioClient.ResponseListener<UserToken>() {
             @Override
@@ -232,8 +220,8 @@ public class MojioClient {
                 // NOTE THIS IS THE APP AUTH TOKEN
                 // We only want to use the app auth token when we have no stored USER auth token
                 // This may happen when we are creating a new user
-                _oauthHelper.SetAppToken(result._id);
-                _oauthHelper.SetAppExpireTime(result.ValidUntil);
+                oauthHelper.SetAppToken(result._id);
+                oauthHelper.SetAppExpireTime(result.ValidUntil);
                 responseListener.onSuccess(result);
             }
 
@@ -263,14 +251,14 @@ public class MojioClient {
         }
 
         String entityPath = String.format("Login/%s?secretKey=%s&userOrEmail=%s&password=%s&minutes=%s",
-                _mojioAppID, _mojioAppSecretKey, urlEncodedUsername, urlEncodedPassword, "43829");
+                mojioAppID, mojioAppSecretKey, urlEncodedUsername, urlEncodedPassword, "43829");
 
         this.create(UserToken.class, entityPath, new MojioClient.ResponseListener<UserToken>() {
             @Override
             public void onSuccess(UserToken result) {
                 // Save auth tokens
-                _oauthHelper.SetAccessToken(result._id);
-                _oauthHelper.SetAccessExpireTime(result.ValidUntil);
+                oauthHelper.SetAccessToken(result._id);
+                oauthHelper.SetAccessExpireTime(result.ValidUntil);
 
                 // Now we need to get the USER
                 String userID = result.UserId;
@@ -289,7 +277,7 @@ public class MojioClient {
      * Must already be logged in and have an access token
      */
     public void setSandboxedAccess(boolean sandboxed, final ResponseListener<Boolean> responseListener) {
-        String currentAccessToken = _oauthHelper.GetAccessToken();
+        String currentAccessToken = oauthHelper.GetAccessToken();
 
         if (currentAccessToken == null) {
             ResponseError error = new ResponseError("Not logged in", RESPONSE_ERR_NOT_LOGGED_IN);
@@ -305,8 +293,8 @@ public class MojioClient {
             public void onSuccess(UserToken result) {
                 Log.d(TAG, "Successfully updated Sandboxed to: " + result.Sandboxed);
                 // Update access tokens
-                _oauthHelper.SetAccessToken(result._id);
-                _oauthHelper.SetAccessExpireTime(result.ValidUntil);
+                oauthHelper.SetAccessToken(result._id);
+                oauthHelper.SetAccessExpireTime(result.ValidUntil);
                 responseListener.onSuccess(true);
             }
 
@@ -322,15 +310,14 @@ public class MojioClient {
      * @param responseListener
      */
     public void loginFacebook(String fbAccesstoken, final MojioClient.ResponseListener<User> responseListener){
-
         String entityPath = String.format("Login/ExternalUser?accessToken=%s", fbAccesstoken);
 
         this.create(UserToken.class, entityPath, new MojioClient.ResponseListener<UserToken>() {
             @Override
             public void onSuccess(UserToken result) {
                 // Save user auth token
-                _oauthHelper.SetAccessToken(result._id);
-                _oauthHelper.SetAccessExpireTime(result.ValidUntil);
+                oauthHelper.SetAccessToken(result._id);
+                oauthHelper.SetAccessExpireTime(result.ValidUntil);
                 String userID = result.UserId;
                 getUser(userID, responseListener); // Pass along response listener
             }
@@ -356,7 +343,7 @@ public class MojioClient {
     }
 
     public void logout() {
-        _oauthHelper.removeAllUserStoredValues();
+        oauthHelper.removeAllUserStoredValues();
     }
 
     //========================================================================
@@ -382,7 +369,7 @@ public class MojioClient {
             entityPath += getParams.replaceFirst("&", "?");
         }
 
-        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.GET, _apiBaseUrl + entityPath, modelClass, queryOptions,
+        MojioRequest apiRequest = new MojioRequest(context, Request.Method.GET, apiBaseUrl + entityPath, modelClass, queryOptions,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -398,7 +385,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
     /**
@@ -410,7 +397,7 @@ public class MojioClient {
      * @param <T>
      */
     public <T> void update(final Class<T> modelClass, String entityPath, String contentBody, final ResponseListener<T> listener) {
-        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.PUT, _apiBaseUrl + entityPath, modelClass, contentBody,
+        MojioRequest apiRequest = new MojioRequest(context, Request.Method.PUT, apiBaseUrl + entityPath, modelClass, contentBody,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -426,7 +413,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
     /**
@@ -437,7 +424,7 @@ public class MojioClient {
      * @param <T>
      */
     public <T> void delete(final Class<T> modelClass, String entityPath, final ResponseListener<T> listener) {
-        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.DELETE, _apiBaseUrl + entityPath, modelClass,
+        MojioRequest apiRequest = new MojioRequest(context, Request.Method.DELETE, apiBaseUrl + entityPath, modelClass,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -453,7 +440,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
     /**
@@ -467,7 +454,7 @@ public class MojioClient {
 
         String contentBody = null;
 
-        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, _apiBaseUrl + entityPath, modelClass, contentBody,
+        MojioRequest apiRequest = new MojioRequest(context, Request.Method.POST, apiBaseUrl + entityPath, modelClass, contentBody,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -483,7 +470,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
     /**
@@ -495,7 +482,7 @@ public class MojioClient {
      * @param <T>
      */
     public <T> void create(final Class<T> modelClass, String entityPath, String contentBody, final ResponseListener<T> listener) {
-        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, _apiBaseUrl + entityPath, modelClass, contentBody,
+        MojioRequest apiRequest = new MojioRequest(context, Request.Method.POST, apiBaseUrl + entityPath, modelClass, contentBody,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -511,7 +498,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
     /**
@@ -523,7 +510,7 @@ public class MojioClient {
      * @param <T>
      */
     public <T> void create(final Class<T> modelClass, String entityPath, Map<String, String> params, final ResponseListener<T> listener) {
-        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, _apiBaseUrl + entityPath, modelClass, params,
+        MojioRequest apiRequest = new MojioRequest(context, Request.Method.POST, apiBaseUrl + entityPath, modelClass, params,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -539,7 +526,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
     //========================================================================
@@ -562,7 +549,7 @@ public class MojioClient {
             }
             entityPath += getParams.replaceFirst("&", "?");
 
-            MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.GET, _apiBaseUrl + entityPath, modelClass, queryOptions,
+            MojioRequest apiRequest = new MojioRequest(context, Request.Method.GET, apiBaseUrl + entityPath, modelClass, queryOptions,
                     new Response.Listener<T>() {
                         @Override
                         public void onResponse(T response) {
@@ -578,7 +565,7 @@ public class MojioClient {
                     });
 
             // Run request
-            _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+            requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
         }
     }
 
@@ -590,7 +577,7 @@ public class MojioClient {
      * @param <T>
      */
     public <T> void createObserver(final Class<T> modelClass, String contentBody, final ResponseListener<T> listener) {
-        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, _apiBaseUrl + "Observers", modelClass, contentBody,
+        MojioRequest apiRequest = new MojioRequest(context, Request.Method.POST, apiBaseUrl + "Observers", modelClass, contentBody,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -606,7 +593,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
     /**
@@ -617,7 +604,7 @@ public class MojioClient {
      * @param <T>
      */
     public <T> void deleteObserver(final Class<T> modelClass, final String observerId, final ResponseListener<T> listener) {
-        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.DELETE, _apiBaseUrl + "Observers/" + observerId, modelClass,
+        MojioRequest apiRequest = new MojioRequest(context, Request.Method.DELETE, apiBaseUrl + "Observers/" + observerId, modelClass,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -634,7 +621,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
     /**
@@ -647,7 +634,7 @@ public class MojioClient {
      */
     public <T> void createConditionalObserver(final Class<T> modelClass, Object conditionalObserverObject, final ResponseListener<T> listener) {
         String obj = new Gson().toJson(conditionalObserverObject);
-        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, _apiBaseUrl + "Observers", modelClass, obj,
+        MojioRequest apiRequest = new MojioRequest(context, Request.Method.POST, apiBaseUrl + "Observers", modelClass, obj,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -663,7 +650,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
     /**
@@ -681,7 +668,7 @@ public class MojioClient {
         subscriberGson = new Gson();
         Platform.loadPlatformComponent(new AndroidPlatformComponent());
 
-        connection = new HubConnection(_signalRHost);
+        connection = new HubConnection(signalRHost);
         hub = connection.createHubProxy("ObserverHub");
         awaitConnection = connection.start();
 
@@ -694,7 +681,7 @@ public class MojioClient {
                     Log.e(TAG, "Websockets failed. switching to long polling");
                     LongPollingTransport transport = new LongPollingTransport(new NullLogger());
                     connection.disconnect();
-                    connection = new HubConnection(_signalRHost);
+                    connection = new HubConnection(signalRHost);
                     hub = connection.createHubProxy("ObserverHub");
                     awaitConnection = connection.start(transport);
                     connectToObserver(awaitConnection, hub, observer);
@@ -759,7 +746,7 @@ public class MojioClient {
             entityPath += getParams.replaceFirst("&", "?");
         }
 
-        MojioImageRequest imageRequest = new MojioImageRequest(_ctx, _apiBaseUrl + entityPath, 0,0,null,
+        MojioImageRequest imageRequest = new MojioImageRequest(context, apiBaseUrl + entityPath, 0,0,null,
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap response) {
@@ -778,7 +765,7 @@ public class MojioClient {
     }
 
     public <T> void updateImage(final Class<T> modelClass, String entityPath, Bitmap data, final ResponseListener<T> listener) {
-        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.PUT, _apiBaseUrl + entityPath, modelClass, data,
+        MojioRequest apiRequest = new MojioRequest(context, Request.Method.PUT, apiBaseUrl + entityPath, modelClass, data,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -794,7 +781,7 @@ public class MojioClient {
                 });
 
         // Run request
-        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
     //========================================================================
@@ -802,11 +789,11 @@ public class MojioClient {
     //========================================================================
     public void addRequestToQueue(Request request) {
         Log.i(TAG, "Adding to request queue: " + request.getUrl());
-        _requestHelper.addToRequestQueue(request, REQUEST_TAG);
+        requestHelper.addToRequestQueue(request, REQUEST_TAG);
     }
 
     public void cancelAllRequests() {
-        _requestHelper.cancelPendingRequests(REQUEST_TAG);
+        requestHelper.cancelPendingRequests(REQUEST_TAG);
     }
 
     //========================================================================
@@ -848,10 +835,9 @@ public class MojioClient {
                 respErr.message = "Unknown error";
             }
 
-            e.printStackTrace();
-
-            Log.e(TAG, respErr.message);
+            Log.e(TAG, respErr.message, e);
             listener.onFailure(respErr);
         }
     }
+
 }

@@ -12,6 +12,7 @@ import com.android.volley.toolbox.Volley;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.util.Map;
 
 /**
  * Created by ssawchenko on 15-01-14.
@@ -21,17 +22,24 @@ public class VolleyHelper {
     private static String TAG = "VolleyHelper";
     private final int SOCKET_TIMEOUT_MS = 5000;
 
-    private RequestQueue _requestQueue;
-    private CookieManager _cookieManager;
-    private Context _ctx;
+    private RequestQueue requestQueue;
+    private MojioHttpStack networkStack;
 
     private DefaultRetryPolicy _defaultRetryPolicy = new DefaultRetryPolicy(
             SOCKET_TIMEOUT_MS,
             DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
             DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
 
-    public VolleyHelper(Context ctx) {
-        _ctx = ctx;
+    public VolleyHelper(Context context) {
+        // Set default cookie manager
+        CookieManager cookieManager = new CookieManager();
+        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+        CookieHandler.setDefault(cookieManager);
+
+        // newRequestQueue uses volley's BasicNetwork, which uses an underlying HttpURLConnection object
+        // SHOULD automatically query the CookieManager
+        networkStack = new MojioHttpStack();
+        requestQueue = Volley.newRequestQueue(context, networkStack);
     }
 
     /**
@@ -40,19 +48,16 @@ public class VolleyHelper {
     public RequestQueue getRequestQueue() {
         // Lazy initialize the request queue, the queue instance will be
         // created when it is accessed for the first time
-        if (_requestQueue == null) {
-
-            // Set default cookie manager
-            _cookieManager = new CookieManager();
-            _cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-            CookieHandler.setDefault(_cookieManager);
-
-            // newRequestQueue uses volley's BasicNetwork, which uses an underlying HttpURLConnection object
-            // SHOULD automatically query the CookieManager
-            _requestQueue = Volley.newRequestQueue(_ctx);
+        if (requestQueue == null) {
+            initRequestQueue();
         }
+        return requestQueue;
+    }
 
-        return _requestQueue;
+    private synchronized void initRequestQueue() {
+        if (requestQueue == null) {
+
+        }
     }
 
     /**
@@ -63,13 +68,12 @@ public class VolleyHelper {
      * @param tag
      */
     public <T> void addToRequestQueue(Request<T> req, String tag) {
-
-        if (_requestQueue == null) {
+        if (requestQueue == null) {
             getRequestQueue();
         }
 
         // set the default tag if tag is empty
-        req.setTag(tag == null || TextUtils.isEmpty(tag) ? TAG : tag);
+        req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
         req.setRetryPolicy(_defaultRetryPolicy);
         Log.i(TAG, String.format("VolleyHelper adding request to queue: %s", req.getUrl()));
 
@@ -93,8 +97,18 @@ public class VolleyHelper {
      * @param tag
      */
     public void cancelPendingRequests(Object tag) {
-        if (_requestQueue != null) {
-            _requestQueue.cancelAll(tag);
+        if (requestQueue != null) {
+            requestQueue.cancelAll(tag);
         }
     }
+
+    /**
+     * Sets headers that will be added to every request.
+     * @param key the key of the header (e.g. Authorization, Accept-Language, etc)
+     * @param value the value of the header
+     */
+    public void setGlobalHeader(String key, String value) {
+        this.networkStack.setGlobalHeader(key, value);
+    }
+
 }
