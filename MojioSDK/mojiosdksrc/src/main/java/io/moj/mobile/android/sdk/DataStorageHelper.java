@@ -56,9 +56,7 @@ public class DataStorageHelper {
             Log.w(TAG, PREF_ACCESS_TOKEN_EXPIRES + " was of an unexpected type", e);
             expirationTimestamp = 0;
         }
-        long msToExpiration = expirationTimestamp - System.currentTimeMillis();
-        Log.d(TAG, "Access token expires in: " + msToExpiration + "ms");
-        return msToExpiration < TOKEN_REFRESH_MS;
+        return (expirationTimestamp - System.currentTimeMillis()) < TOKEN_REFRESH_MS;
     }
 
     public boolean isUserToken() {
