@@ -37,23 +37,46 @@ RecalledComponentId (string, optional)
     @SerializedName("MFRCampaignNumber")
     private String mfrCampaignNumber;
 
-    // TODO here
+    @SerializedName("ComponentDescription")
     private String componentDescription;
+
+    @SerializedName("ReportManufacturer")
     private String reportManufacturer;
+
+    @SerializedName("ManufacturingStartDate")
     private String manufacturingStartDate;
+
+    @SerializedName("ManufacturingEndDate")
     private String manufacturingEndDate;
 
     @SerializedName("RecallTypeCode")
     private String typeCode;
 
+    @SerializedName("PotentialUnitsAffected")
     private String potentialUnitsAffected;
+
+    @SerializedName("OwnerNotificationDate")
     private String ownerNotificationDate;
+
+    @SerializedName("RecallInitiator")
     private String recallInitiator;
+
+    @SerializedName("ProductManufacturer")
     private String productManufacturer;
+
+    @SerializedName("ReportReceivedDate")
     private String reportReceivedDate;
+
+    @SerializedName("RegulationPartNumber")
     private String regulationPartNumber;
+
+    @SerializedName("FMVVSNumber")
     private String fmvvsNumber;
+
+    @SerializedName("DefectSummary")
     private String defectSummary;
+
+    @SerializedName("ConsequenceSummary")
     private String consequenceSummary;
     private String correctiveAction;
     private String notes;

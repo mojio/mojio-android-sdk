@@ -18,39 +18,29 @@ import java.net.CookiePolicy;
  */
 public class VolleyHelper {
 
-    private static String TAG = "VolleyHelper";
-    private final int SOCKET_TIMEOUT_MS = 5000;
+    private static String TAG = VolleyHelper.class.getSimpleName();
+    private static final int SOCKET_TIMEOUT_MS = 5000;
 
-    private RequestQueue _requestQueue;
-    private CookieManager _cookieManager;
-    private Context _ctx;
-
-    private DefaultRetryPolicy _defaultRetryPolicy = new DefaultRetryPolicy(
+    private static final DefaultRetryPolicy RETRY_POLICY = new DefaultRetryPolicy(
             SOCKET_TIMEOUT_MS,
             DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
             DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
 
-    public VolleyHelper(Context ctx) {
-        _ctx = ctx;
+    private RequestQueue requestQueue;
+
+    public VolleyHelper(Context context) {
+        // Set default cookie manager
+        CookieManager cookieManager = new CookieManager();
+        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+        CookieHandler.setDefault(cookieManager);
+        requestQueue = Volley.newRequestQueue(context, new MojioHttpStack());
     }
 
     /**
      * @return The Volley Request queue, the queue will be created if it is null
      */
     public RequestQueue getRequestQueue() {
-        // Lazy initialize the request queue, the queue instance will be
-        // created when it is accessed for the first time
-        if (_requestQueue == null) {
-            // Set default cookie manager
-            _cookieManager = new CookieManager();
-            _cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-            CookieHandler.setDefault(_cookieManager);
-
-            // newRequestQueue uses volley's BasicNetwork, which uses an underlying HttpURLConnection object
-            // SHOULD automatically query the CookieManager
-            _requestQueue = Volley.newRequestQueue(_ctx);
-        }
-        return _requestQueue;
+        return requestQueue;
     }
 
     /**
@@ -61,14 +51,13 @@ public class VolleyHelper {
      * @param tag
      */
     public <T> void addToRequestQueue(Request<T> req, String tag) {
-
-        if (_requestQueue == null) {
+        if (requestQueue == null) {
             getRequestQueue();
         }
 
         // set the default tag if tag is empty
-        req.setTag(tag == null || TextUtils.isEmpty(tag) ? TAG : tag);
-        req.setRetryPolicy(_defaultRetryPolicy);
+        req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
+        req.setRetryPolicy(RETRY_POLICY);
         Log.i(TAG, String.format("VolleyHelper adding request to queue: %s", req.getUrl()));
 
         getRequestQueue().add(req);
@@ -91,8 +80,9 @@ public class VolleyHelper {
      * @param tag
      */
     public void cancelPendingRequests(Object tag) {
-        if (_requestQueue != null) {
-            _requestQueue.cancelAll(tag);
+        if (requestQueue != null) {
+            requestQueue.cancelAll(tag);
         }
     }
+
 }
