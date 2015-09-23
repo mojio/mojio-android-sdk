@@ -3,7 +3,6 @@ package io.moj.mobile.android.sdk;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.util.Log;
 
 import org.joda.time.DateTime;
 
@@ -30,108 +29,75 @@ public class DataStorageHelper {
         mContext = context;
     }
 
-    //=======================================================
-    // User
-    //=======================================================
-    public void SetAccessToken(String accessToken) {
-        Log.i("MOJIO", "THE ACCESS TOKEN IS: " + accessToken);
+    public void setAccessToken(String accessToken) {
         setSharedPreference(PREF_ACCESS_TOKEN, accessToken);
     }
 
-    public void SetAccessExpireTime(String expireTime) {
-//        SetExpireTime(expireTime, PREF_ACCESS_TOKEN_EXPIRES);
+    public void setAccessTokenExpiration(String expireTime) {
+        // TODO why isn't this doing anything!? Really we should force storing the expiration in same method as storing the token
+//        setExpirationTime(expireTime, PREF_ACCESS_TOKEN_EXPIRES);
     }
 
-    public String GetAccessToken() {
+    public String getAccessToken() {
         return getSharedPreferenceString(PREF_ACCESS_TOKEN);
-//        if (ShouldRefreshToken(PREF_ACCESS_TOKEN_EXPIRES)) {
-//            return null;
-//        } else {
-//            return getSharedPreferenceString(PREF_ACCESS_TOKEN);
-//        }
     }
 
-    public boolean ShouldRefreshAccessToken() {
-        return ShouldRefreshToken(PREF_ACCESS_TOKEN_EXPIRES);
+    public boolean shouldRefreshAccessToken() {
+        return shouldRefreshToken(PREF_ACCESS_TOKEN_EXPIRES);
     }
 
-    //=======================================================
-    // App
-    //=======================================================
-    public void SetAppToken(String accessToken) {
-        Log.i("MOJIO", "THE ACCESS TOKEN IS: " + accessToken);
-        setSharedPreference(PREF_APP_TOKEN, accessToken);
+    public void setAppToken(String appToken) {
+        setSharedPreference(PREF_APP_TOKEN, appToken);
     }
 
-    public void SetAppExpireTime(String expireTime) {
-//        SetExpireTime(expireTime, PREF_APP_EXPIRES);
+    public void setAppTokenExpiration(String expireTime) {
+        // TODO why isn't this doing anything!? Really we should force storing the expiration in same method as storing the token
+//        setExpirationTime(expireTime, PREF_APP_EXPIRES);
     }
 
-    public String GetAppToken() {
+    public String getAppToken() {
         return getSharedPreferenceString(PREF_APP_TOKEN);
-//        if (ShouldRefreshToken(PREF_APP_EXPIRES)) {
-//            return null;
-//        } else {
-//            return getSharedPreferenceString(PREF_APP_TOKEN);
-//        }
     }
 
-    //=======================================================
-    // Endpoint
-    //=======================================================
     /**
      * Saves the end point with which the app token is valid.
      *
-     * @param url       The end point URL.
+     * @param url The end point URL.
      */
     public void setEndpoint(String url) {
         setSharedPreference(PREF_APP_ENDPOINT, url);
     }
 
     /**
-     * @return      The end point with which the app token is valid.
+     * @return The end point with which the app token is valid.
      */
     public String getEndpoint() {
         return getSharedPreferenceString(PREF_APP_ENDPOINT);
     }
 
-    //=======================================================
-    // Helpers
-    //=======================================================
-    private void SetExpireTime(String expireTime, String pref_const) {
-        Log.i("MOJIO", "THE EXPIRES TIME IS: " + expireTime);
-
+    private void setExpirationTime(String expireTime, String prefKey) {
         long expire;
+        // TODO try to use SimpleDateFormat instead to remove heavy JodaTime dependency
         DateTime dt = TimeFormatHelpers.fromServerFormatted(expireTime);
         if (dt == null) {
             // Web oauth login result
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.SECOND, Integer.parseInt(expireTime));
             expire = calendar.getTimeInMillis();
-        }
-        else {
+        } else {
             // Direct API login result
             expire = dt.getMillis();
         }
-
-        setSharedPreference(pref_const, expire);
+        setSharedPreference(prefKey, expire);
     }
 
-    private boolean ShouldRefreshToken(String pref_const) {
+    private boolean shouldRefreshToken(String pref_const) {
         Calendar calendar = Calendar.getInstance();
         long currentTimeMilli = calendar.getTimeInMillis();
         long expiresInMilli = getSharedPreferenceLong(pref_const);
-        long timeRemaining = expiresInMilli - currentTimeMilli;
-        if (timeRemaining > 0) {
-            return false;
-        } else {
-            return true;
-        }
+        return (expiresInMilli - currentTimeMilli) > 0;
     }
 
-    //========================================================================================
-    // Storage methods
-    //========================================================================================
     private String getSharedPreferenceString(String key) {
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE);
         return sharedPreferences.getString(key, null);
@@ -153,13 +119,6 @@ public class DataStorageHelper {
         sharedPreferences.putLong(key, value);
         sharedPreferences.commit();
     }
-
-    /*
-    public void removeAllStoredValues() {
-        Editor sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE).edit();
-        sharedPreferences.clear().commit();
-    }
-    */
 
     public void clearAppToken() {
         Editor sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE).edit();

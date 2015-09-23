@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import io.moj.mobile.android.sdk.enums.Endpoint;
-import io.moj.mobile.android.sdk.models.Observers.Observer;
+import io.moj.mobile.android.sdk.models.observers.Observer;
 import io.moj.mobile.android.sdk.models.User;
 import io.moj.mobile.android.sdk.models.UserToken;
 import io.moj.mobile.android.sdk.networking.MojioImageRequest;
@@ -195,7 +195,7 @@ public class MojioClient {
     public boolean isUserLoggedIn() {
         // Currently we determine if a user is logged in by checking the remaining time on
         // an access token (ie. if it has to be refreshed or not).
-        return !_oauthHelper.ShouldRefreshAccessToken();
+        return !_oauthHelper.shouldRefreshAccessToken();
     }
 
     /**
@@ -208,7 +208,7 @@ public class MojioClient {
         Intent intent = new Intent(activity, OAuthLoginActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("URL_AUTH_PATH", String.format(_authPath, _mojioAppID));
-        bundle.putString("USER_AUTH_TOKEN", _oauthHelper.GetAccessToken());
+        bundle.putString("USER_AUTH_TOKEN", _oauthHelper.getAccessToken());
         bundle.putString("REDIRECT_URL",  _redirectUrl);
         intent.putExtras(bundle);
         activity.startActivityForResult(intent, requestCode);
@@ -232,8 +232,8 @@ public class MojioClient {
                 // NOTE THIS IS THE APP AUTH TOKEN
                 // We only want to use the app auth token when we have no stored USER auth token
                 // This may happen when we are creating a new user
-                _oauthHelper.SetAppToken(result._id);
-                _oauthHelper.SetAppExpireTime(result.ValidUntil);
+                _oauthHelper.setAppToken(result._id);
+                _oauthHelper.setAppTokenExpiration(result.ValidUntil);
                 responseListener.onSuccess(result);
             }
 
@@ -269,8 +269,8 @@ public class MojioClient {
             @Override
             public void onSuccess(UserToken result) {
                 // Save auth tokens
-                _oauthHelper.SetAccessToken(result._id);
-                _oauthHelper.SetAccessExpireTime(result.ValidUntil);
+                _oauthHelper.setAccessToken(result._id);
+                _oauthHelper.setAccessTokenExpiration(result.ValidUntil);
 
                 // Now we need to get the USER
                 String userID = result.UserId;
@@ -289,7 +289,7 @@ public class MojioClient {
      * Must already be logged in and have an access token
      */
     public void setSandboxedAccess(boolean sandboxed, final ResponseListener<Boolean> responseListener) {
-        String currentAccessToken = _oauthHelper.GetAccessToken();
+        String currentAccessToken = _oauthHelper.getAccessToken();
 
         if (currentAccessToken == null) {
             ResponseError error = new ResponseError("Not logged in", RESPONSE_ERR_NOT_LOGGED_IN);
@@ -305,8 +305,8 @@ public class MojioClient {
             public void onSuccess(UserToken result) {
                 Log.d(TAG, "Successfully updated Sandboxed to: " + result.Sandboxed);
                 // Update access tokens
-                _oauthHelper.SetAccessToken(result._id);
-                _oauthHelper.SetAccessExpireTime(result.ValidUntil);
+                _oauthHelper.setAccessToken(result._id);
+                _oauthHelper.setAccessTokenExpiration(result.ValidUntil);
                 responseListener.onSuccess(true);
             }
 
@@ -329,8 +329,8 @@ public class MojioClient {
             @Override
             public void onSuccess(UserToken result) {
                 // Save user auth token
-                _oauthHelper.SetAccessToken(result._id);
-                _oauthHelper.SetAccessExpireTime(result.ValidUntil);
+                _oauthHelper.setAccessToken(result._id);
+                _oauthHelper.setAccessTokenExpiration(result.ValidUntil);
                 String userID = result.UserId;
                 getUser(userID, responseListener); // Pass along response listener
             }

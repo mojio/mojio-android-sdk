@@ -41,7 +41,6 @@ public class VolleyHelper {
         // Lazy initialize the request queue, the queue instance will be
         // created when it is accessed for the first time
         if (_requestQueue == null) {
-
             // Set default cookie manager
             _cookieManager = new CookieManager();
             _cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
@@ -51,7 +50,6 @@ public class VolleyHelper {
             // SHOULD automatically query the CookieManager
             _requestQueue = Volley.newRequestQueue(_ctx);
         }
-
         return _requestQueue;
     }
 

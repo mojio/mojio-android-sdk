@@ -1,4 +1,4 @@
-package io.moj.mobile.android.sdk.models.Observers;
+package io.moj.mobile.android.sdk.models.observers;
 
 import java.util.ArrayList;
 
