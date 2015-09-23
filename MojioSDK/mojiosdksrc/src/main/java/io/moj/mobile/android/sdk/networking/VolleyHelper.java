@@ -35,9 +35,6 @@ public class VolleyHelper {
         CookieManager cookieManager = new CookieManager();
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
         CookieHandler.setDefault(cookieManager);
-
-        // newRequestQueue uses volley's BasicNetwork, which uses an underlying HttpURLConnection object
-        // SHOULD automatically query the CookieManager
         networkStack = new MojioHttpStack();
         requestQueue = Volley.newRequestQueue(context, networkStack);
     }
