@@ -1,28 +1,23 @@
 package io.moj.mobile.android.sdk;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.util.Log;
 
-import org.joda.time.DateTime;
-
-import java.util.Calendar;
-
 public class DataStorageHelper {
 
+    private static final String TAG = DataStorageHelper.class.getSimpleName();
     private static String SHARED_PREF_ID = "mojioauthsdk";
 
-    // User auth
     private static String PREF_ACCESS_TOKEN = "PREF_ACCESS_TOKEN";
-    private static String PREF_ACCESS_TOKEN_EXPIRES = "PREF_TOKEN_EXPIRES";
-
-    // App auth
-    private static String PREF_APP_TOKEN = "PREF_APP_TOKEN";
-    private static String PREF_APP_EXPIRES = "PREF_APP_EXPIRES";
-
-    // Endpoint
+    private static String PREF_ACCESS_TOKEN_EXPIRES = "PREF_ACCESS_TOKEN_EXPIRES";
+    private static String PREF_ACCESS_TOKEN_IS_USER = "PREF_ACCESS_TOKEN_IS_USER";
     private static String PREF_APP_ENDPOINT = "PREF_APP_ENDPOINT";
+
+    // refresh the access token when we have less than 1 minute left
+    private static final long TOKEN_REFRESH_MS = 60000;
 
     private Context mContext;
 
@@ -30,145 +25,71 @@ public class DataStorageHelper {
         mContext = context;
     }
 
-    //=======================================================
-    // User
-    //=======================================================
-    public void SetAccessToken(String accessToken) {
-        Log.i("MOJIO", "THE ACCESS TOKEN IS: " + accessToken);
-        setSharedPreference(PREF_ACCESS_TOKEN, accessToken);
+    public String getAccessToken() {
+        return getSharedPreferences().getString(PREF_ACCESS_TOKEN, null);
     }
 
-    public void SetAccessExpireTime(String expireTime) {
-//        SetExpireTime(expireTime, PREF_ACCESS_TOKEN_EXPIRES);
+    @SuppressLint("CommitPrefEdits")
+    public void setAccessToken(String accessToken, String expirationTime, boolean isUserToken) {
+        Editor sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE).edit();
+        sharedPreferences.putString(PREF_ACCESS_TOKEN, accessToken);
+        sharedPreferences.putString(PREF_ACCESS_TOKEN_EXPIRES, expirationTime);
+        sharedPreferences.putBoolean(PREF_ACCESS_TOKEN_IS_USER, isUserToken);
+        sharedPreferences.commit();
     }
 
-    public String GetAccessToken() {
-        return getSharedPreferenceString(PREF_ACCESS_TOKEN);
-//        if (ShouldRefreshToken(PREF_ACCESS_TOKEN_EXPIRES)) {
-//            return null;
-//        } else {
-//            return getSharedPreferenceString(PREF_ACCESS_TOKEN);
-//        }
+    @SuppressLint("CommitPrefEdits")
+    public void setAccessToken(String accessToken, String expirationTime) {
+        setAccessToken(accessToken, expirationTime, true);
     }
 
-    public boolean ShouldRefreshAccessToken() {
-        return ShouldRefreshToken(PREF_ACCESS_TOKEN_EXPIRES);
+    public boolean shouldRefreshAccessToken() {
+        long expirationTimestamp;
+        try {
+            SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE);
+            expirationTimestamp = sharedPreferences.getLong(PREF_ACCESS_TOKEN_EXPIRES, 0);
+        } catch (ClassCastException e) {
+            // this can happen if someone updated from an old version of the app whose shared prefs
+            // stored this differently
+            Log.w(TAG, PREF_ACCESS_TOKEN_EXPIRES + " was of an unexpected type", e);
+            expirationTimestamp = 0;
+        }
+        return (expirationTimestamp - System.currentTimeMillis()) < TOKEN_REFRESH_MS;
     }
 
-    //=======================================================
-    // App
-    //=======================================================
-    public void SetAppToken(String accessToken) {
-        Log.i("MOJIO", "THE ACCESS TOKEN IS: " + accessToken);
-        setSharedPreference(PREF_APP_TOKEN, accessToken);
+    public boolean isUserToken() {
+        return getSharedPreferences().getBoolean(PREF_ACCESS_TOKEN_IS_USER, false);
     }
 
-    public void SetAppExpireTime(String expireTime) {
-//        SetExpireTime(expireTime, PREF_APP_EXPIRES);
-    }
-
-    public String GetAppToken() {
-        return getSharedPreferenceString(PREF_APP_TOKEN);
-//        if (ShouldRefreshToken(PREF_APP_EXPIRES)) {
-//            return null;
-//        } else {
-//            return getSharedPreferenceString(PREF_APP_TOKEN);
-//        }
-    }
-
-    //=======================================================
-    // Endpoint
-    //=======================================================
     /**
      * Saves the end point with which the app token is valid.
      *
-     * @param url       The end point URL.
+     * @param url The end point URL.
      */
     public void setEndpoint(String url) {
-        setSharedPreference(PREF_APP_ENDPOINT, url);
+        getSharedPreferences().edit().putString(PREF_APP_ENDPOINT, url).commit();
     }
 
     /**
-     * @return      The end point with which the app token is valid.
+     * @return The end point with which the app token is valid.
      */
     public String getEndpoint() {
-        return getSharedPreferenceString(PREF_APP_ENDPOINT);
-    }
-
-    //=======================================================
-    // Helpers
-    //=======================================================
-    private void SetExpireTime(String expireTime, String pref_const) {
-        Log.i("MOJIO", "THE EXPIRES TIME IS: " + expireTime);
-
-        long expire;
-        DateTime dt = TimeFormatHelpers.fromServerFormatted(expireTime);
-        if (dt == null) {
-            // Web oauth login result
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.SECOND, Integer.parseInt(expireTime));
-            expire = calendar.getTimeInMillis();
-        }
-        else {
-            // Direct API login result
-            expire = dt.getMillis();
-        }
-
-        setSharedPreference(pref_const, expire);
-    }
-
-    private boolean ShouldRefreshToken(String pref_const) {
-        Calendar calendar = Calendar.getInstance();
-        long currentTimeMilli = calendar.getTimeInMillis();
-        long expiresInMilli = getSharedPreferenceLong(pref_const);
-        long timeRemaining = expiresInMilli - currentTimeMilli;
-        if (timeRemaining > 0) {
-            return false;
-        } else {
-            return true;
-        }
+        return getSharedPreferences().getString(PREF_APP_ENDPOINT, null);
     }
 
     //========================================================================================
     // Storage methods
     //========================================================================================
-    private String getSharedPreferenceString(String key) {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(key, null);
+    private SharedPreferences getSharedPreferences() {
+        return mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE);
     }
 
-    private long getSharedPreferenceLong(String key) {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE);
-        return sharedPreferences.getLong(key, Integer.MIN_VALUE);
-    }
-
-    private void setSharedPreference(String key, String value) {
-        Editor sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE).edit();
-        sharedPreferences.putString(key, value);
-        sharedPreferences.commit();
-    }
-
-    private void setSharedPreference(String key, long value) {
-        Editor sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE).edit();
-        sharedPreferences.putLong(key, value);
-        sharedPreferences.commit();
-    }
-
-    /*
-    public void removeAllStoredValues() {
-        Editor sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE).edit();
-        sharedPreferences.clear().commit();
-    }
-    */
-
-    public void clearAppToken() {
-        Editor sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE).edit();
-        sharedPreferences.remove(PREF_APP_TOKEN).commit();
-    }
-
+    @SuppressLint("CommitPrefEdits")
     public void removeAllUserStoredValues() {
-        Editor sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE).edit();
-        sharedPreferences.remove(PREF_ACCESS_TOKEN).remove(PREF_ACCESS_TOKEN_EXPIRES).commit();
+        getSharedPreferences().edit()
+                .remove(PREF_ACCESS_TOKEN)
+                .remove(PREF_ACCESS_TOKEN_EXPIRES)
+                .commit();
     }
 
 }

@@ -68,6 +68,7 @@ public class MojioClient {
     private String _signalRHost;            // SignalR Host
     private boolean _didSwitchEndpoints;    // Defines whether the new endpoint differs from the cached data
     private Locale _configuredLocale;       // The most recently configured locale
+    private final Object refreshTokenLock = new Object();
 
     //========================================================================
     // Generic response listener interface
@@ -77,6 +78,8 @@ public class MojioClient {
     public static final int RESPONSE_ERR_SIGNALR_ERROR = 2;
     public static final int RESPONSE_ERR_VOLLEY_ERROR = 3;
     public static final int RESPONSE_ERR_SERVER_TIMEOUT = 4;
+
+    private static final int SESSION_LENGTH_MIN = 43829; // 1 month
 
     public static class ResponseError {
         public String message;
@@ -88,12 +91,13 @@ public class MojioClient {
         }
 
         public ResponseError() {
-           this(null, RESPONSE_ERR_UNKNOWN);
+            this(null, RESPONSE_ERR_UNKNOWN);
         }
     }
 
     public interface ResponseListener<T> {
         public void onSuccess(T result);
+
         public void onFailure(ResponseError error);
     }
 
@@ -121,10 +125,11 @@ public class MojioClient {
     //========================================================================
     // Endpoint setup
     //========================================================================
+
     /**
      * Sets the endpoint depending on the specific locale.
      *
-     * @param clientLocale      The specified locale.
+     * @param clientLocale The specified locale.
      */
     public synchronized void updateLocale(Locale clientLocale) {
         if (_configuredLocale != null && clientLocale.equals(_configuredLocale)) {
@@ -155,7 +160,7 @@ public class MojioClient {
      * endpoint as the endpoint that has been cached. This call allows the application to make
      * configuration changes.
      *
-     * @return          Whether the end point did change.
+     * @return Whether the end point did change.
      */
     public boolean endPointDidChange() {
         return _didSwitchEndpoints;
@@ -164,6 +169,7 @@ public class MojioClient {
     /**
      * Returns true if the API supports a sandboxed environment. Note that the V2 APIs no longer
      * support the sandbox.
+     *
      * @return
      */
     public boolean isSandboxAvailable() {
@@ -178,7 +184,6 @@ public class MojioClient {
         if (api == null) {
             _oauthHelper.setEndpoint(_authPath);
         } else if (!api.equals(_authPath)) {
-            _oauthHelper.clearAppToken();
             _oauthHelper.removeAllUserStoredValues();
             _oauthHelper.setEndpoint(_authPath);
         }
@@ -187,20 +192,21 @@ public class MojioClient {
     //========================================================================
     // Login / Logout methods
     //========================================================================
+
     /**
      * Returns true if a user is considered to be logged in (ie. the proper auth token is stored
      * and still valid).
+     *
      * @return
      */
     public boolean isUserLoggedIn() {
-        // Currently we determine if a user is logged in by checking the remaining time on
-        // an access token (ie. if it has to be refreshed or not).
-        return !_oauthHelper.ShouldRefreshAccessToken();
+        return !_oauthHelper.shouldRefreshAccessToken() && _oauthHelper.isUserToken();
     }
 
     /**
      * Launches oauth web view to login / get user auth key.
      * Calling Activity must override onActivityResult with the given requestCode
+     *
      * @param activity
      * @param requestCode The requestCode used to startActivityForResult
      */
@@ -208,8 +214,8 @@ public class MojioClient {
         Intent intent = new Intent(activity, OAuthLoginActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("URL_AUTH_PATH", String.format(_authPath, _mojioAppID));
-        bundle.putString("USER_AUTH_TOKEN", _oauthHelper.GetAccessToken());
-        bundle.putString("REDIRECT_URL",  _redirectUrl);
+        bundle.putString("USER_AUTH_TOKEN", _oauthHelper.getAccessToken());
+        bundle.putString("REDIRECT_URL", _redirectUrl);
         intent.putExtras(bundle);
         activity.startActivityForResult(intent, requestCode);
     }
@@ -219,11 +225,12 @@ public class MojioClient {
      * NOTE THIS IS THE APP AUTH TOKEN
      * We only want to use the app auth token when we have no stored USER auth token
      * This may happen when we are creating a new user
+     *
      * @param responseListener
      */
     public void authenticateApp(final ResponseListener<UserToken> responseListener) {
-        String entityPath = String.format("Login/%s?secretKey=%s&minutes=%s",
-                _mojioAppID, _mojioAppSecretKey, "43829");
+        String entityPath = String.format("Login/%s?secretKey=%s&minutes=%d",
+                _mojioAppID, _mojioAppSecretKey, SESSION_LENGTH_MIN);
 
         this.create(UserToken.class, entityPath, new MojioClient.ResponseListener<UserToken>() {
             @Override
@@ -232,8 +239,7 @@ public class MojioClient {
                 // NOTE THIS IS THE APP AUTH TOKEN
                 // We only want to use the app auth token when we have no stored USER auth token
                 // This may happen when we are creating a new user
-                _oauthHelper.SetAppToken(result._id);
-                _oauthHelper.SetAppExpireTime(result.ValidUntil);
+                _oauthHelper.setAccessToken(result._id, result.ValidUntil, false);
                 responseListener.onSuccess(result);
             }
 
@@ -251,8 +257,6 @@ public class MojioClient {
      * @param responseListener
      */
     public void login(String userNameOrEmail, String password, final ResponseListener<User> responseListener) {
-        //String entityPath = String.format("Login/User?userOrEmail=%s&password=%s&minutes=%s",
-        //        userNameOrPassword, password, "43829");
         String urlEncodedUsername = userNameOrEmail;
         String urlEncodedPassword = password;
         try {
@@ -262,15 +266,14 @@ public class MojioClient {
             e.printStackTrace();
         }
 
-        String entityPath = String.format("Login/%s?secretKey=%s&userOrEmail=%s&password=%s&minutes=%s",
-                _mojioAppID, _mojioAppSecretKey, urlEncodedUsername, urlEncodedPassword, "43829");
+        String entityPath = String.format("Login/%s?secretKey=%s&userOrEmail=%s&password=%s&minutes=%d",
+                _mojioAppID, _mojioAppSecretKey, urlEncodedUsername, urlEncodedPassword, SESSION_LENGTH_MIN);
 
         this.create(UserToken.class, entityPath, new MojioClient.ResponseListener<UserToken>() {
             @Override
             public void onSuccess(UserToken result) {
                 // Save auth tokens
-                _oauthHelper.SetAccessToken(result._id);
-                _oauthHelper.SetAccessExpireTime(result.ValidUntil);
+                _oauthHelper.setAccessToken(result._id, result.ValidUntil);
 
                 // Now we need to get the USER
                 String userID = result.UserId;
@@ -285,11 +288,28 @@ public class MojioClient {
         });
     }
 
+    public void refreshAccessToken(final ResponseListener<UserToken> responseListener) {
+        String accessToken = _oauthHelper.getAccessToken();
+        String entityPath = String.format("Login/%s/Session?minutes=%d", accessToken, SESSION_LENGTH_MIN);
+        this.update(UserToken.class, entityPath, null, new ResponseListener<UserToken>() {
+            @Override
+            public void onSuccess(UserToken result) {
+                _oauthHelper.setAccessToken(result._id, result.ValidUntil);
+                responseListener.onSuccess(result);
+            }
+
+            @Override
+            public void onFailure(ResponseError error) {
+                responseListener.onFailure(error);
+            }
+        });
+    }
+
     /**
      * Must already be logged in and have an access token
      */
     public void setSandboxedAccess(boolean sandboxed, final ResponseListener<Boolean> responseListener) {
-        String currentAccessToken = _oauthHelper.GetAccessToken();
+        String currentAccessToken = _oauthHelper.getAccessToken();
 
         if (currentAccessToken == null) {
             ResponseError error = new ResponseError("Not logged in", RESPONSE_ERR_NOT_LOGGED_IN);
@@ -305,8 +325,7 @@ public class MojioClient {
             public void onSuccess(UserToken result) {
                 Log.d(TAG, "Successfully updated Sandboxed to: " + result.Sandboxed);
                 // Update access tokens
-                _oauthHelper.SetAccessToken(result._id);
-                _oauthHelper.SetAccessExpireTime(result.ValidUntil);
+                _oauthHelper.setAccessToken(result._id, result.ValidUntil);
                 responseListener.onSuccess(true);
             }
 
@@ -321,16 +340,14 @@ public class MojioClient {
      * @param fbAccesstoken
      * @param responseListener
      */
-    public void loginFacebook(String fbAccesstoken, final MojioClient.ResponseListener<User> responseListener){
-
+    public void loginFacebook(String fbAccesstoken, final MojioClient.ResponseListener<User> responseListener) {
         String entityPath = String.format("Login/ExternalUser?accessToken=%s", fbAccesstoken);
 
         this.create(UserToken.class, entityPath, new MojioClient.ResponseListener<UserToken>() {
             @Override
             public void onSuccess(UserToken result) {
                 // Save user auth token
-                _oauthHelper.SetAccessToken(result._id);
-                _oauthHelper.SetAccessExpireTime(result.ValidUntil);
+                _oauthHelper.setAccessToken(result._id, result.ValidUntil);
                 String userID = result.UserId;
                 getUser(userID, responseListener); // Pass along response listener
             }
@@ -345,6 +362,7 @@ public class MojioClient {
 
     /**
      * Part of the "Login" flow.
+     *
      * @param userID
      * @param responseListener
      */
@@ -366,6 +384,7 @@ public class MojioClient {
 
     /**
      * GET (GET)
+     *
      * @param modelClass
      * @param entityPath
      * @param queryOptions
@@ -403,6 +422,7 @@ public class MojioClient {
 
     /**
      * UPDATE (PUT) with string content body
+     *
      * @param modelClass
      * @param entityPath
      * @param contentBody
@@ -431,6 +451,7 @@ public class MojioClient {
 
     /**
      * DELETE (DELETE)
+     *
      * @param modelClass
      * @param entityPath
      * @param listener
@@ -458,36 +479,19 @@ public class MojioClient {
 
     /**
      * CREATE (POST) with no content body
+     *
      * @param modelClass
      * @param entityPath
      * @param listener
      * @param <T>
      */
     public <T> void create(final Class<T> modelClass, String entityPath, final ResponseListener<T> listener) {
-
-        String contentBody = null;
-
-        MojioRequest apiRequest = new MojioRequest(_ctx, Request.Method.POST, _apiBaseUrl + entityPath, modelClass, contentBody,
-                new Response.Listener<T>() {
-                    @Override
-                    public void onResponse(T response) {
-                        listener.onSuccess(response);
-                    }
-                },
-
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        reportVolleyError(error, listener);
-                    }
-                });
-
-        // Run request
-        _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        create(modelClass, entityPath, (String) null, listener);
     }
 
     /**
      * CREATE (POST) with a string content body
+     *
      * @param modelClass
      * @param entityPath
      * @param contentBody
@@ -516,6 +520,7 @@ public class MojioClient {
 
     /**
      * CREATE (POST) using a Map of key / value pairs
+     *
      * @param modelClass
      * @param entityPath
      * @param params
@@ -548,13 +553,14 @@ public class MojioClient {
 
     /**
      * GET (GET) Observer
+     *
      * @param modelClass
      * @param entityPath
      * @param queryOptions
      * @param listener
      * @param <T>
      */
-    public <T> void getObservers(final Class<T> modelClass, String entityPath, Map<String, String> queryOptions, final ResponseListener<T> listener){
+    public <T> void getObservers(final Class<T> modelClass, String entityPath, Map<String, String> queryOptions, final ResponseListener<T> listener) {
         String getParams = "";
         if (queryOptions != null) {
             for (String key : queryOptions.keySet()) {
@@ -584,6 +590,7 @@ public class MojioClient {
 
     /**
      * CREATE (POST) Observer
+     *
      * @param modelClass
      * @param contentBody
      * @param listener
@@ -611,6 +618,7 @@ public class MojioClient {
 
     /**
      * DELETE (DELETE) Observer
+     *
      * @param modelClass
      * @param observerId
      * @param listener
@@ -640,6 +648,7 @@ public class MojioClient {
     /**
      * CREATE (POST) Conditional Observer
      * Must provide Name, ObserverType, Timing, Subject, SubjectId, Transport and Condition values
+     *
      * @param modelClass
      * @param conditionalObserverObject
      * @param listener
@@ -750,7 +759,7 @@ public class MojioClient {
     // Image methods
     //========================================================================
     // Get image
-    public void getImage(String entityPath, Map<String, String> queryOptions,  final ResponseListener<Bitmap> listener){
+    public void getImage(String entityPath, Map<String, String> queryOptions, final ResponseListener<Bitmap> listener) {
         String getParams = "";
         if (queryOptions != null) {
             for (String key : queryOptions.keySet()) {
@@ -759,7 +768,7 @@ public class MojioClient {
             entityPath += getParams.replaceFirst("&", "?");
         }
 
-        MojioImageRequest imageRequest = new MojioImageRequest(_ctx, _apiBaseUrl + entityPath, 0,0,null,
+        MojioImageRequest imageRequest = new MojioImageRequest(_ctx, _apiBaseUrl + entityPath, 0, 0, null,
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap response) {
@@ -797,12 +806,37 @@ public class MojioClient {
         _requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
     }
 
-    //========================================================================
-    // Manual Volley requests
-    //========================================================================
-    public void addRequestToQueue(Request request) {
-        Log.i(TAG, "Adding to request queue: " + request.getUrl());
-        _requestHelper.addToRequestQueue(request, REQUEST_TAG);
+    public <T> void addRequestToQueue(final Request<T> request) {
+        boolean shouldQueue = true;
+        if (_oauthHelper.shouldRefreshAccessToken()) {
+            // wait if someone else is refreshing the token
+            synchronized (refreshTokenLock) {
+                // we've finished waiting, now check again in case someone else just refreshed it
+                if (_oauthHelper.shouldRefreshAccessToken()) {
+                    shouldQueue = false;
+                    Log.i(TAG, "Access token is about to expire, refreshing before queuing request");
+                    refreshAccessToken(new ResponseListener<UserToken>() {
+                        @Override
+                        public void onSuccess(UserToken result) {
+                            Log.i(TAG, "Successfully refreshed access token");
+                            _requestHelper.addToRequestQueue(request, REQUEST_TAG);
+                        }
+
+                        @Override
+                        public void onFailure(ResponseError error) {
+                            Log.e(TAG, "Failed to refresh access token: " + error.message);
+                            // TODO need some way to communicate this to the user, for now this
+                            // request will just fail and UI should already handle that
+                            _requestHelper.addToRequestQueue(request, REQUEST_TAG);
+                        }
+                    });
+                }
+            }
+        }
+
+        if (shouldQueue) {
+            _requestHelper.addToRequestQueue(request, REQUEST_TAG);
+        }
     }
 
     public void cancelAllRequests() {
@@ -821,21 +855,18 @@ public class MojioClient {
             respErr.type = RESPONSE_ERR_VOLLEY_ERROR;
             Log.e(TAG, respErr.message);
             listener.onFailure(respErr);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             ResponseError respErr = new ResponseError();
 
             if (error instanceof TimeoutError) {
                 respErr.type = RESPONSE_ERR_SERVER_TIMEOUT;
                 respErr.message = "Server timeout";
-            }
-            else {
+            } else {
                 try {
                     // Report raw volley error
                     respErr.type = RESPONSE_ERR_VOLLEY_ERROR;
                     respErr.message = error.getMessage();
-                }
-                catch (Exception e2) {
+                } catch (Exception e2) {
                     // Return unknown
                     respErr.type = RESPONSE_ERR_UNKNOWN;
                     respErr.message = "Unknown error";

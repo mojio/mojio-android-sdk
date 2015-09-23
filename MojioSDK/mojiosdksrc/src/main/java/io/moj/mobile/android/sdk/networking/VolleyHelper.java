@@ -63,7 +63,6 @@ public class VolleyHelper {
      * @param tag
      */
     public <T> void addToRequestQueue(Request<T> req, String tag) {
-
         if (_requestQueue == null) {
             getRequestQueue();
         }

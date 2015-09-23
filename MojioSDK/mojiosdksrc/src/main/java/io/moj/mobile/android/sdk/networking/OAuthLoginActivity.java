@@ -47,7 +47,7 @@ public class OAuthLoginActivity extends Activity {
 
                     // Return in bundle, but also stored in shared prefs
                     Bundle bundle = new Bundle();
-                    bundle.putString("accessToken", _oauthHelper.GetAccessToken());
+                    bundle.putString("accessToken", _oauthHelper.getAccessToken());
 
                     Intent resultIntent = new Intent();
                     resultIntent.putExtras(bundle);

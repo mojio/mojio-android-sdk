@@ -7,11 +7,12 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
+import java.text.SimpleDateFormat;
+
 /**
  * Created by ssawchenko on 15-01-27.
  */
 public class TimeFormatHelpers {
-
     private static DateTimeFormatter FORMATTER_FROM_SERVER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSZ");
     private static DateTimeFormatter FORMATTER_VERBOSE_DATE = DateTimeFormat.forPattern("MMMM dd, YYYY hh:mma"); // Feb 1st, 2015 5:00pm
     private static DateTimeFormatter FORMATTER_TIME_CRITERIA = DateTimeFormat.forPattern("YYYY.MM.dd");
@@ -33,20 +34,15 @@ public class TimeFormatHelpers {
     private static String ERROR_RESPONSE = "??";
 
     public static DateTime fromServerFormatted(String datetime) {
-        try {
-            return DateTime.parse(datetime, FORMATTER_FROM_SERVER);
-        }
-        catch (Exception e) {
-            return null;
-        }
+        return DateTime.parse(datetime, FORMATTER_FROM_SERVER);
     }
+
     public static String getVerboseDateTime(String datetime) {
         // Feb 1st, 2015 5:00pm
         try {
             DateTime dt = DateTime.parse(datetime, FORMATTER_FROM_SERVER);
             return getVerboseDateTime(dt);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ERROR_RESPONSE;
         }
     }
@@ -55,8 +51,7 @@ public class TimeFormatHelpers {
         // Feb 1st, 2015 5:00pm
         try {
             return FORMATTER_VERBOSE_DATE.print(dt);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ERROR_RESPONSE;
         }
     }

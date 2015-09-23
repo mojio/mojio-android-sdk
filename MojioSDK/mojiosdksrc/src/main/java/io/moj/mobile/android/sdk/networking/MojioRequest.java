@@ -156,9 +156,9 @@ public class MojioRequest<T> extends Request<T> {
 
         // Check for auth token
         // Start with user auth, if that does not exist, check for app auth
-        String mojioAuth = oauth.GetAccessToken();
+        String mojioAuth = oauth.getAccessToken();
         if (mojioAuth == null) {
-            mojioAuth = oauth.GetAppToken();
+            mojioAuth = oauth.getAppToken();
         }
         if (mojioAuth != null) {
             headers.put("MojioAPIToken", mojioAuth);
