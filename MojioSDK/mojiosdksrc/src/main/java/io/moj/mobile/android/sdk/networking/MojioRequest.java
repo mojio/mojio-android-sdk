@@ -2,6 +2,7 @@ package io.moj.mobile.android.sdk.networking;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
@@ -21,6 +22,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import io.moj.mobile.android.sdk.DataStorageHelper;
@@ -167,6 +169,9 @@ public class MojioRequest<T> extends Request<T> {
             headers.put("Content-Length",String.valueOf(body.length()));
         }
 
+        // Client locale header
+        headers.put("Accept-Language", getLocaleString(this.mAppContext));
+
         // TODO may want to init MojioClient WITH access token. This would make the app responsible for storing token data.
         Log.i("MOJIO", "Adding headers: " + headers.toString());
         return headers;
@@ -270,6 +275,20 @@ public class MojioRequest<T> extends Request<T> {
             Log.e("MOJIO", "MojioRequest JSONException error: " + e.getMessage());
             return Response.error(new ParseError(e));
         }
+    }
+
+    /**
+     * @return a locale string in the format xx-XX or xx only if XX is not available
+     */
+    private String getLocaleString(Context context) {
+        Locale locale = context.getResources().getConfiguration().locale;
+        String language = locale.getLanguage();
+        String country = locale.getCountry();
+
+        if (TextUtils.isEmpty(country))
+            return language;
+        else
+            return String.format("%s-%s", language, country);
     }
 }
 
