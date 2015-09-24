@@ -13,14 +13,11 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 
 import org.apache.http.HttpStatus;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -30,13 +27,13 @@ import io.moj.mobile.android.sdk.DataStorageHelper;
 /**
  * Writen by Shayla Sawchenko
  * Based on GsonVolleyRequest by Ognyan Bankov
- *
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,6 +46,7 @@ import io.moj.mobile.android.sdk.DataStorageHelper;
  */
 public class MojioRequest<T> extends Request<T> {
 
+    private static final String TAG = MojioRequest.class.getSimpleName();
     private static final String PROTOCOL_CHARSET = "utf-8";
     private static final String PROTOCOL_CONTENT_TYPE = String.format("application/json; charset=%s", PROTOCOL_CHARSET);
 
@@ -143,9 +141,6 @@ public class MojioRequest<T> extends Request<T> {
         this.listener = listener;
         this.mMethod = method;
         mGson = new Gson();
-        // Error listener?
-
-        Log.i("MOJIO", "Creating request for " + this.mUrl);
     }
 
     @Override
@@ -156,24 +151,22 @@ public class MojioRequest<T> extends Request<T> {
 
         // Check for auth token
         // Start with user auth, if that does not exist, check for app auth
-        String mojioAuth = oauth.GetAccessToken();
-        if (mojioAuth == null) {
-            mojioAuth = oauth.GetAppToken();
-        }
+        String mojioAuth = oauth.getAccessToken();
         if (mojioAuth != null) {
             headers.put("MojioAPIToken", mojioAuth);
         }
-        if(imageByteArray != null){
+
+        if (imageByteArray != null) {
             String body = String.format("\"%s\"", this.contentBody);
             headers.put("Content-Type", "application/json; charset=utf-8");
-            headers.put("Content-Length",String.valueOf(body.length()));
+            headers.put("Content-Length", String.valueOf(body.length()));
         }
 
         // Client locale header
         headers.put("Accept-Language", getLocaleString(this.mAppContext));
 
         // TODO may want to init MojioClient WITH access token. This would make the app responsible for storing token data.
-        Log.i("MOJIO", "Adding headers: " + headers.toString());
+        Log.i(TAG, "Adding headers: " + headers.toString());
         return headers;
     }
 
@@ -187,15 +180,12 @@ public class MojioRequest<T> extends Request<T> {
         // If content body given, use it.
         if (this.contentBody == null) {
             return super.getBody();
-
         } else {
             String body = this.contentBody;
-
             if (!body.startsWith("{")) {
                 body = String.format("\"%s\"", this.contentBody); // Add quotes around body
             }
-
-            Log.i("MOJIO", "Adding content body: " + body);
+            Log.i(TAG, "Adding content body: " + body);
             return body.getBytes();
         }
     }
@@ -221,28 +211,15 @@ public class MojioRequest<T> extends Request<T> {
             T result = null;
 
             String responseString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-            Log.i("MOJIO", "Response for " + mUrl);
-            Log.i("MOJIO", responseString);
-
+            Log.i(TAG, "Response [" + VolleyHelper.parseMethodString(getMethod()) + " " + mUrl + "]: " + responseString);
             if (responseString.isEmpty()) {
                 // Body was empty, no need to parse.
                 return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
             }
 
-            // Else attempt to parse into the expected class.
-
-            /*
-            if ((this.mMethod == Method.PUT)
-                    || (this.mMethod == Method.DELETE)
-                    || (this.mMethod == Method.POST)) {
-                // Response body will be empty, no need to parse.
-                return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
-            }
-            */
-
             // If we want just a String, simply return the response.data casted as such.
             if (this.clazz == String.class) {
-                result = (T)responseString;
+                result = (T) responseString;
                 return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
             }
 
@@ -257,22 +234,8 @@ public class MojioRequest<T> extends Request<T> {
             }
 
             return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
-
-        } catch (UnsupportedEncodingException e) {
-            Log.e("MOJIO", "MojioRequest UnsupportedEncodingException error");
-            return Response.error(new ParseError(e));
-
-        } catch (JsonSyntaxException e) {
-            Log.e("MOJIO", "MojioRequest JsonSyntaxException error" + e.getMessage());
-            return Response.error(new ParseError(e));
-
-        } catch (JSONException e) {
-            Log.e("MOJIO", "MojioRequest JSONException error: " + e.getMessage());
-            return Response.error(new ParseError(e));
-
-        }
-        catch (com.google.gson.JsonParseException e) {
-            Log.e("MOJIO", "MojioRequest JSONException error: " + e.getMessage());
+        } catch (Exception e) {
+            Log.e(TAG, "Error parsing network response", e);
             return Response.error(new ParseError(e));
         }
     }
@@ -290,5 +253,6 @@ public class MojioRequest<T> extends Request<T> {
         else
             return String.format("%s-%s", language, country);
     }
+
 }
 

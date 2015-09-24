@@ -42,12 +42,11 @@ public class OAuthLoginActivity extends Activity {
                     String [] accessToken = parameters[0].split("=");
                     String [] expiresIn = parameters[2].split("=");
 
-                    _oauthHelper.SetAccessToken(accessToken[1]);
-                    _oauthHelper.SetAccessExpireTime(expiresIn[1]);
+                    _oauthHelper.setAccessToken(accessToken[1], expiresIn[1]);
 
                     // Return in bundle, but also stored in shared prefs
                     Bundle bundle = new Bundle();
-                    bundle.putString("accessToken", _oauthHelper.GetAccessToken());
+                    bundle.putString("accessToken", _oauthHelper.getAccessToken());
 
                     Intent resultIntent = new Intent();
                     resultIntent.putExtras(bundle);
