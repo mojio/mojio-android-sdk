@@ -1,6 +1,7 @@
 package io.moj.mobile.android.sdk.networking;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,11 +13,12 @@ import io.moj.mobile.android.sdk.R;
 
 public class OAuthLoginActivity extends Activity {
 
-    private static String TAG = "MOJIO";
+    private static String TAG = OAuthLoginActivity.class.getSimpleName();
+    private static final String EXTRA_URL_AUTH = "EXTRA_URL_AUTH";
+    private static final String EXTRA_URL_REDIRECT = "EXTRA_URL_REDIRECT";
 
-    private WebView _loginWebView;
-    private DataStorageHelper _oauthHelper;
-    private String _urlPath, _redirectUrl;
+    private DataStorageHelper oAuthHelper;
+    private String redirectUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,30 +26,27 @@ public class OAuthLoginActivity extends Activity {
         setContentView(R.layout.activity_oauth_login);
 
         Bundle extras = getIntent().getExtras();
-        _urlPath = extras.getString("URL_AUTH_PATH");
-        _redirectUrl = extras.getString("REDIRECT_URL");
-        _urlPath += "&redirect_uri=" + _redirectUrl; // Add redirectUrl
-        _oauthHelper = new DataStorageHelper(this);
+        String authUrl = extras.getString("URL_AUTH_PATH");
+        redirectUrl = extras.getString("REDIRECT_URL");
+        authUrl += "&redirect_uri=" + redirectUrl; // Add redirectUrl
+        oAuthHelper = new DataStorageHelper(this);
 
-        _loginWebView = (WebView) findViewById(R.id.loginwebview);
-        Log.e(TAG, "Auth url: " + _urlPath);
-        _loginWebView.setWebViewClient(new WebViewClient() {
+        WebView webView = (WebView) findViewById(R.id.loginwebview);
+        webView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Log.e(TAG, "Redirecting to url: " + url);
-                if (url.startsWith(_redirectUrl)) {
+                Log.i(TAG, "Redirecting to url: " + url);
+                if (url.startsWith(redirectUrl)) {
 
                     // Note, the url returned cannot be parsed correctly via Uri parse.
                     // Need to manually pull out access_token, expires_in
-                    String [] parameters = url.split("&");
-                    String [] accessToken = parameters[0].split("=");
-                    String [] expiresIn = parameters[2].split("=");
-
-                    _oauthHelper.setAccessToken(accessToken[1]);
-                    _oauthHelper.setAccessTokenExpiration(expiresIn[1]);
+                    String[] parameters = url.split("&");
+                    String[] accessToken = parameters[0].split("=");
+                    String[] expiresIn = parameters[2].split("=");
+                    oAuthHelper.setAccessToken(accessToken[1], expiresIn[1]);
 
                     // Return in bundle, but also stored in shared prefs
                     Bundle bundle = new Bundle();
-                    bundle.putString("accessToken", _oauthHelper.getAccessToken());
+                    bundle.putString("accessToken", oAuthHelper.getAccessToken());
 
                     Intent resultIntent = new Intent();
                     resultIntent.putExtras(bundle);
@@ -59,6 +58,13 @@ public class OAuthLoginActivity extends Activity {
                 return true;
             }
         });
-        _loginWebView.loadUrl(_urlPath);
+        webView.loadUrl(authUrl);
+    }
+
+    public static Intent newIntent(Context context, String authUrl, String redirectUrl) {
+        Intent intent = new Intent(context, OAuthLoginActivity.class);
+        intent.putExtra(EXTRA_URL_AUTH, authUrl);
+        intent.putExtra(EXTRA_URL_REDIRECT, redirectUrl);
+        return intent;
     }
 }

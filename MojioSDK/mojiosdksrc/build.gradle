@@ -9,15 +9,22 @@ android {
         versionCode 7
         versionName "1.0.5"
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     productFlavors {
         beta { }
         prod { }
+    }
+
+    testOptions {
+        // lets us not explode on OS calls (e.g. Log.e())
+        unitTests.returnDefaultValues = true
     }
 }
 
@@ -38,4 +45,6 @@ dependencies {
 
     compile project(':libraries')
     compile 'client.signalr.aspnet.microsoft.signalr_client_sdk_android:signalr-client-sdk-android-release:1.0@aar'
+
+    testCompile 'junit:junit:4.12'
 }

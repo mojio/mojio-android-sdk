@@ -7,6 +7,7 @@ import android.util.Log;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.toolbox.ImageRequest;
+
 import io.moj.mobile.android.sdk.DataStorageHelper;
 
 import java.util.HashMap;
@@ -15,7 +16,7 @@ import java.util.Map;
 /**
  * Created by jian on 24/02/2015.
  */
-public class MojioImageRequest extends ImageRequest{
+public class MojioImageRequest extends ImageRequest {
 
     private Context mAppContext;
     private String mUrl;
@@ -54,10 +55,10 @@ public class MojioImageRequest extends ImageRequest{
 
     private void commonInit(Context appContext,
                             String url,
-                       Response.Listener<Bitmap> listener,
-                       int maxWidth, int maxHeight,
-                       Bitmap.Config decodeConfig,
-                       Response.ErrorListener errorListener){
+                            Response.Listener<Bitmap> listener,
+                            int maxWidth, int maxHeight,
+                            Bitmap.Config decodeConfig,
+                            Response.ErrorListener errorListener) {
 
         this.mAppContext = appContext;
         this.mUrl = url;
@@ -77,9 +78,12 @@ public class MojioImageRequest extends ImageRequest{
         // Check for auth token
         // Start with user auth, if that does not exist, check for app auth
         String mojioAuth = oauth.getAccessToken();
+<<<<<<< HEAD
         if (mojioAuth == null) {
             mojioAuth = oauth.getAppToken();
         }
+=======
+>>>>>>> dev
         if (mojioAuth != null) {
             headers.put("MojioAPIToken", mojioAuth);
         }

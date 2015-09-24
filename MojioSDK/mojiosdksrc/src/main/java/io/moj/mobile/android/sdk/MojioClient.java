@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -23,6 +22,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.moj.mobile.android.sdk.enums.Endpoint;
 import io.moj.mobile.android.sdk.models.User;
@@ -70,10 +70,13 @@ public class MojioClient {
     private String apiBaseUrl;             // Base API URL
     private String signalRHost;            // SignalR Host
     private Locale configuredLocale;       // The most recently configured locale
+    private AtomicBoolean refreshTokenLock = new AtomicBoolean(false);
 
     private boolean didSwitchEndpoints = false;    // Defines whether the new endpoint differs from the cached data
     private boolean connectionEstablished = false;
     private boolean sandboxAvailable = true;
+
+    private static final int SESSION_LENGTH_MIN = 43829; // 1 month
 
     public static class ResponseError {
         public String message;
@@ -91,7 +94,6 @@ public class MojioClient {
 
     public interface ResponseListener<T> {
         void onSuccess(T result);
-
         void onFailure(ResponseError error);
     }
 
@@ -167,7 +169,6 @@ public class MojioClient {
         if (api == null) {
             oauthHelper.setEndpoint(authPath);
         } else if (!api.equals(authPath)) {
-            oauthHelper.clearAppToken();
             oauthHelper.removeAllUserStoredValues();
             oauthHelper.setEndpoint(authPath);
         }
@@ -186,7 +187,7 @@ public class MojioClient {
     public boolean isUserLoggedIn() {
         // Currently we determine if a user is logged in by checking the remaining time on
         // an access token (ie. if it has to be refreshed or not).
-        return !oauthHelper.shouldRefreshAccessToken();
+        return !oauthHelper.shouldRefreshAccessToken() && oauthHelper.isUserToken();
     }
 
     /**
@@ -197,12 +198,8 @@ public class MojioClient {
      * @param requestCode The requestCode used to startActivityForResult
      */
     public void launchLoginActivity(Activity activity, int requestCode) {
-        Intent intent = new Intent(activity, OAuthLoginActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString("URL_AUTH_PATH", String.format(authPath, mojioAppID));
-        bundle.putString("USER_AUTH_TOKEN", oauthHelper.getAccessToken());
-        bundle.putString("REDIRECT_URL", redirectUrl);
-        intent.putExtras(bundle);
+        String authUrl = String.format(authPath, mojioAppID);
+        Intent intent = OAuthLoginActivity.newIntent(activity, authUrl, redirectUrl);
         activity.startActivityForResult(intent, requestCode);
     }
 
@@ -215,8 +212,8 @@ public class MojioClient {
      * @param responseListener
      */
     public void authenticateApp(final ResponseListener<UserToken> responseListener) {
-        String entityPath = String.format("Login/%s?secretKey=%s&minutes=%s",
-                mojioAppID, mojioAppSecretKey, "43829");
+        String entityPath = String.format("Login/%s?secretKey=%s&minutes=%d",
+                mojioAppID, mojioAppSecretKey, SESSION_LENGTH_MIN);
 
         this.create(UserToken.class, entityPath, new MojioClient.ResponseListener<UserToken>() {
             @Override
@@ -225,8 +222,7 @@ public class MojioClient {
                 // NOTE THIS IS THE APP AUTH TOKEN
                 // We only want to use the app auth token when we have no stored USER auth token
                 // This may happen when we are creating a new user
-                oauthHelper.setAppToken(result._id);
-                oauthHelper.setAppTokenExpiration(result.ValidUntil);
+                oauthHelper.setAccessToken(result._id, result.ValidUntil, false);
                 responseListener.onSuccess(result);
             }
 
@@ -244,8 +240,6 @@ public class MojioClient {
      * @param responseListener
      */
     public void login(String userNameOrEmail, String password, final ResponseListener<User> responseListener) {
-        //String entityPath = String.format("Login/User?userOrEmail=%s&password=%s&minutes=%s",
-        //        userNameOrPassword, password, "43829");
         String urlEncodedUsername = userNameOrEmail;
         String urlEncodedPassword = password;
         try {
@@ -255,15 +249,14 @@ public class MojioClient {
             e.printStackTrace();
         }
 
-        String entityPath = String.format("Login/%s?secretKey=%s&userOrEmail=%s&password=%s&minutes=%s",
-                mojioAppID, mojioAppSecretKey, urlEncodedUsername, urlEncodedPassword, "43829");
+        String entityPath = String.format("Login/%s?secretKey=%s&userOrEmail=%s&password=%s&minutes=%d",
+                mojioAppID, mojioAppSecretKey, urlEncodedUsername, urlEncodedPassword, SESSION_LENGTH_MIN);
 
         this.create(UserToken.class, entityPath, new MojioClient.ResponseListener<UserToken>() {
             @Override
             public void onSuccess(UserToken result) {
                 // Save auth tokens
-                oauthHelper.setAccessToken(result._id);
-                oauthHelper.setAccessTokenExpiration(result.ValidUntil);
+                oauthHelper.setAccessToken(result._id, result.ValidUntil);
 
                 // Now we need to get the USER
                 String userID = result.UserId;
@@ -274,6 +267,23 @@ public class MojioClient {
             public void onFailure(ResponseError error) {
                 responseListener.onFailure(error);
                 // TODO Need a way to pass back failures better (reasons)
+            }
+        });
+    }
+
+    public void refreshAccessToken(final ResponseListener<UserToken> responseListener) {
+        String accessToken = oauthHelper.getAccessToken();
+        String entityPath = String.format("Login/%s/Session?minutes=%d", accessToken, SESSION_LENGTH_MIN);
+        this.create(UserToken.class, entityPath, new ResponseListener<UserToken>() {
+            @Override
+            public void onSuccess(UserToken result) {
+                oauthHelper.setAccessToken(result._id, result.ValidUntil);
+                responseListener.onSuccess(result);
+            }
+
+            @Override
+            public void onFailure(ResponseError error) {
+                responseListener.onFailure(error);
             }
         });
     }
@@ -298,8 +308,7 @@ public class MojioClient {
             public void onSuccess(UserToken result) {
                 Log.d(TAG, "Successfully updated Sandboxed to: " + result.Sandboxed);
                 // Update access tokens
-                oauthHelper.setAccessToken(result._id);
-                oauthHelper.setAccessTokenExpiration(result.ValidUntil);
+                oauthHelper.setAccessToken(result._id, result.ValidUntil);
                 responseListener.onSuccess(true);
             }
 
@@ -321,8 +330,7 @@ public class MojioClient {
             @Override
             public void onSuccess(UserToken result) {
                 // Save user auth token
-                oauthHelper.setAccessToken(result._id);
-                oauthHelper.setAccessTokenExpiration(result.ValidUntil);
+                oauthHelper.setAccessToken(result._id, result.ValidUntil);
                 String userID = result.UserId;
                 getUser(userID, responseListener); // Pass along response listener
             }
@@ -376,7 +384,7 @@ public class MojioClient {
             entityPath += getParams.replaceFirst("&", "?");
         }
 
-        MojioRequest apiRequest = new MojioRequest(context, Request.Method.GET, apiBaseUrl + entityPath, modelClass, queryOptions,
+        MojioRequest apiRequest = new MojioRequest<>(context, Request.Method.GET, apiBaseUrl + entityPath, modelClass, queryOptions,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -392,7 +400,7 @@ public class MojioClient {
                 });
 
         // Run request
-        requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        addRequestToQueue(apiRequest);
     }
 
     /**
@@ -405,7 +413,7 @@ public class MojioClient {
      * @param <T>
      */
     public <T> void update(final Class<T> modelClass, String entityPath, String contentBody, final ResponseListener<T> listener) {
-        MojioRequest apiRequest = new MojioRequest(context, Request.Method.PUT, apiBaseUrl + entityPath, modelClass, contentBody,
+        MojioRequest apiRequest = new MojioRequest<>(context, Request.Method.PUT, apiBaseUrl + entityPath, modelClass, contentBody,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -421,7 +429,7 @@ public class MojioClient {
                 });
 
         // Run request
-        requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        addRequestToQueue(apiRequest);
     }
 
     /**
@@ -433,7 +441,7 @@ public class MojioClient {
      * @param <T>
      */
     public <T> void delete(final Class<T> modelClass, String entityPath, final ResponseListener<T> listener) {
-        MojioRequest apiRequest = new MojioRequest(context, Request.Method.DELETE, apiBaseUrl + entityPath, modelClass,
+        MojioRequest apiRequest = new MojioRequest<>(context, Request.Method.DELETE, apiBaseUrl + entityPath, modelClass,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -449,7 +457,7 @@ public class MojioClient {
                 });
 
         // Run request
-        requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        addRequestToQueue(apiRequest);
     }
 
     /**
@@ -461,26 +469,7 @@ public class MojioClient {
      * @param <T>
      */
     public <T> void create(final Class<T> modelClass, String entityPath, final ResponseListener<T> listener) {
-
-        String contentBody = null;
-
-        MojioRequest apiRequest = new MojioRequest(context, Request.Method.POST, apiBaseUrl + entityPath, modelClass, contentBody,
-                new Response.Listener<T>() {
-                    @Override
-                    public void onResponse(T response) {
-                        listener.onSuccess(response);
-                    }
-                },
-
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        reportVolleyError(error, listener);
-                    }
-                });
-
-        // Run request
-        requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        create(modelClass, entityPath, (String) null, listener);
     }
 
     /**
@@ -493,7 +482,7 @@ public class MojioClient {
      * @param <T>
      */
     public <T> void create(final Class<T> modelClass, String entityPath, String contentBody, final ResponseListener<T> listener) {
-        MojioRequest apiRequest = new MojioRequest(context, Request.Method.POST, apiBaseUrl + entityPath, modelClass, contentBody,
+        MojioRequest apiRequest = new MojioRequest<>(context, Request.Method.POST, apiBaseUrl + entityPath, modelClass, contentBody,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -509,7 +498,7 @@ public class MojioClient {
                 });
 
         // Run request
-        requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        addRequestToQueue(apiRequest);
     }
 
     /**
@@ -522,7 +511,7 @@ public class MojioClient {
      * @param <T>
      */
     public <T> void create(final Class<T> modelClass, String entityPath, Map<String, String> params, final ResponseListener<T> listener) {
-        MojioRequest apiRequest = new MojioRequest(context, Request.Method.POST, apiBaseUrl + entityPath, modelClass, params,
+        MojioRequest apiRequest = new MojioRequest<>(context, Request.Method.POST, apiBaseUrl + entityPath, modelClass, params,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -538,7 +527,7 @@ public class MojioClient {
                 });
 
         // Run request
-        requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        addRequestToQueue(apiRequest);
     }
 
     //========================================================================
@@ -562,7 +551,7 @@ public class MojioClient {
             }
             entityPath += getParams.replaceFirst("&", "?");
 
-            MojioRequest apiRequest = new MojioRequest(context, Request.Method.GET, apiBaseUrl + entityPath, modelClass, queryOptions,
+            MojioRequest apiRequest = new MojioRequest<>(context, Request.Method.GET, apiBaseUrl + entityPath, modelClass, queryOptions,
                     new Response.Listener<T>() {
                         @Override
                         public void onResponse(T response) {
@@ -578,7 +567,7 @@ public class MojioClient {
                     });
 
             // Run request
-            requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+            addRequestToQueue(apiRequest);
         }
     }
 
@@ -591,7 +580,7 @@ public class MojioClient {
      * @param <T>
      */
     public <T> void createObserver(final Class<T> modelClass, String contentBody, final ResponseListener<T> listener) {
-        MojioRequest apiRequest = new MojioRequest(context, Request.Method.POST, apiBaseUrl + "Observers", modelClass, contentBody,
+        MojioRequest apiRequest = new MojioRequest<>(context, Request.Method.POST, apiBaseUrl + "Observers", modelClass, contentBody,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -607,7 +596,7 @@ public class MojioClient {
                 });
 
         // Run request
-        requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        addRequestToQueue(apiRequest);
     }
 
     /**
@@ -619,7 +608,7 @@ public class MojioClient {
      * @param <T>
      */
     public <T> void deleteObserver(final Class<T> modelClass, final String observerId, final ResponseListener<T> listener) {
-        MojioRequest apiRequest = new MojioRequest(context, Request.Method.DELETE, apiBaseUrl + "Observers/" + observerId, modelClass,
+        MojioRequest apiRequest = new MojioRequest<>(context, Request.Method.DELETE, apiBaseUrl + "Observers/" + observerId, modelClass,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -636,7 +625,7 @@ public class MojioClient {
                 });
 
         // Run request
-        requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        addRequestToQueue(apiRequest);
     }
 
     /**
@@ -650,7 +639,7 @@ public class MojioClient {
      */
     public <T> void createConditionalObserver(final Class<T> modelClass, Object conditionalObserverObject, final ResponseListener<T> listener) {
         String obj = new Gson().toJson(conditionalObserverObject);
-        MojioRequest apiRequest = new MojioRequest(context, Request.Method.POST, apiBaseUrl + "Observers", modelClass, obj,
+        MojioRequest apiRequest = new MojioRequest<>(context, Request.Method.POST, apiBaseUrl + "Observers", modelClass, obj,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -666,7 +655,7 @@ public class MojioClient {
                 });
 
         // Run request
-        requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        addRequestToQueue(apiRequest);
     }
 
     /**
@@ -690,6 +679,8 @@ public class MojioClient {
 
         //create a handler that waits to check if we can subscribe using web sockets.  if we can't
         //switch to long polling to subscribe
+
+        // TODO this is bad - use SignalRFuture.get(timeout) instead
         Handler mHandler = new Handler(Looper.getMainLooper());
         mHandler.postDelayed(new Runnable() {
             public void run() {
@@ -777,7 +768,7 @@ public class MojioClient {
     }
 
     public <T> void updateImage(final Class<T> modelClass, String entityPath, Bitmap data, final ResponseListener<T> listener) {
-        MojioRequest apiRequest = new MojioRequest(context, Request.Method.PUT, apiBaseUrl + entityPath, modelClass, data,
+        MojioRequest apiRequest = new MojioRequest<>(context, Request.Method.PUT, apiBaseUrl + entityPath, modelClass, data,
                 new Response.Listener<T>() {
                     @Override
                     public void onResponse(T response) {
@@ -793,11 +784,33 @@ public class MojioClient {
                 });
 
         // Run request
-        requestHelper.addToRequestQueue(apiRequest, REQUEST_TAG);
+        addRequestToQueue(apiRequest);
     }
 
-    public void addRequestToQueue(Request request) {
-        Log.i(TAG, "Adding to request queue: " + request.getUrl());
+    public <T> void addRequestToQueue(final Request<T> request) {
+        // Login requests shouldn't get blocked checking the access token
+        addRequestToQueue(request, !request.getUrl().contains("Login"));
+    }
+
+    public <T> void addRequestToQueue(final Request<T> request, boolean checkAccessToken) {
+        // Note we use an AtomicBoolean for refreshTokenLock as locks give ownership to threads
+        // and it's possible for the same thread to get in here more than once before listener returns
+        if (checkAccessToken && oauthHelper.shouldRefreshAccessToken() && refreshTokenLock.compareAndSet(false, true)) {
+            Log.i(TAG, "Access token is about to expire, refreshing...");
+            refreshAccessToken(new ResponseListener<UserToken>() {
+                @Override
+                public void onSuccess(UserToken result) {
+                    Log.i(TAG, "Successfully refreshed access token");
+                    refreshTokenLock.set(false);
+                }
+
+                @Override
+                public void onFailure(ResponseError error) {
+                    Log.e(TAG, "Failed to refresh access token: " + error.message);
+                    refreshTokenLock.set(false);
+                }
+            });
+        }
         requestHelper.addToRequestQueue(request, REQUEST_TAG);
     }
 
@@ -814,7 +827,6 @@ public class MojioClient {
             Log.e(TAG, respErr.message);
             listener.onFailure(respErr);
         } catch (Exception e) {
-
             ResponseError respErr = new ResponseError();
             if (error instanceof TimeoutError) {
                 respErr.type = RESPONSE_ERR_SERVER_TIMEOUT;

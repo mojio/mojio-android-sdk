@@ -51,15 +51,9 @@ public class VolleyHelper {
      * @param tag
      */
     public <T> void addToRequestQueue(Request<T> req, String tag) {
-        if (requestQueue == null) {
-            getRequestQueue();
-        }
-
-        // set the default tag if tag is empty
-        req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
+        req.setTag(tag == null || TextUtils.isEmpty(tag) ? TAG : tag);
         req.setRetryPolicy(RETRY_POLICY);
-        Log.i(TAG, String.format("VolleyHelper adding request to queue: %s", req.getUrl()));
-
+        Log.i(TAG, "Request [" + parseMethodString(req.getMethod()) + ": " + req.getUrl() + "]");
         getRequestQueue().add(req);
     }
 
@@ -68,7 +62,7 @@ public class VolleyHelper {
      *
      * @param req
      */
-    public <T> void addToRequestQueue(Request<T> req) {
+    public <T> void addToRequestQueue(MojioRequest<T> req) {
         // set the default tag if tag is empty
         addToRequestQueue(req, null);
     }
@@ -82,6 +76,34 @@ public class VolleyHelper {
     public void cancelPendingRequests(Object tag) {
         if (requestQueue != null) {
             requestQueue.cancelAll(tag);
+        }
+    }
+
+    /**
+     * Returns the string method name given a Volley integer {@link com.android.volley.Request.Method}.
+     * @param method
+     * @return
+     */
+    public static String parseMethodString(int method) {
+        switch (method) {
+            case Request.Method.GET:
+                return "GET";
+            case Request.Method.POST:
+                return "POST";
+            case Request.Method.PUT:
+                return "PUT";
+            case Request.Method.DELETE:
+                return "DELETE";
+            case Request.Method.HEAD:
+                return "HEAD";
+            case Request.Method.OPTIONS:
+                return "OPTIONS";
+            case Request.Method.TRACE:
+                return "TRACE";
+            case Request.Method.PATCH:
+                return "PATCH";
+            default:
+                return null;
         }
     }
 
