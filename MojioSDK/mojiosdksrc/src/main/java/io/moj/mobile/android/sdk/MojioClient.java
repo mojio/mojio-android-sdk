@@ -222,7 +222,7 @@ public class MojioClient {
                 // NOTE THIS IS THE APP AUTH TOKEN
                 // We only want to use the app auth token when we have no stored USER auth token
                 // This may happen when we are creating a new user
-                oauthHelper.setAccessToken(result._id, result.ValidUntil, false);
+                oauthHelper.setAccessToken(result.getId(), result.getValidUntil(), false);
                 responseListener.onSuccess(result);
             }
 
@@ -255,12 +255,8 @@ public class MojioClient {
         this.create(Token.class, entityPath, new MojioClient.ResponseListener<Token>() {
             @Override
             public void onSuccess(Token result) {
-                // Save auth tokens
-                oauthHelper.setAccessToken(result._id, result.ValidUntil);
-
-                // Now we need to get the USER
-                String userID = result.UserId;
-                getUser(userID, responseListener); // Pass along response listener
+                oauthHelper.setAccessToken(result.getId(), result.getValidUntil());
+                getUser(result.getUserId(), responseListener); // Pass along response listener
             }
 
             @Override
@@ -277,7 +273,7 @@ public class MojioClient {
         this.create(Token.class, entityPath, new ResponseListener<Token>() {
             @Override
             public void onSuccess(Token result) {
-                oauthHelper.setAccessToken(result._id, result.ValidUntil);
+                oauthHelper.setAccessToken(result.getId(), result.getValidUntil());
                 responseListener.onSuccess(result);
             }
 
@@ -306,9 +302,9 @@ public class MojioClient {
         this.update(Token.class, entityPath, null, new MojioClient.ResponseListener<Token>() {
             @Override
             public void onSuccess(Token result) {
-                Log.d(TAG, "Successfully updated Sandboxed to: " + result.Sandboxed);
+                Log.d(TAG, "Successfully updated Sandboxed to: " + result.isSandboxed());
                 // Update access tokens
-                oauthHelper.setAccessToken(result._id, result.ValidUntil);
+                oauthHelper.setAccessToken(result.getId(), result.getValidUntil());
                 responseListener.onSuccess(true);
             }
 
@@ -334,7 +330,7 @@ public class MojioClient {
             authenticateApp(new ResponseListener<Token>() {
                 @Override
                 public void onSuccess(Token result) {
-                    Log.d(TAG, "App token " + result._id + " set. Proceeding to external user login.");
+                    Log.d(TAG, "Got Facebook access token, proceeding to external user login...");
                     loginFacebook(fbAccessToken, responseListener);
                 }
 
@@ -353,10 +349,10 @@ public class MojioClient {
             @Override
             public void onSuccess(Token result) {
                 // Save user auth token
-                Log.d(TAG, "Login successful. User token: " + result._id);
-                oauthHelper.setAccessToken(result._id, result.ValidUntil);
+                Log.d(TAG, "Login successful. User token: " + result.getId());
+                oauthHelper.setAccessToken(result.getId(), result.getValidUntil());
 
-                String userID = result.UserId;
+                String userID = result.getUserId();
                 getUser(userID, responseListener); // Pass along response listener
             }
 
