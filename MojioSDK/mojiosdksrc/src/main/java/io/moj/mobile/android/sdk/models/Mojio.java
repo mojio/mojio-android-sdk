@@ -23,19 +23,14 @@ public class Mojio {
     @SerializedName("VehicleId")
     private String vehicleId;
 
-    @SerializedName("_deleted")
-    private String deleted;
+    @SerializedName("SSID")
+    private String ssid;
+
+    @SerializedName("SSIDPassword")
+    private String ssidPassword;
 
     @SerializedName("_id")
     private String id;
-
-    public String getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(String deleted) {
-        this.deleted = deleted;
-    }
 
     public String getId() {
         return id;
@@ -85,15 +80,32 @@ public class Mojio {
         this.vehicleId = vehicleId;
     }
 
+    public String getSsid() {
+        return ssid;
+    }
+
+    public void setSsid(String ssid) {
+        this.ssid = ssid;
+    }
+
+    public String getSsidPassword() {
+        return ssidPassword;
+    }
+
+    public void setSsidPassword(String ssidPassword) {
+        this.ssidPassword = ssidPassword;
+    }
+
     @Override
     public String toString() {
         return "Mojio{" +
-                "deleted='" + deleted + '\'' +
-                ", ownerId='" + ownerId + '\'' +
+                "ownerId='" + ownerId + '\'' +
                 ", name='" + name + '\'' +
                 ", imei='" + imei + '\'' +
                 ", lastContactTime='" + lastContactTime + '\'' +
                 ", vehicleId='" + vehicleId + '\'' +
+                ", ssid='" + ssid + '\'' +
+                ", ssidPassword='" + ssidPassword + '\'' +
                 ", id='" + id + '\'' +
                 '}';
     }

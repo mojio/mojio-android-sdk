@@ -24,17 +24,6 @@ public class App {
     @SerializedName("_id")
     private String id;
 
-    @SerializedName("_deleted")
-    private boolean deleted;
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     public String getName() {
         return name;
     }
@@ -92,7 +81,6 @@ public class App {
                 ", redirectUris=" + redirectUris +
                 ", type=" + type +
                 ", id='" + id + '\'' +
-                ", deleted=" + deleted +
                 '}';
     }
 }

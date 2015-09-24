@@ -114,9 +114,6 @@ public class Vehicle {
     @SerializedName("_id")
     private String id;
 
-    @SerializedName("_deleted")
-    private boolean deleted;
-
     public String getOwnerId() {
         return ownerId;
     }
@@ -389,18 +386,11 @@ public class Vehicle {
         this.id = id;
     }
 
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
     @Override
     public String toString() {
         return "Vehicle{" +
-                "ownerId='" + ownerId + '\'' +
+                "currentTrip='" + currentTrip + '\'' +
+                ", ownerId='" + ownerId + '\'' +
                 ", MojioId='" + MojioId + '\'' +
                 ", name='" + name + '\'' +
                 ", VIN='" + VIN + '\'' +
@@ -421,7 +411,6 @@ public class Vehicle {
                 ", lastOdometer=" + lastOdometer +
                 ", lastRpm=" + lastRpm +
                 ", lastFuelEfficiency=" + lastFuelEfficiency +
-                ", currentTrip='" + currentTrip + '\'' +
                 ", lastTrip='" + lastTrip + '\'' +
                 ", lastContactTime='" + lastContactTime + '\'' +
                 ", milStatus=" + milStatus +
@@ -434,7 +423,6 @@ public class Vehicle {
                 ", lastAltitudes=" + lastAltitudes +
                 ", viewers=" + viewers +
                 ", id='" + id + '\'' +
-                ", deleted=" + deleted +
                 '}';
     }
 }

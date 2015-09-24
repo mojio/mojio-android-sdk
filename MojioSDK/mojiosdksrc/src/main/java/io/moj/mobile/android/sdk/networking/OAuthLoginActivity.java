@@ -13,9 +13,10 @@ import io.moj.mobile.android.sdk.R;
 
 public class OAuthLoginActivity extends Activity {
 
-    private static String TAG = OAuthLoginActivity.class.getSimpleName();
+    public static final String EXTRA_ACCESS_TOKEN = "accessToken";
     private static final String EXTRA_URL_AUTH = "EXTRA_URL_AUTH";
     private static final String EXTRA_URL_REDIRECT = "EXTRA_URL_REDIRECT";
+    private static final String TAG = OAuthLoginActivity.class.getSimpleName();
 
     private DataStorageHelper oAuthHelper;
     private String redirectUrl;
@@ -36,7 +37,6 @@ public class OAuthLoginActivity extends Activity {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 Log.i(TAG, "Redirecting to url: " + url);
                 if (url.startsWith(redirectUrl)) {
-
                     // Note, the url returned cannot be parsed correctly via Uri parse.
                     // Need to manually pull out access_token, expires_in
                     String[] parameters = url.split("&");
@@ -46,7 +46,7 @@ public class OAuthLoginActivity extends Activity {
 
                     // Return in bundle, but also stored in shared prefs
                     Bundle bundle = new Bundle();
-                    bundle.putString("accessToken", oAuthHelper.getAccessToken());
+                    bundle.putString(EXTRA_ACCESS_TOKEN, oAuthHelper.getAccessToken());
 
                     Intent resultIntent = new Intent();
                     resultIntent.putExtras(bundle);

@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.moj.mobile.android.sdk.enums.Endpoint;
 import io.moj.mobile.android.sdk.models.User;
-import io.moj.mobile.android.sdk.models.UserToken;
+import io.moj.mobile.android.sdk.models.Token;
 import io.moj.mobile.android.sdk.models.observers.Observer;
 import io.moj.mobile.android.sdk.networking.MojioImageRequest;
 import io.moj.mobile.android.sdk.networking.MojioRequest;
@@ -211,13 +211,13 @@ public class MojioClient {
      *
      * @param responseListener
      */
-    public void authenticateApp(final ResponseListener<UserToken> responseListener) {
+    public void authenticateApp(final ResponseListener<Token> responseListener) {
         String entityPath = String.format("Login/%s?secretKey=%s&minutes=%d",
                 mojioAppID, mojioAppSecretKey, SESSION_LENGTH_MIN);
 
-        this.create(UserToken.class, entityPath, new MojioClient.ResponseListener<UserToken>() {
+        this.create(Token.class, entityPath, new MojioClient.ResponseListener<Token>() {
             @Override
-            public void onSuccess(UserToken result) {
+            public void onSuccess(Token result) {
                 // Save auth tokens
                 // NOTE THIS IS THE APP AUTH TOKEN
                 // We only want to use the app auth token when we have no stored USER auth token
@@ -246,15 +246,15 @@ public class MojioClient {
             urlEncodedUsername = URLEncoder.encode(userNameOrEmail, "UTF-8");
             urlEncodedPassword = URLEncoder.encode(password, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Unsupported encoding of username or password string to UTF-8");
         }
 
         String entityPath = String.format("Login/%s?secretKey=%s&userOrEmail=%s&password=%s&minutes=%d",
                 mojioAppID, mojioAppSecretKey, urlEncodedUsername, urlEncodedPassword, SESSION_LENGTH_MIN);
 
-        this.create(UserToken.class, entityPath, new MojioClient.ResponseListener<UserToken>() {
+        this.create(Token.class, entityPath, new MojioClient.ResponseListener<Token>() {
             @Override
-            public void onSuccess(UserToken result) {
+            public void onSuccess(Token result) {
                 // Save auth tokens
                 oauthHelper.setAccessToken(result._id, result.ValidUntil);
 
@@ -271,12 +271,12 @@ public class MojioClient {
         });
     }
 
-    public void refreshAccessToken(final ResponseListener<UserToken> responseListener) {
+    public void refreshAccessToken(final ResponseListener<Token> responseListener) {
         String accessToken = oauthHelper.getAccessToken();
         String entityPath = String.format("Login/%s/Session?minutes=%d", accessToken, SESSION_LENGTH_MIN);
-        this.create(UserToken.class, entityPath, new ResponseListener<UserToken>() {
+        this.create(Token.class, entityPath, new ResponseListener<Token>() {
             @Override
-            public void onSuccess(UserToken result) {
+            public void onSuccess(Token result) {
                 oauthHelper.setAccessToken(result._id, result.ValidUntil);
                 responseListener.onSuccess(result);
             }
@@ -303,9 +303,9 @@ public class MojioClient {
         String entityPath = String.format("Login/%s/Sandboxed", currentAccessToken);
         entityPath += "?sandboxed=" + String.valueOf(sandboxed);
 
-        this.update(UserToken.class, entityPath, null, new MojioClient.ResponseListener<UserToken>() {
+        this.update(Token.class, entityPath, null, new MojioClient.ResponseListener<Token>() {
             @Override
-            public void onSuccess(UserToken result) {
+            public void onSuccess(Token result) {
                 Log.d(TAG, "Successfully updated Sandboxed to: " + result.Sandboxed);
                 // Update access tokens
                 oauthHelper.setAccessToken(result._id, result.ValidUntil);
@@ -320,17 +320,42 @@ public class MojioClient {
     }
 
     /**
-     * @param fbAccesstoken
+     * @param fbAccessToken
      * @param responseListener
      */
-    public void loginFacebook(String fbAccesstoken, final MojioClient.ResponseListener<User> responseListener) {
-        String entityPath = String.format("Login/ExternalUser?accessToken=%s", fbAccesstoken);
+    public void loginFacebook(final String fbAccessToken, final MojioClient.ResponseListener<User> responseListener) {
 
-        this.create(UserToken.class, entityPath, new MojioClient.ResponseListener<UserToken>() {
+        // If we need an app access token, then fetch it first and call login again.
+        // We will need an app access token under the following conditions:
+        // 1. There is no access token at all (caught by the shouldRefreshAccessToken() call)
+        // 2. The access token needs to be refreshed (caught by the shouldRefreshAccessToken() call)
+        // 3. The access token is not an app access token
+        if (oauthHelper.shouldRefreshAccessToken() || oauthHelper.isUserToken()) {
+            authenticateApp(new ResponseListener<Token>() {
+                @Override
+                public void onSuccess(Token result) {
+                    Log.d(TAG, "App token " + result._id + " set. Proceeding to external user login.");
+                    loginFacebook(fbAccessToken, responseListener);
+                }
+
+                @Override
+                public void onFailure(ResponseError error) {
+                    responseListener.onFailure(error);
+                }
+            });
+            return;
+        }
+
+        // Process to login.
+        String entityPath = String.format("Login/ExternalUser?accessToken=%s", fbAccessToken);
+
+        this.create(Token.class, entityPath, new MojioClient.ResponseListener<Token>() {
             @Override
-            public void onSuccess(UserToken result) {
+            public void onSuccess(Token result) {
                 // Save user auth token
+                Log.d(TAG, "Login successful. User token: " + result._id);
                 oauthHelper.setAccessToken(result._id, result.ValidUntil);
+
                 String userID = result.UserId;
                 getUser(userID, responseListener); // Pass along response listener
             }
@@ -797,9 +822,9 @@ public class MojioClient {
         // and it's possible for the same thread to get in here more than once before listener returns
         if (checkAccessToken && oauthHelper.shouldRefreshAccessToken() && refreshTokenLock.compareAndSet(false, true)) {
             Log.i(TAG, "Access token is about to expire, refreshing...");
-            refreshAccessToken(new ResponseListener<UserToken>() {
+            refreshAccessToken(new ResponseListener<Token>() {
                 @Override
-                public void onSuccess(UserToken result) {
+                public void onSuccess(Token result) {
                     Log.i(TAG, "Successfully refreshed access token");
                     refreshTokenLock.set(false);
                 }

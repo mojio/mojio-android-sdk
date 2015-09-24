@@ -46,23 +46,12 @@ public class User {
     @SerializedName("_id")
     private String id;
 
-    @SerializedName("_deleted")
-    private boolean deleted;
-
     public String getCreationDate() {
         return creationDate;
     }
 
     public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public String getEmail() {
@@ -162,7 +151,6 @@ public class User {
                 ", PhoneNumber='" + PhoneNumber + '\'' +
                 ", Name='" + Name + '\'' +
                 ", id='" + id + '\'' +
-                ", deleted=" + deleted +
                 '}';
     }
 }

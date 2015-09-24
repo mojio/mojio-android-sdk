@@ -128,6 +128,7 @@ public class MojioRequest<T> extends Request<T> {
                             Class<T> clazz,
                             Response.Listener<T> listener) {
         this.mUrl = url;
+        // TODO we could avoid holding context by passing headers and locale here instead
         this.mAppContext = appContext;
         this.clazz = clazz;
         this.listener = listener;
@@ -138,7 +139,6 @@ public class MojioRequest<T> extends Request<T> {
         DataStorageHelper oauth = new DataStorageHelper(this.mAppContext);
         HashMap<String, String> headers = new HashMap<>();
         headers.putAll(super.getHeaders());
-
         String mojioAuth = oauth.getAccessToken();
         if (mojioAuth != null) {
             headers.put("MojioAPIToken", mojioAuth);
@@ -189,11 +189,6 @@ public class MojioRequest<T> extends Request<T> {
     @Override
     protected Response<T> parseNetworkResponse(NetworkResponse response) {
         try {
-            // Check result
-            if (response.statusCode != HttpStatus.SC_OK) {
-                // TODO Error.
-            }
-
             T result = null;
 
             String responseString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));

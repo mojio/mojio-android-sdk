@@ -18,12 +18,8 @@ import java.util.Map;
  */
 public class MojioImageRequest extends ImageRequest {
 
-    private Context mAppContext;
-    private String mUrl;
-    private Response.Listener<Bitmap> listener;
-    private int mMaxWidth, mMaxHeight;
-    private Bitmap.Config mDecodeConfig;
-    private Response.ErrorListener errorListener;
+    private static final String TAG = MojioImageRequest.class.getSimpleName();
+    private Context context;
 
     /**
      * Creates a new image request, decoding to a maximum specified width and
@@ -42,54 +38,32 @@ public class MojioImageRequest extends ImageRequest {
      * @param decodeConfig  Format to decode the bitmap to
      * @param errorListener Error listener, or null to ignore errors
      */
-    public MojioImageRequest(Context appContext,
+    public MojioImageRequest(Context context,
                              String url,
                              int maxWidth, int maxHeight,
                              Bitmap.Config decodeConfig,
                              Response.Listener<Bitmap> listener,
                              Response.ErrorListener errorListener) {
         super(url, listener, maxWidth, maxHeight, decodeConfig, errorListener);
-        commonInit(appContext, url, listener, maxWidth, maxHeight, decodeConfig, errorListener);
-
-    }
-
-    private void commonInit(Context appContext,
-                            String url,
-                            Response.Listener<Bitmap> listener,
-                            int maxWidth, int maxHeight,
-                            Bitmap.Config decodeConfig,
-                            Response.ErrorListener errorListener) {
-
-        this.mAppContext = appContext;
-        this.mUrl = url;
-        this.listener = listener;
-        this.mMaxWidth = maxWidth;
-        this.mMaxHeight = maxHeight;
-        this.mDecodeConfig = decodeConfig;
-        this.errorListener = errorListener;
+        // TODO we could avoid holding context by just passing headers in here instead
+        this.context = context;
     }
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        DataStorageHelper oauth = new DataStorageHelper(this.mAppContext);
+        DataStorageHelper oauth = new DataStorageHelper(context);
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.putAll(super.getHeaders());
 
         // Check for auth token
         // Start with user auth, if that does not exist, check for app auth
         String mojioAuth = oauth.getAccessToken();
-<<<<<<< HEAD
-        if (mojioAuth == null) {
-            mojioAuth = oauth.getAppToken();
-        }
-=======
->>>>>>> dev
         if (mojioAuth != null) {
             headers.put("MojioAPIToken", mojioAuth);
         }
 
         // TODO may want to init MojioClient WITH access token. This would make the app responsible for storing token data.
-        Log.i("MOJIO", "Adding headers: " + headers.toString());
+        Log.i(TAG, "Adding headers: " + headers.toString());
         return headers;
     }
 }

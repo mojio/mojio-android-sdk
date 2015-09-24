@@ -14,6 +14,7 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 
 /**
+ * Wraps Volley's {@link RequestQueue} and provides initial configuration.
  * Created by ssawchenko on 15-01-14.
  */
 public class VolleyHelper {

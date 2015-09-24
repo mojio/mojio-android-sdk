@@ -29,9 +29,6 @@ public class DiagnosticCode {
     @SerializedName("_id")
     private String id;
 
-    @SerializedName("_deleted")
-    private boolean deleted;
-
     public String getCategory() {
         return category;
     }
@@ -46,14 +43,6 @@ public class DiagnosticCode {
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public String getDescription() {
@@ -106,7 +95,6 @@ public class DiagnosticCode {
                 ", source='" + source + '\'' +
                 ", Severity=" + Severity +
                 ", id='" + id + '\'' +
-                ", deleted=" + deleted +
                 '}';
     }
 }

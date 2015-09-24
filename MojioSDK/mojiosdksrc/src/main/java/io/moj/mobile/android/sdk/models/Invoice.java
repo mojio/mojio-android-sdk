@@ -44,9 +44,6 @@ public class Invoice {
     @SerializedName("_id")
     private String id;
 
-    @SerializedName("_deleted")
-    private boolean deleted;
-
     public Address getAddress() {
         return address;
     }
@@ -85,14 +82,6 @@ public class Invoice {
 
     public void setDate(String date) {
         this.date = date;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public String getDetails() {
@@ -166,7 +155,6 @@ public class Invoice {
                 ", statusMessage='" + statusMessage + '\'' +
                 ", status=" + status +
                 ", id='" + id + '\'' +
-                ", deleted=" + deleted +
                 '}';
     }
 }

@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 /**
+ * Model class for a warranty.
  * Created by skidson on 15-09-21.
  */
 public class Warranty {
