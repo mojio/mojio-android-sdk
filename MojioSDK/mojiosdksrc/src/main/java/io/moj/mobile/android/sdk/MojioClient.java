@@ -690,7 +690,7 @@ public class MojioClient {
      * @param <T>
      */
     public <T> void subscribeToObserver(final Class<T> modelClass, final Observer observer, final ResponseListener<T> listener) {
-        Log.d(TAG, "Subscribing to observer " + observer._id + "...");
+        Log.d(TAG, "Subscribing to observer " + observer.getId() + "...");
         subscriberGson = new Gson();
         Platform.loadPlatformComponent(new AndroidPlatformComponent());
 
@@ -731,9 +731,9 @@ public class MojioClient {
         try {
             awaitConnection.get();
             connectionEstablished = true;
-            hub.invoke("Subscribe", observer._id);
+            hub.invoke("Subscribe", observer.getId());
         } catch (InterruptedException | ExecutionException e) {
-            Log.e(TAG, "Error connecting to observer " + observer._id, e);
+            Log.e(TAG, "Error connecting to observer " + observer.getId(), e);
         }
     }
 

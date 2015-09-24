@@ -4,8 +4,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-import io.moj.mobile.android.sdk.models.observers.DiagnosticStatus;
-
 /**
  * Model class for a vehicle.
  * Created by ssawchenko on 15-02-01.

@@ -1,4 +1,4 @@
-package io.moj.mobile.android.sdk.models.observers;
+package io.moj.mobile.android.sdk.models;
 
 import com.google.gson.annotations.SerializedName;
 
