@@ -1,5 +1,7 @@
 package io.moj.mobile.android.sdk;
 
+import android.util.Log;
+
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
@@ -13,9 +15,12 @@ import java.text.SimpleDateFormat;
  * Created by ssawchenko on 15-01-27.
  */
 public class TimeFormatHelpers {
-    private static DateTimeFormatter FORMATTER_FROM_SERVER = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ssZ");
-    private static DateTimeFormatter FORMATTER_VERBOSE_DATE = DateTimeFormat.forPattern("MMMM dd, YYYY hh:mma"); // Feb 1st, 2015 5:00pm
-    private static DateTimeFormatter FORMATTER_TIME_CRITERIA = DateTimeFormat.forPattern("YYYY.MM.dd");
+    private static final String TAG = TimeFormatHelpers.class.getSimpleName();
+
+    private static final String FORMAT_FROM_SERVER = "yyyy-MM-dd'T'HH:mm:ssZ";
+    private static DateTimeFormatter FORMATTER_FROM_SERVER = DateTimeFormat.forPattern(FORMAT_FROM_SERVER).withZoneUTC();
+    private static DateTimeFormatter FORMATTER_VERBOSE_DATE = DateTimeFormat.forPattern("MMMM dd, YYYY hh:mma").withZoneUTC();
+    private static DateTimeFormatter FORMATTER_TIME_CRITERIA = DateTimeFormat.forPattern("YYYY.MM.dd").withZoneUTC();
 
     private static PeriodFormatter FORMATTER_FOR_ELAPSED_TIME = new PeriodFormatterBuilder()
             .printZeroAlways()
@@ -33,8 +38,25 @@ public class TimeFormatHelpers {
 
     private static String ERROR_RESPONSE = "??";
 
-    public static DateTime fromServerFormatted(String datetime) {
-        return DateTime.parse(datetime, FORMATTER_FROM_SERVER);
+    /**
+     * Returns a UTC {@link DateTime} given a UTC date from the server. Note that since the server sends a
+     * variable amount of milliseconds we always chop them off for parsing.
+     * @param date
+     * @return a {@link DateTime} instance for the given date or null if parsing failed.
+     */
+    public static DateTime fromServerFormatted(String date) {
+        int endIndex = date.lastIndexOf(".");
+        if (endIndex > 0) {
+            date = date.substring(0, endIndex) + "Z";
+        }
+
+        DateTime dateTime = null;
+        try {
+            dateTime = DateTime.parse(date, FORMATTER_FROM_SERVER);
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "Server sent an invalid date format: " + date, e);
+        }
+        return dateTime;
     }
 
     public static String getVerboseDateTime(String datetime) {
