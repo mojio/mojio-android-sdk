@@ -268,6 +268,7 @@ public class MojioClient {
             authenticateApp(new ResponseListener<UserToken>() {
                 @Override
                 public void onSuccess(UserToken result) {
+                    Log.d(TAG, "App token " + result._id + " set. Proceeding to login.");
                     login(userNameOrEmail, password, responseListener);
                 }
 
@@ -296,6 +297,7 @@ public class MojioClient {
             @Override
             public void onSuccess(UserToken result) {
                 // Save auth tokens
+                Log.d(TAG, "Login successful. User token: " + result._id);
                 _oauthHelper.setAccessToken(result._id, result.ValidUntil);
 
                 // Now we need to get the USER
@@ -374,6 +376,7 @@ public class MojioClient {
             authenticateApp(new ResponseListener<UserToken>() {
                 @Override
                 public void onSuccess(UserToken result) {
+                    Log.d(TAG, "App token " + result._id + " set. Proceeding to external user login.");
                     loginFacebook(fbAccessToken, responseListener);
                 }
 
@@ -392,7 +395,9 @@ public class MojioClient {
             @Override
             public void onSuccess(UserToken result) {
                 // Save user auth token
+                Log.d(TAG, "Login successful. User token: " + result._id);
                 _oauthHelper.setAccessToken(result._id, result.ValidUntil);
+
                 String userID = result.UserId;
                 getUser(userID, responseListener); // Pass along response listener
             }
