@@ -257,14 +257,36 @@ public class MojioClient {
      * @param password
      * @param responseListener
      */
-    public void login(String userNameOrEmail, String password, final ResponseListener<User> responseListener) {
+    public void login(final String userNameOrEmail, final String password, final ResponseListener<User> responseListener) {
+
+        // If we need an app access token, then fetch it first and call login again.
+        // We will need an app access token under the following conditions:
+        // 1. There is no access token at all (caught by the shouldRefreshAccessToken() call)
+        // 2. The access token needs to be refreshed (caught by the shouldRefreshAccessToken() call)
+        // 3. The access token is not an app access token
+        if (_oauthHelper.shouldRefreshAccessToken() || _oauthHelper.isUserToken()) {
+            authenticateApp(new ResponseListener<UserToken>() {
+                @Override
+                public void onSuccess(UserToken result) {
+                    login(userNameOrEmail, password, responseListener);
+                }
+
+                @Override
+                public void onFailure(ResponseError error) {
+                    responseListener.onFailure(error);
+                }
+            });
+            return;
+        }
+
+        // Process to login.
         String urlEncodedUsername = userNameOrEmail;
         String urlEncodedPassword = password;
         try {
             urlEncodedUsername = URLEncoder.encode(userNameOrEmail, "UTF-8");
             urlEncodedPassword = URLEncoder.encode(password, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Unsupported encoding of username or password string to UTF-8");
         }
 
         String entityPath = String.format("Login/%s?secretKey=%s&userOrEmail=%s&password=%s&minutes=%d",
@@ -338,11 +360,33 @@ public class MojioClient {
     }
 
     /**
-     * @param fbAccesstoken
+     * @param fbAccessToken
      * @param responseListener
      */
-    public void loginFacebook(String fbAccesstoken, final MojioClient.ResponseListener<User> responseListener) {
-        String entityPath = String.format("Login/ExternalUser?accessToken=%s", fbAccesstoken);
+    public void loginFacebook(final String fbAccessToken, final MojioClient.ResponseListener<User> responseListener) {
+
+        // If we need an app access token, then fetch it first and call login again.
+        // We will need an app access token under the following conditions:
+        // 1. There is no access token at all (caught by the shouldRefreshAccessToken() call)
+        // 2. The access token needs to be refreshed (caught by the shouldRefreshAccessToken() call)
+        // 3. The access token is not an app access token
+        if (_oauthHelper.shouldRefreshAccessToken() || _oauthHelper.isUserToken()) {
+            authenticateApp(new ResponseListener<UserToken>() {
+                @Override
+                public void onSuccess(UserToken result) {
+                    loginFacebook(fbAccessToken, responseListener);
+                }
+
+                @Override
+                public void onFailure(ResponseError error) {
+                    responseListener.onFailure(error);
+                }
+            });
+            return;
+        }
+
+        // Process to login.
+        String entityPath = String.format("Login/ExternalUser?accessToken=%s", fbAccessToken);
 
         this.create(UserToken.class, entityPath, new MojioClient.ResponseListener<UserToken>() {
             @Override
