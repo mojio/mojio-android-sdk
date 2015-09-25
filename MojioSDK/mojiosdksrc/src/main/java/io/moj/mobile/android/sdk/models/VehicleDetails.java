@@ -78,7 +78,7 @@ public class VehicleDetails {
     private float epaFuelEfficiency;
 
     @SerializedName("InstalledEngine")
-    private Engine engine;
+    private Engine installedEngine;
 
     @SerializedName("Engines")
     private ArrayList<Engine> engines;
@@ -144,14 +144,6 @@ public class VehicleDetails {
 
     public void setDriveType(String driveType) {
         this.driveType = driveType;
-    }
-
-    public Engine getEngine() {
-        return engine;
-    }
-
-    public void setEngine(Engine engine) {
-        this.engine = engine;
     }
 
     public ArrayList<Engine> getEngines() {
@@ -330,6 +322,14 @@ public class VehicleDetails {
         this.year = year;
     }
 
+    public Engine getInstalledEngine() {
+        return installedEngine;
+    }
+
+    public void setInstalledEngine(Engine installedEngine) {
+        this.installedEngine = installedEngine;
+    }
+
     @Override
     public String toString() {
         return "VehicleDetails{" +
@@ -355,7 +355,7 @@ public class VehicleDetails {
                 ", plant='" + plant + '\'' +
                 ", fuelTankSize=" + fuelTankSize +
                 ", epaFuelEfficiency=" + epaFuelEfficiency +
-                ", engine=" + engine +
+                ", installedEngine=" + installedEngine +
                 ", engines=" + engines +
                 ", transmissions=" + transmissions +
                 ", warranties=" + warranties +

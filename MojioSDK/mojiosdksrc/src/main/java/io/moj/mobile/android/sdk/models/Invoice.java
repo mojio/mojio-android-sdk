@@ -8,11 +8,18 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Invoice {
 
+    public static final String CURRENCY_CODE_CAN = "CAN";
+    public static final String CURRENCY_CODE_USD = "USD";
+
     @SerializedName("OwnerId")
     private String ownerId;
 
     @SerializedName("BuyerId")
     private String buyerId;
+
+    // TODO this isn't in the Swagger schema but Gauge seems to use it
+    @SerializedName("Name")
+    private String name;
 
     @SerializedName("AppId")
     private String appId;
@@ -43,6 +50,9 @@ public class Invoice {
 
     @SerializedName("_id")
     private String id;
+
+    @SerializedName("Type")
+    private String type = "Invoice";
 
     public Address getAddress() {
         return address;
@@ -140,12 +150,21 @@ public class Invoice {
         this.transactionId = transactionId;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return "Invoice{" +
                 "address=" + address +
                 ", ownerId='" + ownerId + '\'' +
                 ", buyerId='" + buyerId + '\'' +
+                ", name='" + name + '\'' +
                 ", appId='" + appId + '\'' +
                 ", transactionId='" + transactionId + '\'' +
                 ", date='" + date + '\'' +
@@ -155,6 +174,8 @@ public class Invoice {
                 ", statusMessage='" + statusMessage + '\'' +
                 ", status=" + status +
                 ", id='" + id + '\'' +
+                ", type='" + type + '\'' +
                 '}';
     }
+
 }
