@@ -11,6 +11,7 @@ public class ObservableAttribute {
     @SerializedName("LinkType")
     private String linkType;
 
+    // TODO can we just make this a String?
     @SerializedName("TypeId")
     private Object typeId;
 

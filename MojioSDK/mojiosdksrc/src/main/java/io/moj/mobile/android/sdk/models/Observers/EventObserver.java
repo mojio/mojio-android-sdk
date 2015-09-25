@@ -10,6 +10,8 @@ import java.util.ArrayList;
  */
 public class EventObserver extends ConditionalObserverBase{
 
+    // TODO we should use the actual EventType object.
+    // TODO Double check if the server accepts an array (vs. a comma-separated string)
     @SerializedName("EventTypes")
     private ArrayList<Object> eventTypes;
 

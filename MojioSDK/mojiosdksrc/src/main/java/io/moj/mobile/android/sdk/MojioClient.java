@@ -77,6 +77,7 @@ public class MojioClient {
     private boolean sandboxAvailable = true;
 
     private static final int SESSION_LENGTH_MIN = 43829; // 1 month
+    private static final String ENCODING = "UTF-8";
 
     public static class ResponseError {
         public String message;
@@ -239,14 +240,30 @@ public class MojioClient {
      * @param password
      * @param responseListener
      */
-    public void login(String userNameOrEmail, String password, final ResponseListener<User> responseListener) {
+    public void login(final String userNameOrEmail, final String password, final ResponseListener<User> responseListener) {
+        if (oauthHelper.shouldRefreshAccessToken() || oauthHelper.isUserToken()) {
+            authenticateApp(new ResponseListener<Token>() {
+                @Override
+                public void onSuccess(Token result) {
+                    Log.d(TAG, "Successfully retrieved app access token, proceeding with login...");
+                    login(userNameOrEmail, password, responseListener);
+                }
+
+                @Override
+                public void onFailure(ResponseError error) {
+                    responseListener.onFailure(error);
+                }
+            });
+            return;
+        }
+
         String urlEncodedUsername = userNameOrEmail;
         String urlEncodedPassword = password;
         try {
-            urlEncodedUsername = URLEncoder.encode(userNameOrEmail, "UTF-8");
-            urlEncodedPassword = URLEncoder.encode(password, "UTF-8");
+            urlEncodedUsername = URLEncoder.encode(userNameOrEmail, ENCODING);
+            urlEncodedPassword = URLEncoder.encode(password, ENCODING);
         } catch (UnsupportedEncodingException e) {
-            Log.e(TAG, "Unsupported encoding of username or password string to UTF-8");
+            Log.e(TAG, "Unsupported encoding of username or password string to " + ENCODING);
         }
 
         String entityPath = String.format("Login/%s?secretKey=%s&userOrEmail=%s&password=%s&minutes=%d",

@@ -10,6 +10,8 @@ import java.util.ArrayList;
  */
 public class DiagnosticCodeObserver extends ConditionalObserverBase{
 
+    // TODO we should use the actual DiagnosticCode object.
+    // TODO Double check if the server accepts an array (vs. a comma-separated string)
     @SerializedName("DiagnosticCodes")
     private ArrayList<Object> diagnosticCodes;
 
