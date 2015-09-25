@@ -28,15 +28,6 @@ public class User {
     @SerializedName("Locale")
     private String locale;
 
-    @SerializedName("LastActivityDate")
-    private String LastActivityDate;
-
-    @SerializedName("LastLoginDate")
-    private String LastLoginDate;
-
-    @SerializedName("Locale")
-    private String Locale;
-
     @SerializedName("PhoneNumber")
     private String PhoneNumber;
 
@@ -145,9 +136,6 @@ public class User {
                 ", lastActivityDate='" + lastActivityDate + '\'' +
                 ", lastLoginDate='" + lastLoginDate + '\'' +
                 ", locale='" + locale + '\'' +
-                ", LastActivityDate='" + LastActivityDate + '\'' +
-                ", LastLoginDate='" + LastLoginDate + '\'' +
-                ", Locale='" + Locale + '\'' +
                 ", PhoneNumber='" + PhoneNumber + '\'' +
                 ", Name='" + Name + '\'' +
                 ", id='" + id + '\'' +

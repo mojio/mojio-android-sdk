@@ -2,6 +2,8 @@ package io.moj.mobile.android.sdk.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import io.moj.mobile.android.sdk.enums.EventType;
+
 /**
  * Model class for an event.
  * Created by ssawchenko on 15-02-20.
@@ -18,7 +20,7 @@ public class Event {
     private String ownerId;
 
     @SerializedName("EventType")
-    private String type;
+    private EventType type;
 
     @SerializedName("Time")
     private String time;
@@ -102,20 +104,20 @@ public class Event {
         this.timeIsApprox = timeIsApprox;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public String getVehicleId() {
         return vehicleId;
     }
 
     public void setVehicleId(String vehicleId) {
         this.vehicleId = vehicleId;
+    }
+
+    public EventType getType() {
+        return type;
+    }
+
+    public void setType(EventType type) {
+        this.type = type;
     }
 
     @Override
@@ -125,7 +127,7 @@ public class Event {
                 ", mojioId='" + mojioId + '\'' +
                 ", vehicleId='" + vehicleId + '\'' +
                 ", ownerId='" + ownerId + '\'' +
-                ", type='" + type + '\'' +
+                ", type=" + type +
                 ", time='" + time + '\'' +
                 ", location=" + location +
                 ", timeIsApprox=" + timeIsApprox +
