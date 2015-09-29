@@ -10,9 +10,9 @@ public class Event {
     public String EventType;
     public String Time;
     public Location Location;
+    public float BatteryVoltage;
     //public String Accelerometer;
     public boolean TimeIsApprox;
-    public boolean BatteryVoltage;
     public boolean ConnectionLost;
     public String _id;
 
