@@ -10,6 +10,8 @@ import java.util.ArrayList;
  */
 public class Observer {
 
+    // TODO we should create a Builder for Observers to make it clearer what is required
+
     @SerializedName("Name")
     public String Name;
 
@@ -34,6 +36,7 @@ public class Observer {
     @SerializedName("SubjectId")
     public String subjectId;
 
+    // TODO we should custom serialize this as a comma-separate list of {@link ObserverTransport}s
     @SerializedName("Transports")
     public String transports;
 

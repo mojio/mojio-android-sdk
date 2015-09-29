@@ -2,6 +2,9 @@ package io.moj.mobile.android.sdk.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Model object for a diagnostic's severity. The {@link #ordinal()} of this enumeration represents
  * increasing severity.
@@ -10,18 +13,38 @@ import com.google.gson.annotations.SerializedName;
 public enum Severity {
 
     @SerializedName("Unknown")
-    UNKNOWN,
+    UNKNOWN("Unknown"),
 
     @SerializedName("Notice")
-    NOTICE,
+    NOTICE("Notice"),
 
     @SerializedName("Warning")
-    WARNING,
+    WARNING("Warning"),
 
     @SerializedName("Alert")
-    ALERT,
+    ALERT("Alert"),
 
     @SerializedName("Emergency")
-    EMERGENCY
+    EMERGENCY("Emergency");
 
+    private static final Map<String, Severity> NAME_TO_SEVERITY = new HashMap<>();
+    static {
+        for (Severity severity : values()) {
+            NAME_TO_SEVERITY.put(severity.getName(), severity);
+        }
+    }
+
+    private final String name;
+
+    Severity(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public static Severity fromName(String name) {
+        return NAME_TO_SEVERITY.get(name);
+    }
 }

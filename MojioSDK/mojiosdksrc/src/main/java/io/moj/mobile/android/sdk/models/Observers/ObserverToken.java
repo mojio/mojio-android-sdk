@@ -12,7 +12,18 @@ public class ObserverToken {
     private String deviceRegistrationId;
 
     @SerializedName("Transport")
-    private String transport;
+    private ObserverTransport transport;
+
+    /**
+     * @deprecated Should only be used for JSON serialization.
+     */
+    @Deprecated
+    public ObserverToken() { }
+
+    public ObserverToken(String deviceRegistrationId, ObserverTransport transport) {
+        this.deviceRegistrationId = deviceRegistrationId;
+        this.transport = transport;
+    }
 
     public String getDeviceRegistrationId() {
         return deviceRegistrationId;
@@ -22,16 +33,16 @@ public class ObserverToken {
         this.deviceRegistrationId = deviceRegistrationId;
     }
 
-    public String getTransport() {
+    public ObserverTransport getTransport() {
         return transport;
     }
 
-    public void setTransport(String transport) {
+    public void setTransport(ObserverTransport transport) {
         this.transport = transport;
     }
 
     @Override
-    public String toString() {
+     public String toString() {
         return "ObserverToken{" +
                 "deviceRegistrationId='" + deviceRegistrationId + '\'' +
                 ", transport='" + transport + '\'' +

@@ -80,16 +80,36 @@ public class MojioClient {
     private static final String ENCODING = "UTF-8";
 
     public static class ResponseError {
-        public String message;
-        public int type;
+        private String message;
+        private int type;
 
-        public ResponseError(String m, int t) {
-            message = m;
-            type = t;
+        public ResponseError(String message, int type) {
+            this.message = message;
+            this.type = type;
+        }
+
+        public ResponseError(String message) {
+            this(null, RESPONSE_ERR_UNKNOWN);
         }
 
         public ResponseError() {
-            this(null, RESPONSE_ERR_UNKNOWN);
+            this(null);
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public void setType(int type) {
+            this.type = type;
         }
     }
 
