@@ -54,7 +54,7 @@ public class VolleyHelper {
     public <T> void addToRequestQueue(Request<T> req, String tag) {
         req.setTag(tag == null || TextUtils.isEmpty(tag) ? TAG : tag);
         req.setRetryPolicy(RETRY_POLICY);
-        Log.i(TAG, "Request [" + parseMethodString(req.getMethod()) + ": " + req.getUrl() + "]");
+        Log.v(TAG, "Request [" + parseMethodString(req.getMethod()) + ": " + req.getUrl() + "]");
         getRequestQueue().add(req);
     }
 

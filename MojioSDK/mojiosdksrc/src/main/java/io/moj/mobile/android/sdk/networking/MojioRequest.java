@@ -192,7 +192,7 @@ public class MojioRequest<T> extends Request<T> {
             T result = null;
 
             String responseString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-            Log.i(TAG, "Response [" + VolleyHelper.parseMethodString(getMethod()) + " " + mUrl + "]: " + responseString.replace("\n", ""));
+            Log.v(TAG, "Response [" + VolleyHelper.parseMethodString(getMethod()) + " " + mUrl + "]: " + responseString.replace("\n", ""));
             if (responseString.isEmpty()) {
                 // Body was empty, no need to parse.
                 return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
