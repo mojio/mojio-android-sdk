@@ -23,7 +23,7 @@ public class Endpoint {
         context.getResources().updateConfiguration(config, null);
 
         this.apiUrl = context.getString(R.string.endpoint_url);
-        this.sandboxAvailable = Boolean.parseBoolean(context.getString(R.string.sandbox_available));
+        this.sandboxAvailable = context.getResources().getBoolean(R.bool.sandbox_available);
         context.getResources().updateConfiguration(originalConfiguration, null);
     }
 
