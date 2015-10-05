@@ -12,9 +12,8 @@ import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
-import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -23,6 +22,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import io.moj.mobile.android.sdk.DataStorageHelper;
+import io.moj.mobile.android.sdk.MojioClient;
 
 /**
  * Writen by Shayla Sawchenko
@@ -44,20 +44,18 @@ import io.moj.mobile.android.sdk.DataStorageHelper;
 /**
  * Volley adapter for JSON requests with POST method that will be parsed into Java objects by Gson.
  */
-public class MojioRequest<T> extends Request<T> {
+public class MojioRequest<T> extends Request<MojioResponse<T>> {
 
     private static final String TAG = MojioRequest.class.getSimpleName();
     private static final String PROTOCOL_CHARSET = "utf-8";
     private static final String PROTOCOL_CONTENT_TYPE = String.format("application/json; charset=%s", PROTOCOL_CHARSET);
-    private static final Gson GSON = new Gson();
 
     private Context mAppContext;
     private Class<T> clazz;
     private Map<String, String> params;
     private String contentBody;
-    private byte[] imageByteArray;
-    private Response.Listener<T> listener;
-    private String mUrl;
+    private MojioClient.ResponseListener<T> listener;
+    private boolean blobContent = false;
 
     /**
      * Make a GET request and return a parsed object from JSON.
@@ -69,10 +67,9 @@ public class MojioRequest<T> extends Request<T> {
                         int method,
                         String url,
                         Class<T> clazz,
-                        Response.Listener<T> listener,
-                        Response.ErrorListener errorListener) {
-        super(method, url, errorListener);
-        commonInit(appContext, url, clazz, listener);
+                        MojioClient.ResponseListener<T> listener) {
+        super(method, url, listener);
+        commonInit(appContext, clazz, null, null, listener);
     }
 
     /**
@@ -86,11 +83,9 @@ public class MojioRequest<T> extends Request<T> {
                         String url,
                         Class<T> clazz,
                         Map<String, String> params,
-                        Response.Listener<T> listener,
-                        Response.ErrorListener errorListener) {
-        super(method, url, errorListener);
-        commonInit(appContext, url, clazz, listener);
-        this.params = params;
+                        MojioClient.ResponseListener<T> listener) {
+        super(method, url, listener);
+        commonInit(appContext, clazz, params, null, listener);
     }
 
     public MojioRequest(Context appContext,
@@ -98,11 +93,9 @@ public class MojioRequest<T> extends Request<T> {
                         String url,
                         Class<T> clazz,
                         String contentBody,
-                        Response.Listener<T> listener,
-                        Response.ErrorListener errorListener) {
-        super(method, url, errorListener);
-        commonInit(appContext, url, clazz, listener);
-        this.contentBody = contentBody;
+                        MojioClient.ResponseListener<T> listener) {
+        super(method, url, listener);
+        commonInit(appContext, clazz, params, contentBody, listener);
     }
 
     public MojioRequest(Context appContext,
@@ -110,27 +103,26 @@ public class MojioRequest<T> extends Request<T> {
                         String url,
                         Class<T> clazz,
                         Bitmap contentBody,
-                        Response.Listener<T> listener,
-                        Response.ErrorListener errorListener) {
-        super(method, url, errorListener);
-        commonInit(appContext, url, clazz, listener);
+                        MojioClient.ResponseListener<T> listener) {
+        super(method, url, listener);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         contentBody.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] b = baos.toByteArray();
-        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
-        this.imageByteArray = b;
-        this.contentBody = imageEncoded;
+        String imageEncoded = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+        this.blobContent = true;
+        commonInit(appContext, clazz, null, imageEncoded, listener);
     }
 
     private void commonInit(Context appContext,
-                            String url,
                             Class<T> clazz,
-                            Response.Listener<T> listener) {
-        this.mUrl = url;
+                            Map<String, String> params,
+                            String contentBody,
+                            MojioClient.ResponseListener<T> listener) {
         // TODO we could avoid holding context by passing headers and locale here instead
         this.mAppContext = appContext;
         this.clazz = clazz;
+        this.params = params;
+        this.contentBody = contentBody;
         this.listener = listener;
     }
 
@@ -144,7 +136,8 @@ public class MojioRequest<T> extends Request<T> {
             headers.put("MojioAPIToken", mojioAuth);
         }
 
-        if (imageByteArray != null) {
+        // TODO would it hurt to always specify these headers if contentBody isn't empty?
+        if (blobContent) {
             String body = String.format("\"%s\"", this.contentBody);
             headers.put("Content-Type", PROTOCOL_CONTENT_TYPE);
             headers.put("Content-Length", String.valueOf(body.length()));
@@ -182,41 +175,38 @@ public class MojioRequest<T> extends Request<T> {
     }
 
     @Override
-    protected void deliverResponse(T response) {
+    protected void deliverResponse(MojioResponse<T> response) {
         listener.onResponse(response);
     }
 
     @Override
-    protected Response<T> parseNetworkResponse(NetworkResponse response) {
+    protected Response<MojioResponse<T>> parseNetworkResponse(NetworkResponse response) {
         try {
-            T result = null;
-
+            MojioResponse<T> result = null;
             String responseString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-            Log.v(TAG, "Response [" + VolleyHelper.parseMethodString(getMethod()) + " " + mUrl + "]: " + responseString.replace("\n", ""));
+            Log.v(TAG, "Response [" + VolleyHelper.parseMethodString(getMethod()) + " " + getUrl() + "]: " + responseString.replace("\n", ""));
+
             if (responseString.isEmpty()) {
+                result = new MojioResponse<>();
                 // Body was empty, no need to parse.
-                return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
-            }
-
-            // If we want just a String, simply return the response.data casted as such.
-            if (this.clazz == String.class) {
-                result = (T) responseString;
-                return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
-            }
-
-            // TODO this is where we have to start handling pagination (e.g. add a page value to all
-            // responses and allow app to easily request next page, such as on scroll)
-
-            // this handles responses that wrap the data and have a Data element
-            JSONObject testObject = new JSONObject(responseString);
-            if (testObject.has("Data")) {
-                // Result contains Data object (array).
-                result = GSON.fromJson(testObject.getString("Data"), clazz);
+            } else if (this.clazz == String.class) {
+                // If we want just a String, simply return the response.data casted as such.
+                result = (MojioResponse<T>) new MojioResponse<>(responseString);
             } else {
-                // Result does not contain the Data object - assumed to be a single result.
-                result = GSON.fromJson(responseString, clazz);
+                // this handles responses that wrap the data and have a Data element
+                JSONObject testObject = new JSONObject(responseString);
+                if (testObject.has(MojioResponse.ATTR_DATA)) {
+                    // unfortunately using Gson to parse MojioResponse<T> directly with a TypeToken forces arrays to ArrayList when T is an array
+                    T data = MojioClient.getGson().fromJson(testObject.getString(MojioResponse.ATTR_DATA), TypeToken.get(clazz).getType());
+                    result = new MojioResponse<>(data);
+                    result.setPageSize(testObject.getInt(MojioResponse.ATTR_PAGE_SIZE));
+                    result.setOffset(testObject.getInt(MojioResponse.ATTR_PAGE_OFFSET));
+                    result.setTotalRows(testObject.getInt(MojioResponse.ATTR_PAGE_TOTAL_ROWS));
+                } else {
+                    // result does not contain the Data object - assumed to be a single result.
+                    result = new MojioResponse<>(MojioClient.getGson().fromJson(responseString, clazz));
+                }
             }
-
             return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
         } catch (Exception e) {
             Log.e(TAG, "Error parsing network response", e);
