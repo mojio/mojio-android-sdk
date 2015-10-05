@@ -14,7 +14,6 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import java.io.UnsupportedEncodingException;
@@ -26,8 +25,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.moj.mobile.android.sdk.enums.Endpoint;
-import io.moj.mobile.android.sdk.models.User;
 import io.moj.mobile.android.sdk.models.Token;
+import io.moj.mobile.android.sdk.models.User;
 import io.moj.mobile.android.sdk.models.observers.Observer;
 import io.moj.mobile.android.sdk.networking.MojioImageRequest;
 import io.moj.mobile.android.sdk.networking.MojioRequest;

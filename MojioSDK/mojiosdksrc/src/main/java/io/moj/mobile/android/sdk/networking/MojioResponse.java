@@ -63,4 +63,8 @@ public class MojioResponse<T> {
         this.totalRows = totalRows;
     }
 
+    public boolean hasMorePages() {
+        return pageSize + offset < totalRows;
+    }
+
 }

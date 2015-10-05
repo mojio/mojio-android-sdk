@@ -12,13 +12,11 @@ import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -196,14 +194,9 @@ public class MojioRequest<T> extends Request<MojioResponse<T>> {
                 result = (MojioResponse<T>) new MojioResponse<>(responseString);
             } else {
                 // this handles responses that wrap the data and have a Data element
-                // TODO constructing a JSONObject just to throw it away - is there a more efficient way?
                 JSONObject testObject = new JSONObject(responseString);
                 if (testObject.has(MojioResponse.ATTR_DATA)) {
-                    /* TODO this doesn't work for arrays - Gson force parses T (when an array) into an ArrayList for some reason
-                    // result contains Data object (array), parse as a MojioRequest directly
-                    Type type = new TypeToken<MojioResponse<T>>() {}.getType();
-                    result = MojioClient.getGson().fromJson(responseString, type);
-                    */
+                    // unfortunately using Gson to parse MojioResponse<T> directly with a TypeToken forces arrays to ArrayList when T is an array
                     T data = MojioClient.getGson().fromJson(testObject.getString(MojioResponse.ATTR_DATA), TypeToken.get(clazz).getType());
                     result = new MojioResponse<>(data);
                     result.setPageSize(testObject.getInt(MojioResponse.ATTR_PAGE_SIZE));
