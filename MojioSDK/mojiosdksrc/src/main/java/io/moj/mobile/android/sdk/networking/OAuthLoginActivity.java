@@ -30,6 +30,7 @@ public class OAuthLoginActivity extends Activity {
         _oauthHelper = new DataStorageHelper(this);
 
         _loginWebView = (WebView) findViewById(R.id.loginwebview);
+        _loginWebView.getSettings().setJavaScriptEnabled(true);
         Log.e(TAG, "Auth url: " + _urlPath);
         _loginWebView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
