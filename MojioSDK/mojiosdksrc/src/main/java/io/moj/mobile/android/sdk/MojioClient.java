@@ -115,8 +115,8 @@ public class MojioClient {
     }
 
     public static abstract class ResponseListener<T> implements Response.Listener<MojioResponse<T>>, Response.ErrorListener {
-        abstract void onSuccess(MojioResponse<T> result);
-        abstract void onFailure(ResponseError error);
+        public abstract void onSuccess(MojioResponse<T> result);
+        public abstract void onFailure(ResponseError error);
 
         @Override
         public void onResponse(MojioResponse<T> response) {

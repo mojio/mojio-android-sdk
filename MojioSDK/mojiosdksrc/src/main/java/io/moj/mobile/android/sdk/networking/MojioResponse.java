@@ -8,6 +8,8 @@ import com.google.gson.annotations.SerializedName;
  */
 public class MojioResponse<T> {
 
+    private int statusCode = 0;
+
     @SerializedName("PageSize")
     private int pageSize = 0;
 
@@ -19,8 +21,6 @@ public class MojioResponse<T> {
 
     @SerializedName("Data")
     private T data;
-
-    private int statusCode;
 
     public MojioResponse() {}
 
