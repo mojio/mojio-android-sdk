@@ -8,18 +8,21 @@ import com.google.gson.annotations.SerializedName;
  */
 public class MojioResponse<T> {
 
-    private int statusCode = 0;
+    public static final String ATTR_PAGE_SIZE = "PageSize";
+    public static final String ATTR_PAGE_OFFSET = "Offset";
+    public static final String ATTR_PAGE_TOTAL_ROWS = "TotalRows";
+    public static final String ATTR_DATA = "Data";
 
-    @SerializedName("PageSize")
+    @SerializedName(ATTR_PAGE_SIZE)
     private int pageSize = 0;
 
-    @SerializedName("Offset")
+    @SerializedName(ATTR_PAGE_OFFSET)
     private int offset = 0;
 
-    @SerializedName("TotalRows")
+    @SerializedName(ATTR_PAGE_TOTAL_ROWS)
     private int totalRows = 0;
 
-    @SerializedName("Data")
+    @SerializedName(ATTR_DATA)
     private T data;
 
     public MojioResponse() {}
@@ -60,11 +63,4 @@ public class MojioResponse<T> {
         this.totalRows = totalRows;
     }
 
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-    }
 }

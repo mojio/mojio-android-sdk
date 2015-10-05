@@ -198,17 +198,22 @@ public class MojioRequest<T> extends Request<MojioResponse<T>> {
                 // this handles responses that wrap the data and have a Data element
                 // TODO constructing a JSONObject just to throw it away - is there a more efficient way?
                 JSONObject testObject = new JSONObject(responseString);
-                if (testObject.has("Data")) {
+                if (testObject.has(MojioResponse.ATTR_DATA)) {
+                    /* TODO this doesn't work for arrays - Gson force parses T (when an array) into an ArrayList for some reason
                     // result contains Data object (array), parse as a MojioRequest directly
-                    Type typeToken = new TypeToken<MojioRequest<T>>() {}.getType();
-                    result = MojioClient.getGson().fromJson(responseString, typeToken);
+                    Type type = new TypeToken<MojioResponse<T>>() {}.getType();
+                    result = MojioClient.getGson().fromJson(responseString, type);
+                    */
+                    T data = MojioClient.getGson().fromJson(testObject.getString(MojioResponse.ATTR_DATA), TypeToken.get(clazz).getType());
+                    result = new MojioResponse<>(data);
+                    result.setPageSize(testObject.getInt(MojioResponse.ATTR_PAGE_SIZE));
+                    result.setOffset(testObject.getInt(MojioResponse.ATTR_PAGE_OFFSET));
+                    result.setTotalRows(testObject.getInt(MojioResponse.ATTR_PAGE_TOTAL_ROWS));
                 } else {
                     // result does not contain the Data object - assumed to be a single result.
                     result = new MojioResponse<>(MojioClient.getGson().fromJson(responseString, clazz));
                 }
             }
-
-            result.setStatusCode(response.statusCode);
             return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
         } catch (Exception e) {
             Log.e(TAG, "Error parsing network response", e);
