@@ -51,7 +51,6 @@ public class MojioRequest<T> extends Request<MojioResponse<T>> {
     private static final String TAG = MojioRequest.class.getSimpleName();
     private static final String PROTOCOL_CHARSET = "utf-8";
     private static final String PROTOCOL_CONTENT_TYPE = String.format("application/json; charset=%s", PROTOCOL_CHARSET);
-    private static final Gson GSON = new Gson();
 
     private Context mAppContext;
     private Class<T> clazz;
@@ -202,10 +201,10 @@ public class MojioRequest<T> extends Request<MojioResponse<T>> {
                 if (testObject.has("Data")) {
                     // result contains Data object (array), parse as a MojioRequest directly
                     Type typeToken = new TypeToken<MojioRequest<T>>() {}.getType();
-                    result = GSON.fromJson(responseString, typeToken);
+                    result = MojioClient.getGson().fromJson(responseString, typeToken);
                 } else {
                     // result does not contain the Data object - assumed to be a single result.
-                    result = new MojioResponse<>(GSON.fromJson(responseString, clazz));
+                    result = new MojioResponse<>(MojioClient.getGson().fromJson(responseString, clazz));
                 }
             }
 

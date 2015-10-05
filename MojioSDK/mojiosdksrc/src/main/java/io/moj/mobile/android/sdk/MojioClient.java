@@ -716,6 +716,10 @@ public class MojioClient {
         requestHelper.cancelPendingRequests(REQUEST_TAG);
     }
 
+    public static Gson getGson() {
+        return GSON;
+    }
+
     private static void reportVolleyError(final VolleyError error, ResponseListener listener) {
         // Attempt to parse response errors
         try {
