@@ -9,6 +9,7 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.ImageRequest;
 
 import io.moj.mobile.android.sdk.DataStorageHelper;
+import io.moj.mobile.android.sdk.MojioClient;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,9 +43,13 @@ public class MojioImageRequest extends ImageRequest {
                              String url,
                              int maxWidth, int maxHeight,
                              Bitmap.Config decodeConfig,
-                             Response.Listener<Bitmap> listener,
-                             Response.ErrorListener errorListener) {
-        super(url, listener, maxWidth, maxHeight, decodeConfig, errorListener);
+                             final MojioClient.ResponseListener<Bitmap> listener) {
+        super(url, new Response.Listener<Bitmap>() {
+            @Override
+            public void onResponse(Bitmap response) {
+                listener.onResponse(new MojioResponse<>(response));
+            }
+        }, maxWidth, maxHeight, decodeConfig, listener);
         // TODO we could avoid holding context by just passing headers in here instead
         this.context = context;
     }
