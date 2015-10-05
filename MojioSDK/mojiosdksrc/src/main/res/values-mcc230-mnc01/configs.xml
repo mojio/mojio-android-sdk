@@ -1,0 +1,4 @@
+<resources>
+    <string name="endpoint_url">cz-api.moj.io</string>
+    <bool name="sandbox_available">false</bool>
+</resources>
