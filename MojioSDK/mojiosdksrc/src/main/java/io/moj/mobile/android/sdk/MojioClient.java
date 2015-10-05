@@ -20,12 +20,10 @@ import com.google.gson.JsonObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import io.moj.mobile.android.sdk.enums.Endpoint;
 import io.moj.mobile.android.sdk.models.Observers.Observer;
 import io.moj.mobile.android.sdk.models.User;
 import io.moj.mobile.android.sdk.models.UserToken;
@@ -68,7 +66,8 @@ public class MojioClient {
     private String _apiBaseUrl;             // Base API URL
     private String _signalRHost;            // SignalR Host
     private boolean _didSwitchEndpoints;    // Defines whether the new endpoint differs from the cached data
-    private Locale _configuredLocale;       // The most recently configured locale
+    private int _configuredMcc;             // The most recently configured MCC
+    private int _configuredMnc;             // The most recently configured MNC
     private AtomicBoolean refreshTokenLock = new AtomicBoolean(false);
 
     //========================================================================
@@ -120,7 +119,9 @@ public class MojioClient {
         _mojioAppSecretKey = mojioSecretkey;
         _redirectUrl = redirectUrl;
         _didSwitchEndpoints = false;
-        updateLocale(ctx.getResources().getConfiguration().locale);
+        int mcc = ctx.getResources().getConfiguration().mcc;
+        int mnc = ctx.getResources().getConfiguration().mnc;
+        updateRegion(mcc, mnc);
     }
 
     //========================================================================
@@ -130,18 +131,19 @@ public class MojioClient {
     /**
      * Sets the endpoint depending on the specific locale.
      *
-     * @param clientLocale The specified locale.
+     * @param mcc The specified MCC.
+     * @param mnc The specified MNC.
      */
-    public synchronized void updateLocale(Locale clientLocale) {
-        if (_configuredLocale != null && clientLocale.equals(_configuredLocale)) {
+    public synchronized void updateRegion(int mcc, int mnc) {
+        if (_configuredMcc == mcc && _configuredMnc == mnc)
             return;
-        }
 
-        Log.i(TAG, "Configuring SDK for locale '" + clientLocale + "'...");
-        Endpoint endpoint = Endpoint.fromLocale(_ctx, clientLocale);
+        Log.i(TAG, "Configuring SDK for MCC '" + mcc + "' and MNC '" + mnc + "'...");
+        Endpoint endpoint = new Endpoint(_ctx, mcc, mnc);
         this.sandboxAvailable = endpoint.isSandboxAvailable();
         this.updateUrl(endpoint.getApiUrl());
-        this._configuredLocale = clientLocale;
+        this._configuredMcc = mcc;
+        this._configuredMnc = mnc;
     }
 
     private void updateUrl(String apiUrl) {

@@ -1,0 +1,4 @@
+<resources>
+    <string name="endpoint_url">api.moj.io</string>
+    <string name="sandbox_available">true</string>
+</resources>
