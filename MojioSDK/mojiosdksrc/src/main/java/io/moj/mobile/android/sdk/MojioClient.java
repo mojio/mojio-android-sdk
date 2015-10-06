@@ -66,8 +66,8 @@ public class MojioClient {
     private String _apiBaseUrl;             // Base API URL
     private String _signalRHost;            // SignalR Host
     private boolean _didSwitchEndpoints;    // Defines whether the new endpoint differs from the cached data
-    private int _configuredMcc;             // The most recently configured MCC
-    private int _configuredMnc;             // The most recently configured MNC
+    private int _configuredMcc = -1;        // The most recently configured MCC
+    private int _configuredMnc = -1;        // The most recently configured MNC
     private AtomicBoolean refreshTokenLock = new AtomicBoolean(false);
 
     //========================================================================
