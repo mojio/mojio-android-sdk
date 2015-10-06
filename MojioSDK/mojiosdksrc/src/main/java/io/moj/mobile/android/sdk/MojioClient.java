@@ -65,7 +65,6 @@ public class MojioClient {
     private String _authPath;               // Authentication path
     private String _apiBaseUrl;             // Base API URL
     private String _signalRHost;            // SignalR Host
-    private boolean _didSwitchEndpoints;    // Defines whether the new endpoint differs from the cached data
     private int _configuredMcc = -1;        // The most recently configured MCC
     private int _configuredMnc = -1;        // The most recently configured MNC
     private AtomicBoolean refreshTokenLock = new AtomicBoolean(false);
@@ -118,7 +117,6 @@ public class MojioClient {
         _mojioAppID = mojioAppID;
         _mojioAppSecretKey = mojioSecretkey;
         _redirectUrl = redirectUrl;
-        _didSwitchEndpoints = false;
         int mcc = ctx.getResources().getConfiguration().mcc;
         int mnc = ctx.getResources().getConfiguration().mnc;
         updateRegion(mcc, mnc);
@@ -151,10 +149,9 @@ public class MojioClient {
         _apiBaseUrl = String.format(URL_BASE_PATH, apiUrl);
         _signalRHost = String.format(URL_SIGNAL_R_HOST, apiUrl);
 
-        if (!_authPath.equals(_oauthHelper.getEndpoint())) {
+        if (endPointDidChange()) {
             Log.i(TAG, "Endpoints have changed from " + _oauthHelper.getEndpoint() + " to " + _authPath);
-            clearEndPointSpecificCache();
-            _didSwitchEndpoints = true;
+            _oauthHelper.removeAllUserStoredValues();
         }
     }
 
@@ -166,7 +163,7 @@ public class MojioClient {
      * @return Whether the end point did change.
      */
     public boolean endPointDidChange() {
-        return _didSwitchEndpoints;
+        return !_authPath.equals(_oauthHelper.getEndpoint());
     }
 
     /**
@@ -177,19 +174,6 @@ public class MojioClient {
      */
     public boolean isSandboxAvailable() {
         return sandboxAvailable;
-    }
-
-    /**
-     * Removes all cache specific to the cached endpoint. This is called when the endpoint changes.
-     */
-    private void clearEndPointSpecificCache() {
-        String api = _oauthHelper.getEndpoint();
-        if (api == null) {
-            _oauthHelper.setEndpoint(_authPath);
-        } else if (!api.equals(_authPath)) {
-            _oauthHelper.removeAllUserStoredValues();
-            _oauthHelper.setEndpoint(_authPath);
-        }
     }
 
     //========================================================================
@@ -242,7 +226,7 @@ public class MojioClient {
                 // NOTE THIS IS THE APP AUTH TOKEN
                 // We only want to use the app auth token when we have no stored USER auth token
                 // This may happen when we are creating a new user
-                _oauthHelper.setAccessToken(result._id, result.ValidUntil, false);
+                _oauthHelper.setAccessToken(result._id, result.ValidUntil, _authPath, false);
                 responseListener.onSuccess(result);
             }
 
@@ -260,7 +244,6 @@ public class MojioClient {
      * @param responseListener
      */
     public void login(final String userNameOrEmail, final String password, final ResponseListener<User> responseListener) {
-
         // If we need an app access token, then fetch it first and call login again.
         // We will need an app access token under the following conditions:
         // 1. There is no access token at all (caught by the shouldRefreshAccessToken() call)
@@ -300,7 +283,7 @@ public class MojioClient {
             public void onSuccess(UserToken result) {
                 // Save auth tokens
                 Log.d(TAG, "Login successful. User token: " + result._id);
-                _oauthHelper.setAccessToken(result._id, result.ValidUntil);
+                _oauthHelper.setAccessToken(result._id, result.ValidUntil, _authPath);
 
                 // Now we need to get the USER
                 String userID = result.UserId;
@@ -321,7 +304,7 @@ public class MojioClient {
         this.create(UserToken.class, entityPath, new ResponseListener<UserToken>() {
             @Override
             public void onSuccess(UserToken result) {
-                _oauthHelper.setAccessToken(result._id, result.ValidUntil);
+                _oauthHelper.setAccessToken(result._id, result.ValidUntil, _authPath);
                 responseListener.onSuccess(result);
             }
 
@@ -352,7 +335,7 @@ public class MojioClient {
             public void onSuccess(UserToken result) {
                 Log.d(TAG, "Successfully updated Sandboxed to: " + result.Sandboxed);
                 // Update access tokens
-                _oauthHelper.setAccessToken(result._id, result.ValidUntil);
+                _oauthHelper.setAccessToken(result._id, result.ValidUntil, _authPath);
                 responseListener.onSuccess(true);
             }
 
@@ -398,7 +381,7 @@ public class MojioClient {
             public void onSuccess(UserToken result) {
                 // Save user auth token
                 Log.d(TAG, "Login successful. User token: " + result._id);
-                _oauthHelper.setAccessToken(result._id, result.ValidUntil);
+                _oauthHelper.setAccessToken(result._id, result.ValidUntil, _authPath);
 
                 String userID = result.UserId;
                 getUser(userID, responseListener); // Pass along response listener

@@ -24,9 +24,9 @@ public class OAuthLoginActivity extends Activity {
         setContentView(R.layout.activity_oauth_login);
 
         Bundle extras = getIntent().getExtras();
-        _urlPath = extras.getString("URL_AUTH_PATH");
+        final String authUrl = extras.getString("URL_AUTH_PATH");
         _redirectUrl = extras.getString("REDIRECT_URL");
-        _urlPath += "&redirect_uri=" + _redirectUrl; // Add redirectUrl
+        _urlPath = authUrl + "&redirect_uri=" + _redirectUrl; // Add redirectUrl
         _oauthHelper = new DataStorageHelper(this);
 
         _loginWebView = (WebView) findViewById(R.id.loginwebview);
@@ -43,7 +43,7 @@ public class OAuthLoginActivity extends Activity {
                     String [] accessToken = parameters[0].split("=");
                     String [] expiresIn = parameters[2].split("=");
 
-                    _oauthHelper.setAccessToken(accessToken[1], expiresIn[1]);
+                    _oauthHelper.setAccessToken(accessToken[1], expiresIn[1], authUrl);
 
                     // Return in bundle, but also stored in shared prefs
                     Bundle bundle = new Bundle();

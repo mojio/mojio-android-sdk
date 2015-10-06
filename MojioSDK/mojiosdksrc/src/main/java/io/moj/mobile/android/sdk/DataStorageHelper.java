@@ -29,20 +29,28 @@ public class DataStorageHelper {
         return getSharedPreferences().getString(PREF_ACCESS_TOKEN, null);
     }
 
+    /**
+     * Stores the access token.
+     * @param accessToken the access token
+     * @param expirationTime the expiration date of the access token
+     * @param endpoint the endpoint the access token was retrieved from
+     * @param isUserToken whether this access token is for an authenticated user
+     */
     @SuppressLint("CommitPrefEdits")
-    public void setAccessToken(String accessToken, String expirationTime, boolean isUserToken) {
+    public void setAccessToken(String accessToken, String expirationTime, String endpoint, boolean isUserToken) {
         long expirationTimestamp = TimeFormatHelpers.fromServerFormatted(expirationTime).getMillis();
 
         Editor sharedPreferences = mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE).edit();
         sharedPreferences.putString(PREF_ACCESS_TOKEN, accessToken);
         sharedPreferences.putLong(PREF_ACCESS_TOKEN_EXPIRES, expirationTimestamp);
         sharedPreferences.putBoolean(PREF_ACCESS_TOKEN_IS_USER, isUserToken);
+        sharedPreferences.putString(PREF_APP_ENDPOINT, endpoint);
         sharedPreferences.commit();
     }
 
     @SuppressLint("CommitPrefEdits")
-    public void setAccessToken(String accessToken, String expirationTime) {
-        setAccessToken(accessToken, expirationTime, true);
+    public void setAccessToken(String accessToken, String expirationTime, String endpoint) {
+        setAccessToken(accessToken, expirationTime, endpoint, true);
     }
 
     public boolean shouldRefreshAccessToken() {
@@ -65,18 +73,6 @@ public class DataStorageHelper {
         return getSharedPreferences().getBoolean(PREF_ACCESS_TOKEN_IS_USER, false);
     }
 
-    /**
-     * Saves the end point with which the app token is valid.
-     *
-     * @param url The end point URL.
-     */
-    public void setEndpoint(String url) {
-        getSharedPreferences().edit().putString(PREF_APP_ENDPOINT, url).commit();
-    }
-
-    /**
-     * @return The end point with which the app token is valid.
-     */
     public String getEndpoint() {
         return getSharedPreferences().getString(PREF_APP_ENDPOINT, null);
     }
@@ -93,6 +89,7 @@ public class DataStorageHelper {
         getSharedPreferences().edit()
                 .remove(PREF_ACCESS_TOKEN)
                 .remove(PREF_ACCESS_TOKEN_EXPIRES)
+                .remove(PREF_APP_ENDPOINT)
                 .commit();
     }
 
