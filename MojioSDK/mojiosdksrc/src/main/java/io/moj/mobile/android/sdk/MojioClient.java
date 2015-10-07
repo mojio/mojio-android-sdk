@@ -3,6 +3,7 @@ package io.moj.mobile.android.sdk;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +21,7 @@ import com.google.gson.JsonObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -80,6 +82,11 @@ public class MojioClient {
 
     private static final int SESSION_LENGTH_MIN = 43829; // 1 month
 
+    private static final Locale EN_GB = new Locale("en", "GB");
+    private static final Locale CS_CZ = new Locale("cs");
+    private static final int CZ_MCC = 230;
+    private static final int CZ_TMOBILE_MNC = 1;
+
     public static class ResponseError {
         public String message;
         public int type;
@@ -117,9 +124,18 @@ public class MojioClient {
         _mojioAppID = mojioAppID;
         _mojioAppSecretKey = mojioSecretkey;
         _redirectUrl = redirectUrl;
-        int mcc = ctx.getResources().getConfiguration().mcc;
-        int mnc = ctx.getResources().getConfiguration().mnc;
-        updateRegion(mcc, mnc);
+
+        /* HACK: this is a temporary solution added for the Czech trial. In the SDK we have
+         * specified that the endpoint URL for MCC 230 and MNC 1 is cz-api.moj.io. The code below
+         * will make it so that if you have specify your locale to EN_GB or CS_CZ you will also connect
+         * to the cz-api.moj.io backend.
+         */
+        Configuration config = ctx.getResources().getConfiguration();
+        if (config.locale.equals(EN_GB) || config.locale.getLanguage().equals(CS_CZ.getLanguage())) {
+            updateRegion(CZ_MCC, CZ_TMOBILE_MNC);
+        } else {
+            updateRegion(config.mcc, config.mnc);
+        }
     }
 
     //========================================================================
