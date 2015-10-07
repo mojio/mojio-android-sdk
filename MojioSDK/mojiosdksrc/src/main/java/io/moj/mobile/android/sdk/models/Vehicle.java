@@ -35,6 +35,8 @@ public class Vehicle {
     public float LastOdometer;
     public float LastRpm;
     public float LastFuelEfficiency;
+    public float LastFuelEfficiencyScore;
+    public float LastFuelEfficiencyScoreChange;
     public String CurrentTrip;
     public String LastTrip;
     public String LastContactTime;

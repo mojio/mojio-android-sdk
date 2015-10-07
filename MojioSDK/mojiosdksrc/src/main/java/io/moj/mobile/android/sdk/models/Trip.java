@@ -13,6 +13,8 @@ public class Trip {
     public int MaxRPM;
     public float FuelLevel;
     public float FuelEfficiency;
+    public float FuelEfficiencyScore;
+    public float FuelEfficiencyScoreChange;
     public float Distance;
     public Object StartLocation;
     public Object LastKnownLocation;
