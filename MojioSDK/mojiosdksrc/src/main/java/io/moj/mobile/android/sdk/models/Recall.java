@@ -1,5 +1,7 @@
 package io.moj.mobile.android.sdk.models;
 
+import android.text.TextUtils;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -43,6 +45,9 @@ public class Recall extends MojioObject {
 
     @SerializedName("ReportReceivedDate")
     private String reportReceivedDate;
+
+    @SerializedName("ReportRecievedDate")
+    private String reportRecievedDate;
 
     @SerializedName("RegulationPartNumber")
     private String regulationPartNumber;
@@ -202,7 +207,8 @@ public class Recall extends MojioObject {
     }
 
     public String getReportReceivedDate() {
-        return reportReceivedDate;
+        // API has a typo, coded for backwards compatibility
+        return TextUtils.isEmpty(reportReceivedDate) ? reportRecievedDate : reportReceivedDate;
     }
 
     public void setReportReceivedDate(String reportReceivedDate) {
@@ -231,7 +237,7 @@ public class Recall extends MojioObject {
                 ", ownerNotificationDate='" + ownerNotificationDate + '\'' +
                 ", recallInitiator='" + recallInitiator + '\'' +
                 ", productManufacturer='" + productManufacturer + '\'' +
-                ", reportReceivedDate='" + reportReceivedDate + '\'' +
+                ", reportReceivedDate='" + getReportReceivedDate() + '\'' +
                 ", regulationPartNumber='" + regulationPartNumber + '\'' +
                 ", fmvvsNumber='" + fmvvsNumber + '\'' +
                 ", defectSummary='" + defectSummary + '\'' +
