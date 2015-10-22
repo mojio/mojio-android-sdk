@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Model class for an address.
  * Created by skidson on 15-09-21.
  */
-public class Address {
+public class Address extends MojioObject {
 
     @SerializedName("Address1")
     private String addressOne;

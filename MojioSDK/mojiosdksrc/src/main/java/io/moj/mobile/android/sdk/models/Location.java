@@ -2,7 +2,7 @@ package io.moj.mobile.android.sdk.models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Location {
+public class Location extends MojioObject {
 
     @SerializedName("Lat")
 	private float latitude;

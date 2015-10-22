@@ -9,7 +9,7 @@ import java.util.Arrays;
  * Model class for vehicle details.
  * Created by ssawchenko on 15-02-26.
  */
-public class VehicleDetails {
+public class VehicleDetails extends MojioObject {
 
     @SerializedName("VIN")
     private String vin;

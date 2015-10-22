@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Model class for an invoice.
  * Created by skidson on 15-09-21.
  */
-public class Invoice {
+public class Invoice extends MojioObject {
 
     public static final String CURRENCY_CODE_CAN = "CAN";
     public static final String CURRENCY_CODE_USD = "USD";

@@ -8,7 +8,7 @@ import io.moj.mobile.android.sdk.enums.EventType;
  * Model class for an event.
  * Created by ssawchenko on 15-02-20.
  */
-public class Event {
+public class Event extends MojioObject {
 
     @SerializedName("MojioId")
     private String mojioId;

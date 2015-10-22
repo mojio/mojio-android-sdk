@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class App {
+public class App extends MojioObject {
 
     @SerializedName("Name")
     private String name;

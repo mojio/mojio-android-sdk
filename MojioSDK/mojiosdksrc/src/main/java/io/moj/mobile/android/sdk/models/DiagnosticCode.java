@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Model object for a diagnostic code.
  * Created by ssawchenko on 15-02-06.
  */
-public class DiagnosticCode {
+public class DiagnosticCode extends MojioObject {
 
     @SerializedName("Code")
     private String code;

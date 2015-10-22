@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Model class for an access token.
  * Created by ssawchenko on 15-02-17.
  */
-public class Token {
+public class Token extends MojioObject {
 
     @SerializedName("AppId")
     private String AppId;
