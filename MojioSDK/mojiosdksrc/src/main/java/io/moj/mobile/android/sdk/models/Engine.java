@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Model class for an engine.
  * Created by ssawchenko on 15-02-26.
  */
-public class Engine {
+public class Engine extends MojioObject {
 
     @SerializedName("Name")
     private String name;

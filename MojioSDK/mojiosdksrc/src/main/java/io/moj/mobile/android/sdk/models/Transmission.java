@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Model class for a transmission.
  * Created by skidson on 15-09-21.
  */
-public class Transmission {
+public class Transmission extends MojioObject {
 
     @SerializedName("Name")
     private String name;

@@ -10,7 +10,7 @@ import io.moj.mobile.android.sdk.models.DiagnosticCode;
  * Model class for a diagnostic status. This is a collection of diagnostic codes at a specific time.
  * Created by skidson on 15-09-21.
  */
-public class DiagnosticStatus {
+public class DiagnosticStatus extends MojioObject {
 
     @SerializedName("TimeStamp")
     private String timestamp;

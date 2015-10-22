@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * Model class for a vehicle.
  * Created by ssawchenko on 15-02-01.
  */
-public class Vehicle {
+public class Vehicle extends MojioObject {
 
     @SerializedName("OwnerId")
     private String ownerId;

@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Model class for a recall.
  * Created by ssawchenko on 15-03-19.
  */
-public class Recall {
+public class Recall extends MojioObject {
 
     @SerializedName("NHTSACampaignNumber")
     private String nhtsaCampaignNumber;

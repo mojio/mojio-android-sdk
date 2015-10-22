@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Model class for a trip.
  */
-public class Trip {
+public class Trip extends MojioObject {
 
     @SerializedName("MojioId")
     private String mojioId;

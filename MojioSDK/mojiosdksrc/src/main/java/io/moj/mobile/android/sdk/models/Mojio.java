@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Model object for a Mojio.
  * Created by ssawchenko on 15-02-06.
  */
-public class Mojio {
+public class Mojio extends MojioObject {
 
     @SerializedName("OwnerId")
     private String ownerId;
