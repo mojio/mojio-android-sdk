@@ -21,6 +21,10 @@ android {
         // lets us not explode on OS calls (e.g. Log.e())
         unitTests.returnDefaultValues = true
     }
+
+    lintOptions {
+        abortOnError false
+    }
 }
 
 repositories{

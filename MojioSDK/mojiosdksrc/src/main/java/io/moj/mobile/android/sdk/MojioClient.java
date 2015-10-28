@@ -378,6 +378,20 @@ public class MojioClient {
     }
 
     /**
+     * UPDATE V2 (PUT) with string content body
+     *
+     * @param modelClass
+     * @param entityPath
+     * @param contentBody
+     * @param listener
+     * @param <T>
+     */
+    public <T> void updateV2(final Class<T> modelClass, String entityPath, String contentBody, final ResponseListener<T> listener) {
+        addRequestToQueue(new MojioRequest<>(context, Request.Method.PUT, environment.getApiUrl(2) + entityPath,
+                modelClass, contentBody, listener));
+    }
+
+    /**
      * DELETE (DELETE)
      *
      * @param modelClass
@@ -388,6 +402,19 @@ public class MojioClient {
     public <T> void delete(final Class<T> modelClass, String entityPath, final ResponseListener<T> listener) {
         addRequestToQueue(new MojioRequest<>(context, Request.Method.DELETE,
                 environment.getApiUrl() + entityPath, modelClass, listener));
+    }
+
+    /**
+     * DELETE V2 (DELETE)
+     *
+     * @param modelClass
+     * @param entityPath
+     * @param listener
+     * @param <T>
+     */
+    public <T> void deleteV2(final Class<T> modelClass, String entityPath, final ResponseListener<T> listener) {
+        addRequestToQueue(new MojioRequest<>(context, Request.Method.DELETE,
+                environment.getApiUrl(2) + entityPath, modelClass, listener));
     }
 
     /**
