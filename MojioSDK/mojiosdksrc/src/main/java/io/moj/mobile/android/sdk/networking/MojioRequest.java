@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import io.moj.mobile.android.sdk.DataStorageHelper;
+import io.moj.mobile.android.sdk.OAuthHelper;
 import io.moj.mobile.android.sdk.MojioClient;
 
 /**
@@ -128,7 +128,7 @@ public class MojioRequest<T> extends Request<MojioResponse<T>> {
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        DataStorageHelper oauth = new DataStorageHelper(this.mAppContext);
+        OAuthHelper oauth = new OAuthHelper(this.mAppContext);
         HashMap<String, String> headers = new HashMap<>();
         headers.putAll(super.getHeaders());
         String mojioAuth = oauth.getAccessToken();

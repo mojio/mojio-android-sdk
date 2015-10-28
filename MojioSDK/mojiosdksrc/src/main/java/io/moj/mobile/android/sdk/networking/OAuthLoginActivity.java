@@ -3,13 +3,15 @@ package io.moj.mobile.android.sdk.networking;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import io.moj.mobile.android.sdk.DataStorageHelper;
+import io.moj.mobile.android.sdk.OAuthHelper;
 import io.moj.mobile.android.sdk.R;
+import io.moj.mobile.android.sdk.enums.Environment;
 
 public class OAuthLoginActivity extends Activity {
 
@@ -18,7 +20,7 @@ public class OAuthLoginActivity extends Activity {
     private static final String EXTRA_URL_REDIRECT = "EXTRA_URL_REDIRECT";
     private static final String TAG = OAuthLoginActivity.class.getSimpleName();
 
-    private DataStorageHelper oAuthHelper;
+    private OAuthHelper oAuthHelper;
     private String redirectUrl;
 
     @Override
@@ -27,10 +29,9 @@ public class OAuthLoginActivity extends Activity {
         setContentView(R.layout.activity_oauth_login);
 
         Bundle extras = getIntent().getExtras();
-        String authUrl = extras.getString("URL_AUTH_PATH");
+        final String authUrl = extras.getString("URL_AUTH_PATH") + "&redirect_uri=" + redirectUrl;
         redirectUrl = extras.getString("REDIRECT_URL");
-        authUrl += "&redirect_uri=" + redirectUrl; // Add redirectUrl
-        oAuthHelper = new DataStorageHelper(this);
+        oAuthHelper = new OAuthHelper(this);
 
         WebView webView = (WebView) findViewById(R.id.loginwebview);
         webView.setWebViewClient(new WebViewClient() {
@@ -42,7 +43,10 @@ public class OAuthLoginActivity extends Activity {
                     String[] parameters = url.split("&");
                     String[] accessToken = parameters[0].split("=");
                     String[] expiresIn = parameters[2].split("=");
-                    oAuthHelper.setAccessToken(accessToken[1], expiresIn[1]);
+
+                    Uri uri = Uri.parse(authUrl);
+                    Environment environment = Environment.fromHostname(uri.getAuthority());
+                    oAuthHelper.setAccessToken(accessToken[1], expiresIn[1], environment);
 
                     // Return in bundle, but also stored in shared prefs
                     Bundle bundle = new Bundle();

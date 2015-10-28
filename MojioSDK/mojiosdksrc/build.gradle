@@ -17,11 +17,6 @@ android {
         }
     }
 
-    productFlavors {
-        beta { }
-        prod { }
-    }
-
     testOptions {
         // lets us not explode on OS calls (e.g. Log.e())
         unitTests.returnDefaultValues = true

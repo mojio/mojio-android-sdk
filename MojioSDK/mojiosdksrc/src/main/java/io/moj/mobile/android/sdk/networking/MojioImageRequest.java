@@ -5,11 +5,10 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
 import com.android.volley.toolbox.ImageRequest;
 
-import io.moj.mobile.android.sdk.DataStorageHelper;
+import io.moj.mobile.android.sdk.OAuthHelper;
 import io.moj.mobile.android.sdk.MojioClient;
 
 import java.util.HashMap;
@@ -57,7 +56,7 @@ public class MojioImageRequest extends ImageRequest {
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        DataStorageHelper oauth = new DataStorageHelper(context);
+        OAuthHelper oauth = new OAuthHelper(context);
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.putAll(super.getHeaders());
 
