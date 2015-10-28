@@ -412,9 +412,9 @@ public class MojioClient {
      * @param listener
      * @param <T>
      */
-    public <T> void deleteV2(final Class<T> modelClass, String entityPath, String contentBody, final ResponseListener<T> listener) {
+    public <T> void deleteV2(final Class<T> modelClass, String entityPath, final ResponseListener<T> listener) {
         addRequestToQueue(new MojioRequest<>(context, Request.Method.DELETE,
-                environment.getApiUrl(2) + entityPath, modelClass, contentBody, listener));
+                environment.getApiUrl(2) + entityPath, modelClass, listener));
     }
 
     /**
