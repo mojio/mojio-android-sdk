@@ -37,6 +37,33 @@ public class Event extends MojioObject {
     @SerializedName("ConnectionLost")
     private boolean connectionLost;
 
+    @SerializedName("Altitude")
+    private float altitude;
+
+    @SerializedName("Heading")
+    private float heading;
+
+    @SerializedName("FuelLevel")
+    private float fuelLevel;
+
+    @SerializedName("FuelEfficiency")
+    private float fuelEfficiency;
+
+    @SerializedName("Speed")
+    private float speed;
+
+    @SerializedName("Acceleration")
+    private float acceleration;
+
+    @SerializedName("Deceleration")
+    private float deceleration;
+
+    @SerializedName("Odometer")
+    private float odometer;
+
+    @SerializedName("RPM")
+    private float rpm;
+
     @SerializedName("_id")
     private String id;
 
@@ -120,10 +147,82 @@ public class Event extends MojioObject {
         this.type = type;
     }
 
+    public float getAcceleration() {
+        return acceleration;
+    }
+
+    public void setAcceleration(float acceleration) {
+        this.acceleration = acceleration;
+    }
+
+    public float getAltitude() {
+        return altitude;
+    }
+
+    public void setAltitude(float altitude) {
+        this.altitude = altitude;
+    }
+
+    public float getDeceleration() {
+        return deceleration;
+    }
+
+    public void setDeceleration(float deceleration) {
+        this.deceleration = deceleration;
+    }
+
+    public float getFuelEfficiency() {
+        return fuelEfficiency;
+    }
+
+    public void setFuelEfficiency(float fuelEfficiency) {
+        this.fuelEfficiency = fuelEfficiency;
+    }
+
+    public float getFuelLevel() {
+        return fuelLevel;
+    }
+
+    public void setFuelLevel(float fuelLevel) {
+        this.fuelLevel = fuelLevel;
+    }
+
+    public float getHeading() {
+        return heading;
+    }
+
+    public void setHeading(float heading) {
+        this.heading = heading;
+    }
+
+    public float getOdometer() {
+        return odometer;
+    }
+
+    public void setOdometer(float odometer) {
+        this.odometer = odometer;
+    }
+
+    public float getRpm() {
+        return rpm;
+    }
+
+    public void setRpm(float rpm) {
+        this.rpm = rpm;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
+
     @Override
     public String toString() {
         return "Event{" +
-                "batteryVoltage=" + batteryVoltage +
+                "acceleration=" + acceleration +
                 ", mojioId='" + mojioId + '\'' +
                 ", vehicleId='" + vehicleId + '\'' +
                 ", ownerId='" + ownerId + '\'' +
@@ -131,7 +230,16 @@ public class Event extends MojioObject {
                 ", time='" + time + '\'' +
                 ", location=" + location +
                 ", timeIsApprox=" + timeIsApprox +
+                ", batteryVoltage=" + batteryVoltage +
                 ", connectionLost=" + connectionLost +
+                ", altitude=" + altitude +
+                ", heading=" + heading +
+                ", fuelLevel=" + fuelLevel +
+                ", fuelEfficiency=" + fuelEfficiency +
+                ", speed=" + speed +
+                ", deceleration=" + deceleration +
+                ", odometer=" + odometer +
+                ", rpm=" + rpm +
                 ", id='" + id + '\'' +
                 '}';
     }
