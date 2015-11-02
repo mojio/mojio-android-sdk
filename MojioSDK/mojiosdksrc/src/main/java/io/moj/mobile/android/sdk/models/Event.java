@@ -37,9 +37,6 @@ public class Event extends MojioObject {
     @SerializedName("ConnectionLost")
     private boolean connectionLost;
 
-    @SerializedName("_id")
-    private String id;
-
     public float getBatteryVoltage() {
         return batteryVoltage;
     }
@@ -54,14 +51,6 @@ public class Event extends MojioObject {
 
     public void setConnectionLost(boolean connectionLost) {
         this.connectionLost = connectionLost;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public Location getLocation() {
@@ -132,7 +121,6 @@ public class Event extends MojioObject {
                 ", location=" + location +
                 ", timeIsApprox=" + timeIsApprox +
                 ", connectionLost=" + connectionLost +
-                ", id='" + id + '\'' +
-                '}';
+                "} " + super.toString();
     }
 }

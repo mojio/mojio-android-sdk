@@ -70,9 +70,6 @@ public class Trip extends MojioObject {
     @SerializedName("StartOdometer")
     private float startOdometer;
 
-    @SerializedName("_id")
-    private String id;
-
     public float getDistance() {
         return distance;
     }
@@ -135,14 +132,6 @@ public class Trip extends MojioObject {
 
     public void setFuelLevel(float fuelLevel) {
         this.fuelLevel = fuelLevel;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public Location getLastKnownLocation() {
@@ -273,7 +262,6 @@ public class Trip extends MojioObject {
                 ", startMilage=" + startMilage +
                 ", endMilage=" + endMilage +
                 ", startOdometer=" + startOdometer +
-                ", id='" + id + '\'' +
-                '}';
+                "} " + super.toString();
     }
 }

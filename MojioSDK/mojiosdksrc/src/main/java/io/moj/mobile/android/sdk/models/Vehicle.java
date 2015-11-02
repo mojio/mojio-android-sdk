@@ -2,7 +2,7 @@ package io.moj.mobile.android.sdk.models;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Model class for a vehicle.
@@ -13,8 +13,8 @@ public class Vehicle extends MojioObject {
     @SerializedName("OwnerId")
     private String ownerId;
 
-    @SerializedName("MojioId")
-    private String MojioId;
+    @SerializedName("mojioId")
+    private String mojioId;
 
     @SerializedName("Name")
     private String name;
@@ -28,8 +28,8 @@ public class Vehicle extends MojioObject {
     @SerializedName("IgnitionOn")
     private boolean ignitionOn;
 
-    @SerializedName("VehicleTime")
-    private String VehicleTime;
+    @SerializedName("vehicleTime")
+    private String vehicleTime;
 
     @SerializedName("LastTripEvent")
     private String lastTripEvent;
@@ -92,25 +92,22 @@ public class Vehicle extends MojioObject {
     private boolean faultsDetected;
 
     @SerializedName("LastLocationTimes")
-    private ArrayList<String> lastLocationTimes;
+    private List<String> lastLocationTimes;
 
     @SerializedName("LastLocations")
-    private ArrayList<Location> lastLocations;
+    private List<Location> lastLocations;
 
     @SerializedName("LastSpeeds")
-    private ArrayList<Float> lastSpeeds;
+    private List<Float> lastSpeeds;
 
     @SerializedName("LastHeadings")
-    private ArrayList<Float> lastHeadings;
+    private List<Float> lastHeadings;
 
     @SerializedName("LastAltitudes")
-    private ArrayList<Float> lastAltitudes;
+    private List<Float> lastAltitudes;
 
     @SerializedName("Viewers")
-    private ArrayList<String> viewers;
-
-    @SerializedName("_id")
-    private String id;
+    private List<String> viewers;
 
     public String getOwnerId() {
         return ownerId;
@@ -121,11 +118,11 @@ public class Vehicle extends MojioObject {
     }
 
     public String getMojioId() {
-        return MojioId;
+        return mojioId;
     }
 
     public void setMojioId(String mojioId) {
-        MojioId = mojioId;
+        this.mojioId = mojioId;
     }
 
     public String getName() {
@@ -161,11 +158,11 @@ public class Vehicle extends MojioObject {
     }
 
     public String getVehicleTime() {
-        return VehicleTime;
+        return vehicleTime;
     }
 
     public void setVehicleTime(String vehicleTime) {
-        VehicleTime = vehicleTime;
+        this.vehicleTime = vehicleTime;
     }
 
     public String getLastTripEvent() {
@@ -328,60 +325,52 @@ public class Vehicle extends MojioObject {
         this.faultsDetected = faultsDetected;
     }
 
-    public ArrayList<String> getLastLocationTimes() {
+    public List<String> getLastLocationTimes() {
         return lastLocationTimes;
     }
 
-    public void setLastLocationTimes(ArrayList<String> lastLocationTimes) {
+    public void setLastLocationTimes(List<String> lastLocationTimes) {
         this.lastLocationTimes = lastLocationTimes;
     }
 
-    public ArrayList<Location> getLastLocations() {
+    public List<Location> getLastLocations() {
         return lastLocations;
     }
 
-    public void setLastLocations(ArrayList<Location> lastLocations) {
+    public void setLastLocations(List<Location> lastLocations) {
         this.lastLocations = lastLocations;
     }
 
-    public ArrayList<Float> getLastSpeeds() {
+    public List<Float> getLastSpeeds() {
         return lastSpeeds;
     }
 
-    public void setLastSpeeds(ArrayList<Float> lastSpeeds) {
+    public void setLastSpeeds(List<Float> lastSpeeds) {
         this.lastSpeeds = lastSpeeds;
     }
 
-    public ArrayList<Float> getLastHeadings() {
+    public List<Float> getLastHeadings() {
         return lastHeadings;
     }
 
-    public void setLastHeadings(ArrayList<Float> lastHeadings) {
+    public void setLastHeadings(List<Float> lastHeadings) {
         this.lastHeadings = lastHeadings;
     }
 
-    public ArrayList<Float> getLastAltitudes() {
+    public List<Float> getLastAltitudes() {
         return lastAltitudes;
     }
 
-    public void setLastAltitudes(ArrayList<Float> lastAltitudes) {
+    public void setLastAltitudes(List<Float> lastAltitudes) {
         this.lastAltitudes = lastAltitudes;
     }
 
-    public ArrayList<String> getViewers() {
+    public List<String> getViewers() {
         return viewers;
     }
 
-    public void setViewers(ArrayList<String> viewers) {
+    public void setViewers(List<String> viewers) {
         this.viewers = viewers;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     @Override
@@ -389,12 +378,12 @@ public class Vehicle extends MojioObject {
         return "Vehicle{" +
                 "currentTrip='" + currentTrip + '\'' +
                 ", ownerId='" + ownerId + '\'' +
-                ", MojioId='" + MojioId + '\'' +
+                ", mojioId='" + mojioId + '\'' +
                 ", name='" + name + '\'' +
                 ", VIN='" + VIN + '\'' +
                 ", licensePlate='" + licensePlate + '\'' +
                 ", ignitionOn=" + ignitionOn +
-                ", VehicleTime='" + VehicleTime + '\'' +
+                ", vehicleTime='" + vehicleTime + '\'' +
                 ", lastTripEvent='" + lastTripEvent + '\'' +
                 ", lastLocationTime='" + lastLocationTime + '\'' +
                 ", lastLocation=" + lastLocation +
@@ -420,7 +409,6 @@ public class Vehicle extends MojioObject {
                 ", lastHeadings=" + lastHeadings +
                 ", lastAltitudes=" + lastAltitudes +
                 ", viewers=" + viewers +
-                ", id='" + id + '\'' +
-                '}';
+                "} " + super.toString();
     }
 }

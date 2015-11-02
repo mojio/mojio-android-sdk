@@ -26,9 +26,6 @@ public class DiagnosticCode extends MojioObject {
     @SerializedName("Severity")
     private Severity Severity;
 
-    @SerializedName("_id")
-    private String id;
-
     public String getCategory() {
         return category;
     }
@@ -61,14 +58,6 @@ public class DiagnosticCode extends MojioObject {
         this.details = details;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public io.moj.mobile.android.sdk.models.Severity getSeverity() {
         return Severity;
     }
@@ -94,7 +83,6 @@ public class DiagnosticCode extends MojioObject {
                 ", details='" + details + '\'' +
                 ", source='" + source + '\'' +
                 ", Severity=" + Severity +
-                ", id='" + id + '\'' +
                 '}';
     }
 }

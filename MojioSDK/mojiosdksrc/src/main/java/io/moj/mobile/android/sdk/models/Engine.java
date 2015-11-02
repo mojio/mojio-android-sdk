@@ -335,6 +335,6 @@ public class Engine extends MojioObject {
                 ", stroke='" + stroke + '\'' +
                 ", valveTiming='" + valveTiming + '\'' +
                 ", valves='" + valves + '\'' +
-                '}';
+                "} " + super.toString();
     }
 }

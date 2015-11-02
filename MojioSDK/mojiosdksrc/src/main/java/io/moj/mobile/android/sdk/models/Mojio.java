@@ -29,17 +29,6 @@ public class Mojio extends MojioObject {
     @SerializedName("SSIDPassword")
     private String ssidPassword;
 
-    @SerializedName("_id")
-    private String id;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getImei() {
         return imei;
     }
@@ -99,14 +88,13 @@ public class Mojio extends MojioObject {
     @Override
     public String toString() {
         return "Mojio{" +
-                "ownerId='" + ownerId + '\'' +
+                "imei='" + imei + '\'' +
+                ", ownerId='" + ownerId + '\'' +
                 ", name='" + name + '\'' +
-                ", imei='" + imei + '\'' +
                 ", lastContactTime='" + lastContactTime + '\'' +
                 ", vehicleId='" + vehicleId + '\'' +
                 ", ssid='" + ssid + '\'' +
                 ", ssidPassword='" + ssidPassword + '\'' +
-                ", id='" + id + '\'' +
-                '}';
+                "} " + super.toString();
     }
 }

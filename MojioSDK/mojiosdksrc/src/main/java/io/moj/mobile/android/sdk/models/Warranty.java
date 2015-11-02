@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * Model class for a warranty.
  * Created by skidson on 15-09-21.
  */
-public class Warranty extends MojioObject {
+public class Warranty {
 
     @SerializedName("Name")
     private String name;

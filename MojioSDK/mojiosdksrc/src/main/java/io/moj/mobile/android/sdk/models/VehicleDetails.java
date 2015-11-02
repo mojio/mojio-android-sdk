@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Model class for vehicle details.
@@ -81,22 +82,19 @@ public class VehicleDetails extends MojioObject {
     private Engine installedEngine;
 
     @SerializedName("Engines")
-    private ArrayList<Engine> engines;
+    private List<Engine> engines;
 
     @SerializedName("Transmissions")
-    private ArrayList<Transmission> transmissions;
+    private List<Transmission> transmissions;
 
     @SerializedName("Warranties")
-    private ArrayList<Warranty> warranties;
+    private List<Warranty> warranties;
 
-    @SerializedName("ServiceBulletins")
-    private ServiceBulletin [] ServiceBulletins;
+    @SerializedName("serviceBulletins")
+    private List<ServiceBulletin> serviceBulletins;
 
-    @SerializedName("Recalls")
-    private Recall [] Recalls;
-
-    @SerializedName("_id")
-    private String id;
+    @SerializedName("recalls")
+    private List<Recall> recalls;
 
     public String getBodySubType() {
         return bodySubType;
@@ -146,14 +144,6 @@ public class VehicleDetails extends MojioObject {
         this.driveType = driveType;
     }
 
-    public ArrayList<Engine> getEngines() {
-        return engines;
-    }
-
-    public void setEngines(ArrayList<Engine> engines) {
-        this.engines = engines;
-    }
-
     public float getEpaFuelEfficiency() {
         return epaFuelEfficiency;
     }
@@ -168,14 +158,6 @@ public class VehicleDetails extends MojioObject {
 
     public void setFuelTankSize(float fuelTankSize) {
         this.fuelTankSize = fuelTankSize;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getMake() {
@@ -242,14 +224,6 @@ public class VehicleDetails extends MojioObject {
         this.plant = plant;
     }
 
-    public Recall[] getRecalls() {
-        return Recalls;
-    }
-
-    public void setRecalls(Recall[] recalls) {
-        Recalls = recalls;
-    }
-
     public String getRestraintType() {
         return restraintType;
     }
@@ -258,28 +232,12 @@ public class VehicleDetails extends MojioObject {
         this.restraintType = restraintType;
     }
 
-    public ServiceBulletin[] getServiceBulletins() {
-        return ServiceBulletins;
-    }
-
-    public void setServiceBulletins(ServiceBulletin[] serviceBulletins) {
-        ServiceBulletins = serviceBulletins;
-    }
-
     public String getTimestamp() {
         return timestamp;
     }
 
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
-    }
-
-    public ArrayList<Transmission> getTransmissions() {
-        return transmissions;
-    }
-
-    public void setTransmissions(ArrayList<Transmission> transmissions) {
-        this.transmissions = transmissions;
     }
 
     public String getTrim() {
@@ -306,14 +264,6 @@ public class VehicleDetails extends MojioObject {
         this.vin = vin;
     }
 
-    public ArrayList<Warranty> getWarranties() {
-        return warranties;
-    }
-
-    public void setWarranties(ArrayList<Warranty> warranties) {
-        this.warranties = warranties;
-    }
-
     public String getYear() {
         return year;
     }
@@ -328,6 +278,46 @@ public class VehicleDetails extends MojioObject {
 
     public void setInstalledEngine(Engine installedEngine) {
         this.installedEngine = installedEngine;
+    }
+
+    public List<Engine> getEngines() {
+        return engines;
+    }
+
+    public void setEngines(List<Engine> engines) {
+        this.engines = engines;
+    }
+
+    public List<Recall> getRecalls() {
+        return recalls;
+    }
+
+    public void setRecalls(List<Recall> recalls) {
+        this.recalls = recalls;
+    }
+
+    public List<ServiceBulletin> getServiceBulletins() {
+        return serviceBulletins;
+    }
+
+    public void setServiceBulletins(List<ServiceBulletin> serviceBulletins) {
+        this.serviceBulletins = serviceBulletins;
+    }
+
+    public List<Transmission> getTransmissions() {
+        return transmissions;
+    }
+
+    public void setTransmissions(List<Transmission> transmissions) {
+        this.transmissions = transmissions;
+    }
+
+    public List<Warranty> getWarranties() {
+        return warranties;
+    }
+
+    public void setWarranties(List<Warranty> warranties) {
+        this.warranties = warranties;
     }
 
     @Override
@@ -359,9 +349,8 @@ public class VehicleDetails extends MojioObject {
                 ", engines=" + engines +
                 ", transmissions=" + transmissions +
                 ", warranties=" + warranties +
-                ", ServiceBulletins=" + Arrays.toString(ServiceBulletins) +
-                ", Recalls=" + Arrays.toString(Recalls) +
-                ", id='" + id + '\'' +
-                '}';
+                ", serviceBulletins=" + serviceBulletins +
+                ", recalls=" + recalls +
+                "} " + super.toString();
     }
 }

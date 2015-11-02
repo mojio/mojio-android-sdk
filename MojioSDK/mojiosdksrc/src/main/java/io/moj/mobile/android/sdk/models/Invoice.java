@@ -48,9 +48,6 @@ public class Invoice extends MojioObject {
     @SerializedName("Status")
     private Integer status;
 
-    @SerializedName("_id")
-    private String id;
-
     @SerializedName("Type")
     private String type = "Invoice";
 
@@ -100,14 +97,6 @@ public class Invoice extends MojioObject {
 
     public void setDetails(String details) {
         this.details = details;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getOwnerId() {
@@ -173,9 +162,7 @@ public class Invoice extends MojioObject {
                 ", total=" + total +
                 ", statusMessage='" + statusMessage + '\'' +
                 ", status=" + status +
-                ", id='" + id + '\'' +
                 ", type='" + type + '\'' +
-                '}';
+                "} " + super.toString();
     }
-
 }

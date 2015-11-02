@@ -4,11 +4,13 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
+import io.moj.mobile.android.sdk.models.MojioObject;
+
 /**
  * Model class for an observer.
  * Created by jian on 01/04/2015.
  */
-public class Observer {
+public class Observer extends MojioObject {
 
     // TODO we should create a Builder for Observers to make it clearer what is required
 
@@ -58,9 +60,6 @@ public class Observer {
     @SerializedName("NextAllowedBroadcast")
     public String nextAllowedBroadcast;
 
-    @SerializedName("_id")
-    public String id;
-
     public String getAppId() {
         return appId;
     }
@@ -75,14 +74,6 @@ public class Observer {
 
     public void setBroadcastOnlyRecent(boolean broadcastOnlyRecent) {
         this.broadcastOnlyRecent = broadcastOnlyRecent;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -207,7 +198,6 @@ public class Observer {
                 ", broadcastOnlyRecent=" + broadcastOnlyRecent +
                 ", throttle='" + throttle + '\'' +
                 ", nextAllowedBroadcast='" + nextAllowedBroadcast + '\'' +
-                ", id='" + id + '\'' +
-                '}';
+                "} " + super.toString();
     }
 }
