@@ -64,9 +64,6 @@ public class Event extends MojioObject {
     @SerializedName("RPM")
     private float rpm;
 
-    @SerializedName("_id")
-    private String id;
-
     public float getBatteryVoltage() {
         return batteryVoltage;
     }
@@ -232,7 +229,6 @@ public class Event extends MojioObject {
                 ", deceleration=" + deceleration +
                 ", odometer=" + odometer +
                 ", rpm=" + rpm +
-                ", id='" + id + '\'' +
                 "} " + super.toString();
     }
 }
