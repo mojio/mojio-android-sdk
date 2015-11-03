@@ -26,9 +26,6 @@ public class Token extends MojioObject {
     @SerializedName("Deprecated")
     private boolean Deprecated;
 
-    @SerializedName("_id")
-    private String id;
-
     public String getAppId() {
         return AppId;
     }
@@ -43,14 +40,6 @@ public class Token extends MojioObject {
 
     public void setDeprecated(boolean deprecated) {
         Deprecated = deprecated;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public boolean isSandboxed() {
@@ -94,7 +83,6 @@ public class Token extends MojioObject {
                 ", Scopes='" + Scopes + '\'' +
                 ", Sandboxed=" + Sandboxed +
                 ", Deprecated=" + Deprecated +
-                ", id='" + id + '\'' +
-                '}';
+                "} " + super.toString();
     }
 }

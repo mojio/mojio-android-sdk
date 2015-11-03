@@ -3,6 +3,7 @@ package io.moj.mobile.android.sdk.models;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.moj.mobile.android.sdk.models.DiagnosticCode;
 
@@ -16,7 +17,7 @@ public class DiagnosticStatus extends MojioObject {
     private String timestamp;
 
     @SerializedName("DiagnosticCodes")
-    private ArrayList<DiagnosticCode> diagnosticCodes;
+    private List<DiagnosticCode> diagnosticCodes;
 
     public String getTimestamp() {
         return timestamp;
@@ -26,7 +27,7 @@ public class DiagnosticStatus extends MojioObject {
         this.timestamp = timestamp;
     }
 
-    public ArrayList<DiagnosticCode> getDiagnosticCodes() {
+    public List<DiagnosticCode> getDiagnosticCodes() {
         return diagnosticCodes;
     }
 

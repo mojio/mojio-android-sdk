@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Model class for vehicle service.
  * Created by ssawchenko on 15-04-01.
  */
-public class VehicleService extends MojioObject {
+public class VehicleService {
 
     @SerializedName("DOVehicleId")
     private int DOVehicleId;

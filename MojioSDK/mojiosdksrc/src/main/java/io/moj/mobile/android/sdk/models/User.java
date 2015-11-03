@@ -13,8 +13,8 @@ public class User extends MojioObject {
     @SerializedName("LastName")
     private String lastName;
 
-    @SerializedName("Email")
-    private String Email;
+    @SerializedName("email")
+    private String email;
 
     @SerializedName("CreationDate")
     private String creationDate;
@@ -28,14 +28,11 @@ public class User extends MojioObject {
     @SerializedName("Locale")
     private String locale;
 
-    @SerializedName("PhoneNumber")
-    private String PhoneNumber;
+    @SerializedName("phoneNumber")
+    private String phoneNumber;
 
-    @SerializedName("Name")
-    private String Name;
-
-    @SerializedName("_id")
-    private String id;
+    @SerializedName("name")
+    private String name;
 
     public String getCreationDate() {
         return creationDate;
@@ -46,11 +43,11 @@ public class User extends MojioObject {
     }
 
     public String getEmail() {
-        return Email;
+        return email;
     }
 
     public void setEmail(String email) {
-        Email = email;
+        this.email = email;
     }
 
     public String getFirstName() {
@@ -59,14 +56,6 @@ public class User extends MojioObject {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getLastActivityDate() {
@@ -102,19 +91,19 @@ public class User extends MojioObject {
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
     public String getPhoneNumber() {
-        return PhoneNumber;
+        return phoneNumber;
     }
 
     public void setPhoneNumber(String phoneNumber) {
-        PhoneNumber = phoneNumber;
+        this.phoneNumber = phoneNumber;
     }
 
     public String getUserName() {
@@ -132,13 +121,12 @@ public class User extends MojioObject {
                 ", userName='" + userName + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", Email='" + Email + '\'' +
+                ", email='" + email + '\'' +
                 ", lastActivityDate='" + lastActivityDate + '\'' +
                 ", lastLoginDate='" + lastLoginDate + '\'' +
                 ", locale='" + locale + '\'' +
-                ", PhoneNumber='" + PhoneNumber + '\'' +
-                ", Name='" + Name + '\'' +
-                ", id='" + id + '\'' +
-                '}';
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", name='" + name + '\'' +
+                "} " + super.toString();
     }
 }

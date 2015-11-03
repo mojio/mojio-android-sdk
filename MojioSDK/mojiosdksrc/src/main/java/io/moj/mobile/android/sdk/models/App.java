@@ -21,9 +21,6 @@ public class App extends MojioObject {
     @SerializedName("ApplicationType")
     private int type;
 
-    @SerializedName("_id")
-    private String id;
-
     public String getName() {
         return name;
     }
@@ -64,23 +61,14 @@ public class App extends MojioObject {
         this.type = type;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     @Override
     public String toString() {
         return "App{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
+                "description='" + description + '\'' +
+                ", name='" + name + '\'' +
                 ", downloads=" + downloads +
                 ", redirectUris=" + redirectUris +
                 ", type=" + type +
-                ", id='" + id + '\'' +
-                '}';
+                "} " + super.toString();
     }
 }

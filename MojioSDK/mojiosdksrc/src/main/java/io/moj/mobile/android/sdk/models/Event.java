@@ -83,14 +83,6 @@ public class Event extends MojioObject {
         this.connectionLost = connectionLost;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public Location getLocation() {
         return location;
     }
@@ -241,6 +233,6 @@ public class Event extends MojioObject {
                 ", odometer=" + odometer +
                 ", rpm=" + rpm +
                 ", id='" + id + '\'' +
-                '}';
+                "} " + super.toString();
     }
 }

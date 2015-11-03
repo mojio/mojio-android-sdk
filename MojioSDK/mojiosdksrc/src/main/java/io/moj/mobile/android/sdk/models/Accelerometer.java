@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Model class for an accelerometer measurement.
  */
-public class Accelerometer extends MojioObject {
+public class Accelerometer {
 
 	@SerializedName("X")
 	private float x;

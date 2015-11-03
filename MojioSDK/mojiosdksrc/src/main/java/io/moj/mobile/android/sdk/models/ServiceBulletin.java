@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Model class for a service bulletin.
  * Created by ssawchenko on 15-03-19.
  */
-public class ServiceBulletin extends MojioObject {
+public class ServiceBulletin {
 
     @SerializedName("ItemNumber")
     private String itemNumber;
