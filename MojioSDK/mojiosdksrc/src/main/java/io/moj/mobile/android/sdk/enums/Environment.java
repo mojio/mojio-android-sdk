@@ -11,6 +11,7 @@ import java.util.Map;
 public enum Environment {
 
     PLATFORM_1("api.moj.io", true),
+    API2("api2.moj.io", false),
     PROD("prod-api.moj.io", false),
     CZECH("cz-api.moj.io", false),
     TRIAL("trial-api.moj.io", false),
@@ -63,7 +64,7 @@ public enum Environment {
     }
 
     public static Environment getDefault() {
-        return PLATFORM_1;
+        return API2;
     }
 
     public static Environment fromHostname(String hostname) {
