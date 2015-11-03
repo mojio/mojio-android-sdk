@@ -13,7 +13,7 @@ public class User extends MojioObject {
     @SerializedName("LastName")
     private String lastName;
 
-    @SerializedName("email")
+    @SerializedName("Email")
     private String email;
 
     @SerializedName("CreationDate")
