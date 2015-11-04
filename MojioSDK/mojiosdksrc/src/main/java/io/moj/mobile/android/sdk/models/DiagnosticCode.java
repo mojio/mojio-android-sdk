@@ -24,7 +24,7 @@ public class DiagnosticCode extends MojioObject {
     private String category;
 
     @SerializedName("Severity")
-    private Severity Severity;
+    private Severity severity;
 
     public String getCategory() {
         return category;
@@ -59,11 +59,11 @@ public class DiagnosticCode extends MojioObject {
     }
 
     public io.moj.mobile.android.sdk.models.Severity getSeverity() {
-        return Severity;
+        return severity;
     }
 
     public void setSeverity(io.moj.mobile.android.sdk.models.Severity severity) {
-        Severity = severity;
+        this.severity = severity;
     }
 
     public String getSource() {
@@ -82,7 +82,7 @@ public class DiagnosticCode extends MojioObject {
                 ", description='" + description + '\'' +
                 ", details='" + details + '\'' +
                 ", source='" + source + '\'' +
-                ", Severity=" + Severity +
+                ", Severity=" + severity +
                 '}';
     }
 }
