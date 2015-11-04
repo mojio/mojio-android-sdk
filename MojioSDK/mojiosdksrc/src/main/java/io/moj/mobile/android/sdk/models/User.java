@@ -28,10 +28,10 @@ public class User extends MojioObject {
     @SerializedName("Locale")
     private String locale;
 
-    @SerializedName("phoneNumber")
+    @SerializedName("PhoneNumber")
     private String phoneNumber;
 
-    @SerializedName("name")
+    @SerializedName("Name")
     private String name;
 
     public String getCreationDate() {

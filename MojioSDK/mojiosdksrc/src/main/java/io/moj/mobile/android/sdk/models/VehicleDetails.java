@@ -90,10 +90,10 @@ public class VehicleDetails extends MojioObject {
     @SerializedName("Warranties")
     private List<Warranty> warranties;
 
-    @SerializedName("serviceBulletins")
+    @SerializedName("ServiceBulletins")
     private List<ServiceBulletin> serviceBulletins;
 
-    @SerializedName("recalls")
+    @SerializedName("Recalls")
     private List<Recall> recalls;
 
     public String getBodySubType() {

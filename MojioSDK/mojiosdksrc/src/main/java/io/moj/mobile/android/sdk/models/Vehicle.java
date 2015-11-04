@@ -13,7 +13,7 @@ public class Vehicle extends MojioObject {
     @SerializedName("OwnerId")
     private String ownerId;
 
-    @SerializedName("mojioId")
+    @SerializedName("MojioId")
     private String mojioId;
 
     @SerializedName("Name")
@@ -28,7 +28,7 @@ public class Vehicle extends MojioObject {
     @SerializedName("IgnitionOn")
     private boolean ignitionOn;
 
-    @SerializedName("vehicleTime")
+    @SerializedName("VehicleTime")
     private String vehicleTime;
 
     @SerializedName("LastTripEvent")
