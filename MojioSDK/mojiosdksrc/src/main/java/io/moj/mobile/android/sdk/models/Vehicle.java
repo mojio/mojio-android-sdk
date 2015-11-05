@@ -22,6 +22,12 @@ public class Vehicle extends MojioObject {
     @SerializedName("VIN")
     private String VIN;
 
+    @SerializedName("DetectedVIN")
+    private String detectedVIN;
+
+    @SerializedName("HasVINOverride")
+    private boolean hasVINOverride;
+
     @SerializedName("LicensePlate")
     private String licensePlate;
 
@@ -139,6 +145,22 @@ public class Vehicle extends MojioObject {
 
     public void setVIN(String VIN) {
         this.VIN = VIN;
+    }
+
+    public String getDetectedVIN() {
+        return detectedVIN;
+    }
+
+    public void setDetectedVIN(String detectedVIN) {
+        this.detectedVIN = detectedVIN;
+    }
+
+    public boolean getHasVINOverride() {
+        return hasVINOverride;
+    }
+
+    public void setHasVINOverride(boolean hasVINOverride) {
+        this.hasVINOverride = hasVINOverride;
     }
 
     public String getLicensePlate() {
