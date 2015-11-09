@@ -9,8 +9,9 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/libraries" />
-            <option value="$PROJECT_DIR$/mojiosdksrc" />
+            <option value="$PROJECT_DIR$/auth" />
+            <option value="$PROJECT_DIR$/model" />
+            <option value="$PROJECT_DIR$/rest" />
           </set>
         </option>
       </GradleProjectSettings>

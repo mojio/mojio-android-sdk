@@ -1,1 +1,1 @@
-include ':mojiosdksrc', ':libraries'
+include ':auth', ':rest', ':model'
