@@ -9,9 +9,9 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
@@ -43,12 +43,6 @@ import microsoft.aspnet.signalr.client.hubs.SubscriptionHandler1;
 import microsoft.aspnet.signalr.client.transport.LongPollingTransport;
 
 public class MojioClient {
-
-    public static final int RESPONSE_ERR_UNKNOWN = 0;
-    public static final int RESPONSE_ERR_NOT_LOGGED_IN = 1;
-    public static final int RESPONSE_ERR_SIGNALR_ERROR = 2;
-    public static final int RESPONSE_ERR_VOLLEY_ERROR = 3;
-    public static final int RESPONSE_ERR_SERVER_TIMEOUT = 4;
 
     private static final String TAG = MojioClient.class.getSimpleName();
     private static final String ENCODING = "UTF-8";
@@ -250,7 +244,7 @@ public class MojioClient {
         String currentAccessToken = oauthHelper.getAccessToken();
 
         if (currentAccessToken == null) {
-            ResponseError error = new ResponseError("Not logged in", RESPONSE_ERR_NOT_LOGGED_IN);
+            ResponseError error = new ResponseError("Not logged in");
             responseListener.onFailure(error);
             return;
         }
@@ -597,9 +591,7 @@ public class MojioClient {
         hub.on("Error", new SubscriptionHandler1<Object>() {
             @Override
             public void run(Object o) {
-                ResponseError error = new ResponseError(
-                        "Failed to subscribe to signalr hub",
-                        RESPONSE_ERR_SIGNALR_ERROR);
+                ResponseError error = new ResponseError("Failed to subscribe to signalr hub");
                 listener.onFailure(error); // NOTE still on handler thread.
             }
         }, Object.class);
@@ -641,7 +633,7 @@ public class MojioClient {
 
                 @Override
                 public void onFailure(ResponseError error) {
-                    Log.e(TAG, "Failed to refresh access token: " + error.message);
+                    Log.e(TAG, "Failed to refresh access token: " + error.getMessage());
                     refreshTokenLock.set(false);
                 }
             });
@@ -657,74 +649,37 @@ public class MojioClient {
         return GSON;
     }
 
-    private static void reportVolleyError(final VolleyError error, ResponseListener listener) {
-        // Attempt to parse response errors
-        try {
-            ResponseError respErr = new ResponseError();
-            respErr.message = new String(error.networkResponse.data, HttpHeaderParser.parseCharset(error.networkResponse.headers));
-            respErr.type = RESPONSE_ERR_VOLLEY_ERROR;
-            Log.e(TAG, respErr.message);
-            listener.onFailure(respErr);
-        } catch (Exception e) {
-            ResponseError respErr = new ResponseError();
-            if (error instanceof TimeoutError) {
-                respErr.type = RESPONSE_ERR_SERVER_TIMEOUT;
-                respErr.message = "Server timeout";
-            } else {
-                try {
-                    // Report raw volley error
-                    respErr.type = RESPONSE_ERR_VOLLEY_ERROR;
-                    respErr.message = error.getMessage();
-                } catch (Exception e2) {
-                    // Return unknown
-                    respErr.type = RESPONSE_ERR_UNKNOWN;
-                    respErr.message = "Unknown error";
-                }
-            }
-
-            // Last ditch chance to set error; cannot be null
-            if (respErr.message == null) {
-                respErr.type = RESPONSE_ERR_UNKNOWN;
-                respErr.message = "Unknown error";
-            }
-
-            Log.e(TAG, respErr.message, e);
-            listener.onFailure(respErr);
-        }
-    }
-
     public static class ResponseError {
         private String message;
-        private int type;
+        private NetworkResponse networkResponse;
 
-        public ResponseError(String message, int type) {
-            this.message = message;
-            this.type = type;
+        public ResponseError() {
+            this((String) null);
         }
 
         public ResponseError(String message) {
-            this(null, RESPONSE_ERR_UNKNOWN);
+            this.message = message;
         }
 
-        public ResponseError() {
-            this(null);
+        public ResponseError(VolleyError error) {
+            this.networkResponse = error.networkResponse;
+            if (networkResponse != null && networkResponse.data != null) {
+                try {
+                    this.message = new String(networkResponse.data, HttpHeaderParser.parseCharset(networkResponse.headers));
+                } catch (UnsupportedEncodingException e) {
+                    Log.e(TAG, "Error encoding response data", e);
+                }
+            }
         }
 
         public String getMessage() {
             return message;
         }
 
-        public void setMessage(String message) {
-            this.message = message;
+        public NetworkResponse getNetworkResponse() {
+            return this.networkResponse;
         }
 
-        public int getType() {
-            return type;
-        }
-
-        public void setType(int type) {
-            this.type = type;
-        }
     }
 
     public static abstract class ResponseListener<T> implements Response.Listener<MojioResponse<T>>, Response.ErrorListener {
@@ -739,9 +694,7 @@ public class MojioClient {
 
         @Override
         public void onErrorResponse(VolleyError error) {
-            // TODO backwards compatibility - in reality VolleyError objects are all we need
-            // TODO why bother wrapping them with something that does less?
-            reportVolleyError(error, this);
+            onFailure(new ResponseError(error));
         }
     }
 
