@@ -1,1 +1,1 @@
-include ':auth', ':rest', ':model'
+include ':mojio-sdk-auth', ':mojio-sdk-rest', ':mojio-sdk-model'

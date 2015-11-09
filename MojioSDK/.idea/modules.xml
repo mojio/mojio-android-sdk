@@ -3,9 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MojioSDK.iml" filepath="$PROJECT_DIR$/MojioSDK.iml" />
-      <module fileurl="file://$PROJECT_DIR$/auth/auth.iml" filepath="$PROJECT_DIR$/auth/auth.iml" />
-      <module fileurl="file://$PROJECT_DIR$/model/model.iml" filepath="$PROJECT_DIR$/model/model.iml" />
-      <module fileurl="file://$PROJECT_DIR$/rest/rest.iml" filepath="$PROJECT_DIR$/rest/rest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mojio-sdk-auth/mojio-sdk-auth.iml" filepath="$PROJECT_DIR$/mojio-sdk-auth/mojio-sdk-auth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mojio-sdk-model/mojio-sdk-model.iml" filepath="$PROJECT_DIR$/mojio-sdk-model/mojio-sdk-model.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mojio-sdk-rest/mojio-sdk-rest.iml" filepath="$PROJECT_DIR$/mojio-sdk-rest/mojio-sdk-rest.iml" />
     </modules>
   </component>
 </project>
