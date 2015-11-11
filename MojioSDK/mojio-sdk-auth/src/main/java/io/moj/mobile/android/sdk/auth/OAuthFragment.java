@@ -90,14 +90,15 @@ public class OAuthFragment extends Fragment {
         webview.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Uri uri = Uri.parse(url);
+                // OAuth2 RFC specifies the token to use the fragment (#) instead of ? for parameters
+                // but this tricks Uri.parse into thinking everything is a fragment
+                Uri uri = Uri.parse(url.replaceFirst("#", "?"));
                 if (!isRedirectUri(uri))
                     return false;
 
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(uri);
-                intent.putExtra(OAuthActivity.EXTRA_ACCESS_TOKEN, uri.getFragment());
-                intent.putExtra(OAuthActivity.EXTRA_EXPIRES_IN, uri.getQueryParameter("expires_in"));
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                intent.putExtra(OAuthActivity.EXTRA_ACCESS_TOKEN, uri.getQueryParameter("access_token"));
+                intent.putExtra(OAuthActivity.EXTRA_EXPIRES_IN, Long.parseLong(uri.getQueryParameter("expires_in")));
                 intent.putExtra(OAuthActivity.EXTRA_TOKEN_TYPE, uri.getQueryParameter("token_type"));
 
                 if (getActivity().getCallingActivity() != null) {
