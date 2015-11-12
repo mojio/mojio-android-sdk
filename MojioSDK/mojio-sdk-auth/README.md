@@ -16,10 +16,10 @@ The following steps are taken in the sample to perform basic OAuth2; if you wish
 2. Your application can implement the OAuth2 WebView in one of two ways:
 
 #### OAuthActivity ####
-  1. Add **io.moj.mobile.android.sdk.oauth.auth.OAuthActivity** to your AndroidManifest.xml
+  1. Add **io.moj.mobile.android.sdk.oauth.OAuthActivity** to your AndroidManifest.xml
   
   ```
-  <activity android:name="io.moj.mobile.android.sdk.oauth.auth.OAuthActivity" />
+  <activity android:name="io.moj.mobile.android.sdk.oauth.OAuthActivity" />
   ```
 
   2. Create an Intent for OAuthActivity using the newIntent() method. Note your clientId and redirectUri should be the values
