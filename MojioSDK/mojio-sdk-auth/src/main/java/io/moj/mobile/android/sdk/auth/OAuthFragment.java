@@ -53,6 +53,17 @@ public class OAuthFragment extends Fragment {
 
     /**
      * Instantiates a new {@link OAuthFragment} instance.
+     * @param clientId your app's identification token
+     * @param redirectUri the URI to be invoked with the authentication result
+     * @param scope the scope of permissions your app is requesting
+     * @return
+     */
+    public static OAuthFragment newInstance(String clientId, String scope, String redirectUri) {
+        return newInstance(Environment.getDefault(), clientId, scope, redirectUri);
+    }
+
+    /**
+     * Instantiates a new {@link OAuthFragment} instance.
      * @param environment the environment to authenticate against
      * @param clientId your app's identification token
      * @param redirectUri the URI to be invoked with the authentication result
