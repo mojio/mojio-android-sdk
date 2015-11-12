@@ -1,0 +1,1 @@
+include ':mojio-sdk-auth', ':mojio-sdk-rest', ':mojio-sdk-model'
