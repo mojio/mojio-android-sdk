@@ -1,4 +1,4 @@
-package io.moj.mobile.android.sdk.auth;
+package io.moj.mobile.android.sdk.oauth.auth;
 
 import java.util.Collections;
 import java.util.HashMap;

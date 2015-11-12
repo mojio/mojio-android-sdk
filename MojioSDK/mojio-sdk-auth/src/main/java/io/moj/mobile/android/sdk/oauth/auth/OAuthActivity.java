@@ -1,4 +1,4 @@
-package io.moj.mobile.android.sdk.auth;
+package io.moj.mobile.android.sdk.oauth.auth;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 
-import io.moj.mobile.android.sdk.R;
+import io.moj.mobile.android.sdk.oauth.R;
 
 /**
  * Activity for guiding the user through the OAuth login flow. This activity should be started via

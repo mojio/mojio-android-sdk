@@ -1,4 +1,4 @@
-package io.moj.mobile.android.sdk.auth;
+package io.moj.mobile.android.sdk.oauth.auth;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,7 @@ import android.webkit.WebViewClient;
 
 import java.util.Locale;
 
-import io.moj.mobile.android.sdk.R;
+import io.moj.mobile.android.sdk.oauth.R;
 
 /**
  * Fragment for guiding the user through the OAuth login flow. This can be used by client apps
