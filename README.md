@@ -56,11 +56,11 @@ dependencies {
 ## Structure ##
 The SDK is broken into three modules - you may choose to use some or all of them for your application:
 
-### 1. [mojio-sdk-auth](https://github.com/mojio/mojio-android-sdk/tree/master/MojioSDK/mojio-sdk-auth) ###
+### 1. [mojio-sdk-auth](https://github.com/mojio/mojio-android-sdk/tree/develop/MojioSDK/mojio-sdk-auth) ###
   Implementation of OAuthActivity and OAuthFragment for retrieving an access token 
 
-### 2. [mojio-sdk-model](https://github.com/mojio/mojio-android-sdk/tree/master/MojioSDK/mojio-sdk-model) ###
+### 2. [mojio-sdk-model](https://github.com/mojio/mojio-android-sdk/tree/develop/MojioSDK/mojio-sdk-model) ###
   Model objects entities retrieved from the REST API. These objects are annotated for use with GSON.
 
-### 3. [mojio-sdk-rest](https://github.com/mojio/mojio-android-sdk/tree/master/MojioSDK/mojio-sdk-rest) ###
+### 3. [mojio-sdk-rest](https://github.com/mojio/mojio-android-sdk/tree/develop/MojioSDK/mojio-sdk-rest) ###
   A fluent API for making structured REST calls to the Mojio API. Uses Volley and OKHttp.
