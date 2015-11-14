@@ -3,7 +3,6 @@ package io.moj.mobile.android.sdk;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.text.TextUtils;
 import android.util.Log;
 
