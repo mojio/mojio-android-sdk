@@ -64,6 +64,14 @@ public class MojioClient {
 
     private boolean connectionEstablished = false;
 
+    public MojioClient(Context context) {
+        this(context, null, null, null);
+    }
+
+    public MojioClient(Context context, Environment environment) {
+        this(context, null, null, environment);
+    }
+
     public MojioClient(Context context, String mojioAppID, String mojioSecretkey) {
         this(context, mojioAppID, mojioSecretkey, null);
     }
@@ -220,6 +228,11 @@ public class MojioClient {
         });
     }
 
+    public void loginOAuth(String accessToken, String validUntil, final ResponseListener<User> responseListener) {
+        oauthHelper.setAccessToken(accessToken, validUntil, environment);
+        getUser(responseListener);
+    }
+
     public void refreshAccessToken(final ResponseListener<Token> responseListener) {
         String accessToken = oauthHelper.getAccessToken();
         String entityPath = String.format("Login/%s/Session?minutes=%d", accessToken, SESSION_LENGTH_MIN);
@@ -324,6 +337,11 @@ public class MojioClient {
         String entityPath = "Users/" + userID;
         HashMap<String, String> queryParams = new HashMap<>();
         this.get(User.class, entityPath, queryParams, responseListener);
+    }
+
+    private void getUser(final MojioClient.ResponseListener<User> responseListener) {
+        String entityPath = "Users/Me";
+        this.get(User.class, entityPath, null, responseListener);
     }
 
     public void logout() {
