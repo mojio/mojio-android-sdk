@@ -1,14 +1,18 @@
 package io.moj.mobile.android.sdk.oauth;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -95,6 +99,7 @@ public class OAuthFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        clearCookies(getContext());
         View root = inflater.inflate(R.layout.fragment_oauth, container, false);
         WebView webview = (WebView) root.findViewById(R.id.webview);
         webview.setWebViewClient(new WebViewClient() {
@@ -130,5 +135,21 @@ public class OAuthFragment extends Fragment {
 
     private boolean isRedirectUri(Uri uri) {
         return uri.buildUpon().fragment("").clearQuery().build().equals(redirectUri);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void clearCookies(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            CookieManager.getInstance().removeAllCookies(null);
+            CookieManager.getInstance().flush();
+        } else {
+            CookieSyncManager syncManager = CookieSyncManager.createInstance(context);
+            syncManager.startSync();
+            CookieManager cookieManager = CookieManager.getInstance();
+            cookieManager.removeAllCookie();
+            cookieManager.removeSessionCookie();
+            syncManager.stopSync();
+            syncManager.sync();
+        }
     }
 }
