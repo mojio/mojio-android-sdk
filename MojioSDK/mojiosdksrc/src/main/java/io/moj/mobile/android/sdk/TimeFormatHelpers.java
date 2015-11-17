@@ -47,8 +47,7 @@ public class TimeFormatHelpers {
      * @return a {@link DateTime} instance for the given date or null if parsing failed.
      */
     public static DateTime fromServerFormatted(String date) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(date);
+        StringBuilder builder = new StringBuilder(date);
 
         int periodIndex = date.lastIndexOf(".");
         int zIndex = date.lastIndexOf("Z");
@@ -82,11 +81,11 @@ public class TimeFormatHelpers {
 
     private static String getPaddedMilliseconds(String milliseconds) {
         milliseconds = milliseconds == null ? "" : milliseconds;
-        if (milliseconds.length() == MILLISECOND_PRECISION)
+        if (milliseconds.length() == MILLISECOND_PRECISION) {
             return milliseconds;
-        else if (milliseconds.length() > MILLISECOND_PRECISION)
+        } else if (milliseconds.length() > MILLISECOND_PRECISION) {
             return milliseconds.substring(0, MILLISECOND_PRECISION);
-        else {
+        } else {
             int digitsToAdd = MILLISECOND_PRECISION - milliseconds.length();
             char[] zeroes = new char[digitsToAdd];
             Arrays.fill(zeroes, '0');
