@@ -1,5 +1,7 @@
 package io.moj.mobile.android.sdk.enums;
 
+import android.text.TextUtils;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,32 +12,33 @@ import java.util.Map;
  */
 public enum Environment {
 
-    PLATFORM_1("api.moj.io", true),
-    PROD("prod-api.moj.io", false),
-    CZECH("cz-api.moj.io", false),
-    TRIAL("trial-api.moj.io", false),
-    STAGING("staging-api.moj.io", false),
-    DEVELOP("develop-api.moj.io", false);
+    PLATFORM_1("", true),
+    PROD("prod", false),
+    CZECH("cz", false),
+    TRIAL("trial", false),
+    STAGING("staging", false),
+    DEVELOP("develop", false);
 
     private static final int DEFAULT_VERSION = 1;
     private static final String URL_FORMAT_AUTH = "https://%1$s/OAuth2/authorize?response_type=token&client_id=%2$s";
     private static final String URL_FORMAT_API = "https://%s/v%d/";
     private static final String URL_FORMAT_SIGNALR = "https://%s/v%d/signalr";
-    private static final Map<String, Environment> HOSTNAME_MAP;
-    static {
-        Map<String, Environment> hostnameToEnvironment = new HashMap<>();
-        for (Environment environment : values()) {
-            hostnameToEnvironment.put(environment.hostname, environment);
-        }
-        HOSTNAME_MAP = Collections.unmodifiableMap(hostnameToEnvironment);
-    }
+    private static final String URL_FORMAT_URI = "https://%s";
+    private static final String URL_SUFFIX_API = "api.moj.io";
+    private static final String URL_SUFFIX_MY_MOJIO = "my.moj.io";
+    private static final String URL_SUFFIX_ACCOUNTS = "accounts.moj.io";
+    private static final String URL_SUFFIX_PASSWORD_RECOVERY = URL_SUFFIX_ACCOUNTS + "/account/forgot-password";
 
-    private final String hostname;
+    private final String prefix;
     private final boolean sandboxAvailable;
 
-    Environment(String hostname, boolean sandboxAvailable) {
-        this.hostname = hostname;
+    Environment(String prefix, boolean sandboxAvailable) {
+        this.prefix = prefix;
         this.sandboxAvailable = sandboxAvailable;
+    }
+
+    public String getPrefix() {
+        return prefix;
     }
 
     public boolean isSandboxAvailable() {
@@ -47,11 +50,11 @@ public enum Environment {
     }
 
     public String getApiUrl(int version) {
-        return String.format(URL_FORMAT_API, hostname, version);
+        return String.format(URL_FORMAT_API, buildUrl(prefix, URL_SUFFIX_API), version);
     }
 
     public String getAuthUrl(String mojioAppId) {
-        return String.format(URL_FORMAT_AUTH, hostname, mojioAppId);
+        return String.format(URL_FORMAT_AUTH, buildUrl(prefix, URL_SUFFIX_API), mojioAppId);
     }
 
     public String getSignalRUrl() {
@@ -59,7 +62,7 @@ public enum Environment {
     }
 
     public String getSignalRUrl(int version) {
-        return String.format(URL_FORMAT_SIGNALR, hostname, version);
+        return String.format(URL_FORMAT_SIGNALR, buildUrl(prefix, URL_SUFFIX_API), version);
     }
 
     public static Environment getDefault() {
@@ -67,7 +70,33 @@ public enum Environment {
     }
 
     public static Environment fromHostname(String hostname) {
-        return HOSTNAME_MAP.get(hostname);
+        for (Environment environment : values()) {
+            if (hostname.equals(getApiUrl(environment))) {
+                return environment;
+            }
+        }
+        return null;
     }
 
+    public String getMyMojioUrl() {
+        return String.format(URL_FORMAT_URI, buildUrl(prefix, URL_SUFFIX_MY_MOJIO));
+    }
+
+    public String getAccountsUrl() {
+        return String.format(URL_FORMAT_URI, buildUrl(prefix, URL_SUFFIX_ACCOUNTS));
+    }
+
+    public String getPasswordRecoveryUrl() {
+        return String.format(URL_FORMAT_URI, buildUrl(prefix, URL_SUFFIX_PASSWORD_RECOVERY));
+    }
+
+    private static String getApiUrl(Environment environment) {
+        return String.format(URL_FORMAT_API, buildUrl(environment.getPrefix(), URL_SUFFIX_API), DEFAULT_VERSION);
+    }
+
+    private static String buildUrl(String prefix, String suffix) {
+        if (TextUtils.isEmpty(prefix))
+            return suffix;
+        return prefix + "-" + suffix;
+    }
 }
