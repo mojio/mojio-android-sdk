@@ -10,6 +10,7 @@ import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 
 /**
  * Created by ssawchenko on 15-01-27.
@@ -17,10 +18,11 @@ import java.text.SimpleDateFormat;
 public class TimeFormatHelpers {
     private static final String TAG = TimeFormatHelpers.class.getSimpleName();
 
-    private static final String FORMAT_FROM_SERVER = "yyyy-MM-dd'T'HH:mm:ssZ";
+    private static final String FORMAT_FROM_SERVER = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
     private static DateTimeFormatter FORMATTER_FROM_SERVER = DateTimeFormat.forPattern(FORMAT_FROM_SERVER).withZoneUTC();
     private static DateTimeFormatter FORMATTER_VERBOSE_DATE = DateTimeFormat.forPattern("MMMM dd, YYYY hh:mma").withZoneUTC();
     private static DateTimeFormatter FORMATTER_TIME_CRITERIA = DateTimeFormat.forPattern("YYYY.MM.dd").withZoneUTC();
+    private static final int MILLISECOND_PRECISION = 3;
 
     private static PeriodFormatter FORMATTER_FOR_ELAPSED_TIME = new PeriodFormatterBuilder()
             .printZeroAlways()
@@ -45,10 +47,29 @@ public class TimeFormatHelpers {
      * @return a {@link DateTime} instance for the given date or null if parsing failed.
      */
     public static DateTime fromServerFormatted(String date) {
-        int endIndex = date.lastIndexOf(".");
-        if (endIndex > 0) {
-            date = date.substring(0, endIndex) + "Z";
+        StringBuilder builder = new StringBuilder();
+        builder.append(date);
+
+        int periodIndex = date.lastIndexOf(".");
+        int zIndex = date.lastIndexOf("Z");
+        // Add Z at the end if not present
+        if (zIndex < 0) {
+            builder.append("Z");
+            zIndex = date.length();
         }
+        // Add a period before Z if not present
+        if (periodIndex < 0) {
+            builder.insert(zIndex, ".");
+            periodIndex = zIndex;
+            zIndex++;
+        }
+        date = builder.toString();
+        // Ensure the millisecond portion contains MILLISECOND_PRECISION characters
+        String millis = date.substring(periodIndex + 1, zIndex);
+        millis = getPaddedMilliseconds(millis);
+        builder.replace(periodIndex + 1, zIndex, millis);
+
+        date = builder.toString();
 
         DateTime dateTime = null;
         try {
@@ -57,6 +78,20 @@ public class TimeFormatHelpers {
             Log.e(TAG, "Server sent an invalid date format: " + date, e);
         }
         return dateTime;
+    }
+
+    private static String getPaddedMilliseconds(String milliseconds) {
+        milliseconds = milliseconds == null ? "" : milliseconds;
+        if (milliseconds.length() == MILLISECOND_PRECISION)
+            return milliseconds;
+        else if (milliseconds.length() > MILLISECOND_PRECISION)
+            return milliseconds.substring(0, MILLISECOND_PRECISION);
+        else {
+            int digitsToAdd = MILLISECOND_PRECISION - milliseconds.length();
+            char[] zeroes = new char[digitsToAdd];
+            Arrays.fill(zeroes, '0');
+            return milliseconds + new String(zeroes);
+        }
     }
 
     public static String getVerboseDateTime(String datetime) {
