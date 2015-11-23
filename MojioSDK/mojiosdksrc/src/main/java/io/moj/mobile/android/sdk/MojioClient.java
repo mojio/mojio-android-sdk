@@ -282,6 +282,10 @@ public class MojioClient {
         });
     }
 
+    public String getAccessToken() {
+        return oauthHelper.getAccessToken();
+    }
+
     /**
      * @param fbAccessToken
      * @param responseListener
