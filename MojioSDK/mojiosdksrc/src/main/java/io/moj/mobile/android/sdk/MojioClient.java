@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
@@ -279,6 +280,10 @@ public class MojioClient {
                 responseListener.onFailure(error);
             }
         });
+    }
+
+    public String getAccessToken() {
+        return oauthHelper.getAccessToken();
     }
 
     /**
@@ -630,6 +635,10 @@ public class MojioClient {
     public <T> void updateImage(final Class<T> modelClass, String entityPath, Bitmap data, final ResponseListener<T> listener) {
         addRequestToQueue(new MojioRequest<>(context, Request.Method.PUT, environment.getApiUrl() + entityPath,
                 modelClass, data, listener));
+    }
+
+    public RequestQueue getRequestQueue() {
+        return requestHelper.getRequestQueue();
     }
 
     public <T> void addRequestToQueue(final Request<T> request) {
