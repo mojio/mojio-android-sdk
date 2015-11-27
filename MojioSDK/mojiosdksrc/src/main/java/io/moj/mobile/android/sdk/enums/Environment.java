@@ -12,33 +12,40 @@ import java.util.Map;
  */
 public enum Environment {
 
-    PLATFORM_1("", true),
-    PROD("prod", false),
-    CZECH("cz", false),
-    TRIAL("trial", false),
-    STAGING("staging", false),
-    DEVELOP("develop", false);
+    PLATFORM_1("", "api", true),
+    API2("", "api2", true),
+    PROD("prod", "api", false),
+    CZECH("cz", "api", false),
+    TRIAL("trial", "api", false),
+    STAGING("staging", "api", false),
+    DEVELOP("develop", "api", false);
 
     private static final int DEFAULT_VERSION = 1;
     private static final String URL_FORMAT_AUTH = "https://%1$s/OAuth2/authorize?response_type=token&client_id=%2$s";
     private static final String URL_FORMAT_API = "https://%s/v%d/";
     private static final String URL_FORMAT_SIGNALR = "https://%s/v%d/signalr";
     private static final String URL_FORMAT_URI = "https://%s";
-    private static final String URL_SUFFIX_API = "api.moj.io";
+    private static final String URL_SUFFIX_API = ".moj.io";
     private static final String URL_SUFFIX_MY_MOJIO = "my.moj.io";
     private static final String URL_SUFFIX_ACCOUNTS = "accounts.moj.io";
     private static final String URL_SUFFIX_PASSWORD_RECOVERY = URL_SUFFIX_ACCOUNTS + "/account/forgot-password";
 
     private final String prefix;
     private final boolean sandboxAvailable;
+    private final String apiPrefix;
 
-    Environment(String prefix, boolean sandboxAvailable) {
+    Environment(String prefix, String apiPrefix, boolean sandboxAvailable) {
         this.prefix = prefix;
+        this.apiPrefix = apiPrefix;
         this.sandboxAvailable = sandboxAvailable;
     }
 
     public String getPrefix() {
         return prefix;
+    }
+
+    public String getApiPrefix() {
+        return apiPrefix;
     }
 
     public boolean isSandboxAvailable() {
@@ -50,11 +57,11 @@ public enum Environment {
     }
 
     public String getApiUrl(int version) {
-        return String.format(URL_FORMAT_API, buildUrl(prefix, URL_SUFFIX_API), version);
+        return String.format(URL_FORMAT_API, buildUrl(prefix, apiPrefix + URL_SUFFIX_API), version);
     }
 
     public String getAuthUrl(String mojioAppId) {
-        return String.format(URL_FORMAT_AUTH, buildUrl(prefix, URL_SUFFIX_API), mojioAppId);
+        return String.format(URL_FORMAT_AUTH, buildUrl(prefix, apiPrefix + URL_SUFFIX_API), mojioAppId);
     }
 
     public String getSignalRUrl() {
@@ -62,11 +69,11 @@ public enum Environment {
     }
 
     public String getSignalRUrl(int version) {
-        return String.format(URL_FORMAT_SIGNALR, buildUrl(prefix, URL_SUFFIX_API), version);
+        return String.format(URL_FORMAT_SIGNALR, buildUrl(prefix, apiPrefix + URL_SUFFIX_API), version);
     }
 
     public static Environment getDefault() {
-        return TRIAL;
+        return API2;
     }
 
     public static Environment fromHostname(String hostname) {
@@ -91,7 +98,7 @@ public enum Environment {
     }
 
     private static String getApiUrl(Environment environment) {
-        return String.format(URL_FORMAT_API, buildUrl(environment.getPrefix(), URL_SUFFIX_API), DEFAULT_VERSION);
+        return String.format(URL_FORMAT_API, buildUrl(environment.getPrefix(), environment.getApiPrefix() + URL_SUFFIX_API), DEFAULT_VERSION);
     }
 
     private static String buildUrl(String prefix, String suffix) {
