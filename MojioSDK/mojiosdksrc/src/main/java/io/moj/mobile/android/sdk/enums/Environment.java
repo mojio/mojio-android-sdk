@@ -16,6 +16,7 @@ public enum Environment {
     API2("", "api2", true),
     PROD("prod", "api", false),
     CZECH("cz", "api", false),
+    EU("eu", "api", false),
     TRIAL("trial", "api", false),
     STAGING("staging", "api", false),
     DEVELOP("develop", "api", false);
