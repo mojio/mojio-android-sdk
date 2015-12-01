@@ -126,7 +126,7 @@ public class MojioClient {
         _redirectUrl = redirectUrl;
 
         this.sandboxAvailable = false;
-        this.updateUrl("trial-api.moj.io");
+        this.updateUrl("eu-api.moj.io");
         this._configuredMcc = 0;
         this._configuredMnc = 0;
     }
