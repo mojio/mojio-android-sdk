@@ -88,7 +88,7 @@ public class MojioClient {
         if (environment == null)
             environment = oauthHelper.getEnvironment();
         if (environment == null)
-            environment = Environment.getDefault();
+            environment = Environment.getDefault(context);
         setEnvironment(environment);
     }
 

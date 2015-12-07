@@ -1,10 +1,16 @@
 package io.moj.mobile.android.sdk.enums;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import android.text.TextUtils;
 
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+
+import io.moj.mobile.android.sdk.R;
 
 /**
  * An enumeration of different backend endpoints for the Mojio API.
@@ -30,6 +36,9 @@ public enum Environment {
     private static final String URL_SUFFIX_MY_MOJIO = "my.moj.io";
     private static final String URL_SUFFIX_ACCOUNTS = "accounts.moj.io";
     private static final String URL_SUFFIX_PASSWORD_RECOVERY = URL_SUFFIX_ACCOUNTS + "/account/forgot-password";
+
+    private static final Locale EN_GB = new Locale("en", "GB");
+    private static final Locale CS_CZ = new Locale("cs");
 
     private final String prefix;
     private final boolean sandboxAvailable;
@@ -73,7 +82,22 @@ public enum Environment {
         return String.format(URL_FORMAT_SIGNALR, buildUrl(prefix, apiPrefix + URL_SUFFIX_API), version);
     }
 
-    public static Environment getDefault() {
+    public static Environment getDefault(Context context) {
+        /**
+         * TODO: add a more robust and comprehensive way to determine when to connect to the EU endpoint.
+         * This is a temporary solution to determine to which environment to connect by default.
+         * Ideally, this will be handled by the back-end but until then we have to handle in the front-end.
+         * If the device locale is in EN_GB, CS_CZ, or if the MCC is 230, then connect to the EU
+         * environment; otherwise, connect to API2.
+         */
+        Configuration config = context.getResources().getConfiguration();
+        if (config.locale.equals(EN_GB) || config.locale.getLanguage().equals(CS_CZ.getLanguage())) {
+            return EU;
+        } else {
+            try {
+                return Environment.valueOf(context.getString(R.string.environment));
+            } catch (IllegalArgumentException e) { }
+        }
         return API2;
     }
 
