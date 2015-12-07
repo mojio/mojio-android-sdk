@@ -4,11 +4,14 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.text.TextUtils;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import io.moj.mobile.android.sdk.R;
 
@@ -37,8 +40,13 @@ public enum Environment {
     private static final String URL_SUFFIX_ACCOUNTS = "accounts.moj.io";
     private static final String URL_SUFFIX_PASSWORD_RECOVERY = URL_SUFFIX_ACCOUNTS + "/account/forgot-password";
 
-    private static final Locale EN_GB = new Locale("en", "GB");
-    private static final Locale CS_CZ = new Locale("cs");
+    // Note: Gathered from https://en.wikipedia.org/wiki/List_of_sovereign_states_and_dependent_territories_in_Europe
+    // and http://www.mcc-mnc.com/
+    private static final Integer[] EU_MCC = { 276, 213, 283, 232, 400, 257, 206, 218, 284, 219, 280, 230
+            , 238, 248, 244, 208, 282, 262, 202, 216, 274, 272, 222, 401, 247, 295, 246, 270, 294, 278
+            , 259, 212, 297, 204, 242, 260, 268, 226, 250, 292, 220, 231, 293, 214, 240, 228, 286, 255
+            , 234, 235 };
+    private static final Set<Integer> EU_MCC_SET = new HashSet<>(Arrays.asList(EU_MCC));
 
     private final String prefix;
     private final boolean sandboxAvailable;
@@ -83,21 +91,8 @@ public enum Environment {
     }
 
     public static Environment getDefault(Context context) {
-        /**
-         * TODO: add a more robust and comprehensive way to determine when to connect to the EU endpoint.
-         * This is a temporary solution to determine to which environment to connect by default.
-         * Ideally, this will be handled by the back-end but until then we have to handle in the front-end.
-         * If the device locale is in EN_GB, CS_CZ, or if the MCC is 230, then connect to the EU
-         * environment; otherwise, connect to API2.
-         */
-        Configuration config = context.getResources().getConfiguration();
-        if (config.locale.equals(EN_GB) || config.locale.getLanguage().equals(CS_CZ.getLanguage())) {
+        if (isInEurope(context))
             return EU;
-        } else {
-            try {
-                return Environment.valueOf(context.getString(R.string.environment));
-            } catch (IllegalArgumentException e) { }
-        }
         return API2;
     }
 
@@ -130,5 +125,10 @@ public enum Environment {
         if (TextUtils.isEmpty(prefix))
             return suffix;
         return prefix + "-" + suffix;
+    }
+
+    private static boolean isInEurope(Context context) {
+        int mcc = context.getResources().getConfiguration().mcc;
+        return EU_MCC_SET.contains(mcc);
     }
 }
