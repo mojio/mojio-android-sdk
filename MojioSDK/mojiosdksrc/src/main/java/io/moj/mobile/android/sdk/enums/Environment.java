@@ -128,6 +128,7 @@ public enum Environment {
     }
 
     private static boolean isInEurope(Context context) {
+        // TODO handle cases in which there is no SIM card installed. Maybe use http://ip-api.com/json?
         int mcc = context.getResources().getConfiguration().mcc;
         return EU_MCC_SET.contains(mcc);
     }
