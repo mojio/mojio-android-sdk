@@ -1,10 +1,19 @@
 package io.moj.mobile.android.sdk.enums;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import android.text.TextUtils;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+
+import io.moj.mobile.android.sdk.R;
 
 /**
  * An enumeration of different backend endpoints for the Mojio API.
@@ -30,6 +39,14 @@ public enum Environment {
     private static final String URL_SUFFIX_MY_MOJIO = "my.moj.io";
     private static final String URL_SUFFIX_ACCOUNTS = "accounts.moj.io";
     private static final String URL_SUFFIX_PASSWORD_RECOVERY = URL_SUFFIX_ACCOUNTS + "/account/forgot-password";
+
+    // Note: Gathered from https://en.wikipedia.org/wiki/List_of_sovereign_states_and_dependent_territories_in_Europe
+    // and http://www.mcc-mnc.com/
+    private static final Integer[] EU_MCC = { 276, 213, 283, 232, 400, 257, 206, 218, 284, 219, 280, 230
+            , 238, 248, 244, 208, 282, 262, 202, 216, 274, 272, 222, 401, 247, 295, 246, 270, 294, 278
+            , 259, 212, 297, 204, 242, 260, 268, 226, 250, 292, 220, 231, 293, 214, 240, 228, 286, 255
+            , 234, 235 };
+    private static final Set<Integer> EU_MCC_SET = new HashSet<>(Arrays.asList(EU_MCC));
 
     private final String prefix;
     private final boolean sandboxAvailable;
@@ -73,7 +90,9 @@ public enum Environment {
         return String.format(URL_FORMAT_SIGNALR, buildUrl(prefix, apiPrefix + URL_SUFFIX_API), version);
     }
 
-    public static Environment getDefault() {
+    public static Environment getDefault(Context context) {
+        if (isInEurope(context))
+            return EU;
         return API2;
     }
 
@@ -106,5 +125,11 @@ public enum Environment {
         if (TextUtils.isEmpty(prefix))
             return suffix;
         return prefix + "-" + suffix;
+    }
+
+    private static boolean isInEurope(Context context) {
+        // TODO handle cases in which there is no SIM card installed. Maybe use http://ip-api.com/json?
+        int mcc = context.getResources().getConfiguration().mcc;
+        return EU_MCC_SET.contains(mcc);
     }
 }
