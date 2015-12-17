@@ -688,6 +688,11 @@ public class MojioClient {
             this.message = message;
         }
 
+        public ResponseError(String message, NetworkResponse networkResponse) {
+            this.message = message;
+            this.networkResponse = networkResponse;
+        }
+
         public ResponseError(VolleyError error) {
             this.networkResponse = error.networkResponse;
             if (networkResponse != null && networkResponse.data != null) {
