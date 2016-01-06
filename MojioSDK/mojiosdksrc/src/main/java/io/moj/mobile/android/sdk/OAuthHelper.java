@@ -21,14 +21,13 @@ public class OAuthHelper {
     private static final String PREF_ACCESS_TOKEN_IS_USER = "PREF_ACCESS_TOKEN_IS_USER";
     private static final String PREF_ACCESS_TOKEN_ENVIRONMENT = "PREF_ACCESS_TOKEN_ENVIRONMENT";
 
-    // refresh the access token when we have less than 1 minute left
-    private final long tokenRefreshThreshold;
+    private static final int SESSION_LENGTH_MIN = 43829; // 1 month
+    private static final long SESSION_REFRESH_THRESHOLD_MS = (long) (SESSION_LENGTH_MIN * 0.8 * 60000); // refresh when at 80% of session length left
 
     private Context context;
 
-    public OAuthHelper(Context context, long tokenRefreshThreshold) {
+    public OAuthHelper(Context context) {
         this.context = context;
-        this.tokenRefreshThreshold = tokenRefreshThreshold;
     }
 
     public String getAccessToken() {
@@ -64,7 +63,7 @@ public class OAuthHelper {
     }
 
     public boolean shouldRefreshAccessToken() {
-        return getMsToTokenExpiration() < tokenRefreshThreshold;
+        return getMsToTokenExpiration() < SESSION_REFRESH_THRESHOLD_MS;
     }
 
     public boolean isTokenExpired() {
@@ -97,6 +96,10 @@ public class OAuthHelper {
 
     private SharedPreferences getSharedPreferences() {
         return context.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE);
+    }
+
+    public int getSessionLengthMin() {
+        return SESSION_LENGTH_MIN;
     }
 
     @SuppressLint("CommitPrefEdits")

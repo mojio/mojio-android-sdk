@@ -47,8 +47,6 @@ public class MojioClient {
     private static final String TAG = MojioClient.class.getSimpleName();
     private static final String ENCODING = "UTF-8";
     private static final Gson GSON = new Gson();
-    private static final int SESSION_LENGTH_MIN = 43829; // 1 month
-    private static final long SESSION_REFRESH_THRESHOLD_MS = (long) (SESSION_LENGTH_MIN * 0.8 * 60000); // refresh when at 80% of session length left
 
     private final AtomicBoolean refreshTokenLock = new AtomicBoolean(false);
 
@@ -80,7 +78,7 @@ public class MojioClient {
 
     public MojioClient(Context context, String mojioAppID, String mojioSecretkey, Environment environment) {
         this.context = context;
-        this.oauthHelper = new OAuthHelper(context, SESSION_REFRESH_THRESHOLD_MS);
+        this.oauthHelper = new OAuthHelper(context);
         this.requestHelper = new VolleyHelper(context);
         this.mojioAppID = mojioAppID;
         this.mojioAppSecretKey = mojioSecretkey;
@@ -159,7 +157,7 @@ public class MojioClient {
      */
     public void authenticateApp(final ResponseListener<Token> responseListener) {
         String entityPath = String.format("Login/%s?secretKey=%s&minutes=%d",
-                mojioAppID, mojioAppSecretKey, SESSION_LENGTH_MIN);
+                mojioAppID, mojioAppSecretKey, oauthHelper.getSessionLengthMin());
 
         this.create(Token.class, entityPath, new MojioClient.ResponseListener<Token>() {
             @Override
@@ -211,7 +209,7 @@ public class MojioClient {
         }
 
         String entityPath = String.format("Login/%s?secretKey=%s&userOrEmail=%s&password=%s&minutes=%d",
-                mojioAppID, mojioAppSecretKey, urlEncodedUsername, urlEncodedPassword, SESSION_LENGTH_MIN);
+                mojioAppID, mojioAppSecretKey, urlEncodedUsername, urlEncodedPassword, oauthHelper.getSessionLengthMin());
 
         this.create(Token.class, entityPath, new MojioClient.ResponseListener<Token>() {
             @Override
@@ -235,7 +233,7 @@ public class MojioClient {
 
     public void refreshAccessToken(final ResponseListener<Token> responseListener) {
         String accessToken = oauthHelper.getAccessToken();
-        String entityPath = String.format("Login/%s/Session?minutes=%d", accessToken, SESSION_LENGTH_MIN);
+        String entityPath = String.format("Login/%s/Session?minutes=%d", accessToken, oauthHelper.getSessionLengthMin());
         this.create(Token.class, entityPath, new ResponseListener<Token>() {
             @Override
             public void onSuccess(MojioResponse<Token> result) {
