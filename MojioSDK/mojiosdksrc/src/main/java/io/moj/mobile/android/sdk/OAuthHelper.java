@@ -22,12 +22,13 @@ public class OAuthHelper {
     private static final String PREF_ACCESS_TOKEN_ENVIRONMENT = "PREF_ACCESS_TOKEN_ENVIRONMENT";
 
     // refresh the access token when we have less than 1 minute left
-    private static final long TOKEN_REFRESH_MS = 60000;
+    private final long tokenRefreshThreshold;
 
-    private Context mContext;
+    private Context context;
 
-    public OAuthHelper(Context context) {
-        mContext = context;
+    public OAuthHelper(Context context, long tokenRefreshThreshold) {
+        this.context = context;
+        this.tokenRefreshThreshold = tokenRefreshThreshold;
     }
 
     public String getAccessToken() {
@@ -49,7 +50,7 @@ public class OAuthHelper {
                 .commit();
     }
 
-    public boolean shouldRefreshAccessToken() {
+    public long getMsToTokenExpiration() {
         long expirationTimestamp;
         try {
             expirationTimestamp = getSharedPreferences().getLong(PREF_ACCESS_TOKEN_EXPIRES, 0);
@@ -59,9 +60,15 @@ public class OAuthHelper {
             Log.w(TAG, PREF_ACCESS_TOKEN_EXPIRES + " was of an unexpected type", e);
             expirationTimestamp = 0;
         }
-        long msToExpiration = expirationTimestamp - System.currentTimeMillis();
-        Log.v(TAG, "Access token expires in: " + msToExpiration + "ms");
-        return msToExpiration < TOKEN_REFRESH_MS;
+        return expirationTimestamp - System.currentTimeMillis();
+    }
+
+    public boolean shouldRefreshAccessToken() {
+        return getMsToTokenExpiration() < tokenRefreshThreshold;
+    }
+
+    public boolean isTokenExpired() {
+        return getMsToTokenExpiration() < 0;
     }
 
     /**
@@ -89,7 +96,7 @@ public class OAuthHelper {
     }
 
     private SharedPreferences getSharedPreferences() {
-        return mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE);
+        return context.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE);
     }
 
     @SuppressLint("CommitPrefEdits")

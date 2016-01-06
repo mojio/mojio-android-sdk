@@ -48,6 +48,7 @@ public class MojioClient {
     private static final String ENCODING = "UTF-8";
     private static final Gson GSON = new Gson();
     private static final int SESSION_LENGTH_MIN = 43829; // 1 month
+    private static final long SESSION_REFRESH_THRESHOLD_MS = (long) (SESSION_LENGTH_MIN * 0.8 * 60000); // refresh when at 80% of session length left
 
     private final AtomicBoolean refreshTokenLock = new AtomicBoolean(false);
 
@@ -61,6 +62,7 @@ public class MojioClient {
     private Environment environment;
     private OAuthHelper oauthHelper;
     private VolleyHelper requestHelper;
+    private OnTokenExpiredListener tokenExpiredListener;
 
     private boolean connectionEstablished = false;
 
@@ -78,7 +80,7 @@ public class MojioClient {
 
     public MojioClient(Context context, String mojioAppID, String mojioSecretkey, Environment environment) {
         this.context = context;
-        this.oauthHelper = new OAuthHelper(context);
+        this.oauthHelper = new OAuthHelper(context, SESSION_REFRESH_THRESHOLD_MS);
         this.requestHelper = new VolleyHelper(context);
         this.mojioAppID = mojioAppID;
         this.mojioAppSecretKey = mojioSecretkey;
@@ -131,9 +133,7 @@ public class MojioClient {
      * @return
      */
     public boolean isUserLoggedIn() {
-        // Currently we determine if a user is logged in by checking the remaining time on
-        // an access token (ie. if it has to be refreshed or not).
-        return !oauthHelper.shouldRefreshAccessToken() && oauthHelper.isUserToken();
+        return !oauthHelper.isTokenExpired() && oauthHelper.isUserToken();
     }
 
     /**
@@ -246,6 +246,9 @@ public class MojioClient {
             @Override
             public void onFailure(ResponseError error) {
                 responseListener.onFailure(error);
+                if (tokenExpiredListener != null) {
+                    tokenExpiredListener.onTokenExpired();
+                }
             }
         });
     }
@@ -663,6 +666,10 @@ public class MojioClient {
         requestHelper.cancelPendingRequests(TAG);
     }
 
+    public void setOnTokenExpiredListener(OnTokenExpiredListener listener) {
+        this.tokenExpiredListener = listener;
+    }
+
     public static Gson getGson() {
         return GSON;
     }
@@ -714,6 +721,10 @@ public class MojioClient {
         public void onErrorResponse(VolleyError error) {
             onFailure(new ResponseError(error));
         }
+    }
+
+    public interface OnTokenExpiredListener {
+        void onTokenExpired();
     }
 
 }
