@@ -21,13 +21,13 @@ public class OAuthHelper {
     private static final String PREF_ACCESS_TOKEN_IS_USER = "PREF_ACCESS_TOKEN_IS_USER";
     private static final String PREF_ACCESS_TOKEN_ENVIRONMENT = "PREF_ACCESS_TOKEN_ENVIRONMENT";
 
-    // refresh the access token when we have less than 1 minute left
-    private static final long TOKEN_REFRESH_MS = 60000;
+    private static final int SESSION_LENGTH_MIN = 43829; // 1 month
+    private static final long SESSION_REFRESH_THRESHOLD_MS = (long) (SESSION_LENGTH_MIN * 0.8 * 60000); // refresh when at 80% of session length left
 
-    private Context mContext;
+    private Context context;
 
     public OAuthHelper(Context context) {
-        mContext = context;
+        this.context = context;
     }
 
     public String getAccessToken() {
@@ -49,7 +49,7 @@ public class OAuthHelper {
                 .commit();
     }
 
-    public boolean shouldRefreshAccessToken() {
+    public long getMsToTokenExpiration() {
         long expirationTimestamp;
         try {
             expirationTimestamp = getSharedPreferences().getLong(PREF_ACCESS_TOKEN_EXPIRES, 0);
@@ -59,9 +59,15 @@ public class OAuthHelper {
             Log.w(TAG, PREF_ACCESS_TOKEN_EXPIRES + " was of an unexpected type", e);
             expirationTimestamp = 0;
         }
-        long msToExpiration = expirationTimestamp - System.currentTimeMillis();
-        Log.v(TAG, "Access token expires in: " + msToExpiration + "ms");
-        return msToExpiration < TOKEN_REFRESH_MS;
+        return expirationTimestamp - System.currentTimeMillis();
+    }
+
+    public boolean shouldRefreshAccessToken() {
+        return getMsToTokenExpiration() < SESSION_REFRESH_THRESHOLD_MS;
+    }
+
+    public boolean isTokenExpired() {
+        return getMsToTokenExpiration() < 0;
     }
 
     /**
@@ -89,7 +95,11 @@ public class OAuthHelper {
     }
 
     private SharedPreferences getSharedPreferences() {
-        return mContext.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE);
+        return context.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE);
+    }
+
+    public int getSessionLengthMin() {
+        return SESSION_LENGTH_MIN;
     }
 
     @SuppressLint("CommitPrefEdits")
