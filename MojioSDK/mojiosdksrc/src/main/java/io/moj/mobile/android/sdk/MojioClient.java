@@ -121,6 +121,10 @@ public class MojioClient {
         return !environment.equals(oauthHelper.getEnvironment());
     }
 
+    public OAuthHelper getOAuthHelper() {
+        return oauthHelper;
+    }
+
     //========================================================================
     // Login / Logout methods
     //========================================================================
