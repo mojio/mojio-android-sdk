@@ -36,6 +36,15 @@ public class Measure {
             return 0;
         }
 
-        return (100 * (1/GALLONS_PER_LITRE)) / ((1/MILES_PER_KM) * lp100km);
+        return round((100 * (1/GALLONS_PER_LITRE)) / ((1/MILES_PER_KM) * round(lp100km)));
+    }
+
+    /**
+     * Rounds to 2 decimal places.
+     * @param f
+     * @return
+     */
+    public static float round(float f) {
+        return Math.round(f * 100f) / 100f;
     }
 }
