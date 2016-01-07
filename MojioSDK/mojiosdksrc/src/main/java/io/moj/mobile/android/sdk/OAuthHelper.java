@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import io.moj.mobile.android.sdk.enums.Environment;
+import io.moj.mobile.android.sdk.models.Token;
 
 /**
  * Helper class for storing user authentication data.
@@ -20,9 +21,15 @@ public class OAuthHelper {
     private static final String PREF_ACCESS_TOKEN_EXPIRES = "PREF_ACCESS_TOKEN_EXPIRES";
     private static final String PREF_ACCESS_TOKEN_IS_USER = "PREF_ACCESS_TOKEN_IS_USER";
     private static final String PREF_ACCESS_TOKEN_ENVIRONMENT = "PREF_ACCESS_TOKEN_ENVIRONMENT";
+    private static final String PREF_ACCESS_TOKEN_RECEIVED = "PREF_ACCESS_TOKEN_RECEIVED";
 
-    private static final int SESSION_LENGTH_MIN = 43829; // 1 month
-    private static final long SESSION_REFRESH_THRESHOLD_MS = (long) (SESSION_LENGTH_MIN * 0.8 * 60000); // refresh when at 80% of session length left
+    private static final int REQUESTED_SESSION_LENGTH_MIN = 43829; // 1 month
+
+    /**
+     * The fraction of the current access token's session length at which the access token should
+     * be refreshed.
+     */
+    private static final float SESSION_REFRESH_FACTOR = 0.5f;
 
     private Context context;
 
@@ -34,18 +41,15 @@ public class OAuthHelper {
         return getSharedPreferences().getString(PREF_ACCESS_TOKEN, null);
     }
 
-    public void setAccessToken(String accessToken, String expirationTime, Environment environment) {
-        setAccessToken(accessToken, expirationTime, environment, true);
-    }
-
     @SuppressLint("CommitPrefEdits")
-    public void setAccessToken(String accessToken, String expirationTime, Environment environment, boolean isUserToken) {
-        long expirationTimestamp = TimeFormatHelpers.fromServerFormatted(expirationTime).getMillis();
+    public void setAccessToken(Token token, Environment environment) {
+        long expirationTimestamp = TimeFormatHelpers.fromServerFormatted(token.getValidUntil()).getMillis();
         getSharedPreferences().edit()
-                .putString(PREF_ACCESS_TOKEN, accessToken)
+                .putString(PREF_ACCESS_TOKEN, token.getId())
                 .putLong(PREF_ACCESS_TOKEN_EXPIRES, expirationTimestamp)
+                .putLong(PREF_ACCESS_TOKEN_RECEIVED, System.currentTimeMillis())
                 .putString(PREF_ACCESS_TOKEN_ENVIRONMENT, environment.name())
-                .putBoolean(PREF_ACCESS_TOKEN_IS_USER, isUserToken)
+                .putBoolean(PREF_ACCESS_TOKEN_IS_USER, !TextUtils.isEmpty(token.getUserId()))
                 .commit();
     }
 
@@ -62,8 +66,18 @@ public class OAuthHelper {
         return expirationTimestamp - System.currentTimeMillis();
     }
 
+    public long getAccessTokenExpiresTimestamp() {
+        return getSharedPreferences().getLong(PREF_ACCESS_TOKEN_EXPIRES, 0);
+    }
+
+    public long getAccessTokenReceivedTimestamp() {
+        return getSharedPreferences().getLong(PREF_ACCESS_TOKEN_RECEIVED, 0);
+    }
+
     public boolean shouldRefreshAccessToken() {
-        return getMsToTokenExpiration() < SESSION_REFRESH_THRESHOLD_MS;
+        long sessionLength = getAccessTokenExpiresTimestamp() - getAccessTokenReceivedTimestamp();
+        long refreshThreshold = (long) (sessionLength * SESSION_REFRESH_FACTOR);
+        return getMsToTokenExpiration() < refreshThreshold;
     }
 
     public boolean isTokenExpired() {
@@ -98,8 +112,12 @@ public class OAuthHelper {
         return context.getSharedPreferences(SHARED_PREF_ID, Context.MODE_PRIVATE);
     }
 
-    public int getSessionLengthMin() {
-        return SESSION_LENGTH_MIN;
+    /**
+     * Returns the session length, in minutes, to be requested.
+     * @return
+     */
+    public int getRequestedSessionLength() {
+        return REQUESTED_SESSION_LENGTH_MIN;
     }
 
     @SuppressLint("CommitPrefEdits")

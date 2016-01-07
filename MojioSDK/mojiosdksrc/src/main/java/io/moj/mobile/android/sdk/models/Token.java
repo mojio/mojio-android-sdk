@@ -26,6 +26,13 @@ public class Token extends MojioObject {
     @SerializedName("Deprecated")
     private boolean Deprecated;
 
+    public Token() {}
+
+    public Token(String id, String validUntil) {
+        setId(id);
+        this.ValidUntil = validUntil;
+    }
+
     public String getAppId() {
         return AppId;
     }
