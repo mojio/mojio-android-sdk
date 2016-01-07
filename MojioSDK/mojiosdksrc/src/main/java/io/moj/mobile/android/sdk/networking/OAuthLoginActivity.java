@@ -12,6 +12,7 @@ import android.webkit.WebViewClient;
 import io.moj.mobile.android.sdk.OAuthHelper;
 import io.moj.mobile.android.sdk.R;
 import io.moj.mobile.android.sdk.enums.Environment;
+import io.moj.mobile.android.sdk.models.Token;
 
 public class OAuthLoginActivity extends Activity {
 
@@ -43,10 +44,11 @@ public class OAuthLoginActivity extends Activity {
                     String[] parameters = url.split("&");
                     String[] accessToken = parameters[0].split("=");
                     String[] expiresIn = parameters[2].split("=");
+                    Token token = new Token(accessToken[1], expiresIn[1]);
 
                     Uri uri = Uri.parse(authUrl);
                     Environment environment = Environment.fromHostname(uri.getAuthority());
-                    oAuthHelper.setAccessToken(accessToken[1], expiresIn[1], environment);
+                    oAuthHelper.setAccessToken(token, environment);
 
                     // Return in bundle, but also stored in shared prefs
                     Bundle bundle = new Bundle();
