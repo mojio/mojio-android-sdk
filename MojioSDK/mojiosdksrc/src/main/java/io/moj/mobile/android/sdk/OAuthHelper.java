@@ -127,6 +127,7 @@ public class OAuthHelper {
                 .remove(PREF_ACCESS_TOKEN_EXPIRES)
                 .remove(PREF_ACCESS_TOKEN_IS_USER)
                 .remove(PREF_ACCESS_TOKEN_ENVIRONMENT)
+                .remove(PREF_ACCESS_TOKEN_RECEIVED)
                 .commit();
     }
 
