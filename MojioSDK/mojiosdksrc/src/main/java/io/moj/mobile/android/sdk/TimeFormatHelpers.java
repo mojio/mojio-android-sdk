@@ -19,7 +19,9 @@ public class TimeFormatHelpers {
     private static final String TAG = TimeFormatHelpers.class.getSimpleName();
 
     private static final String FORMAT_FROM_SERVER = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+    private static final String FORMAT_TO_SERVER = "yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'";
     private static DateTimeFormatter FORMATTER_FROM_SERVER = DateTimeFormat.forPattern(FORMAT_FROM_SERVER).withZoneUTC();
+    private static DateTimeFormatter FORMATTER_TO_SERVER = DateTimeFormat.forPattern(FORMAT_TO_SERVER);
     private static DateTimeFormatter FORMATTER_VERBOSE_DATE = DateTimeFormat.forPattern("MMMM dd, YYYY hh:mma").withZoneUTC();
     private static DateTimeFormatter FORMATTER_TIME_CRITERIA = DateTimeFormat.forPattern("YYYY.MM.dd").withZoneUTC();
     private static final int MILLISECOND_PRECISION = 3;
@@ -77,6 +79,14 @@ public class TimeFormatHelpers {
             Log.e(TAG, "Server sent an invalid date format: " + date, e);
         }
         return dateTime;
+    }
+
+    /**
+     * @param dateTime the {@link DateTime} object in UTC
+     * @return the timestamp formatted in the same way as the server formats timestamps
+     */
+    public static String toServerFormatted(DateTime dateTime) {
+        return FORMATTER_TO_SERVER.print(dateTime);
     }
 
     private static String getPaddedMilliseconds(String milliseconds) {
