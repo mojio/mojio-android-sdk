@@ -81,7 +81,6 @@ public class Location extends MojioObject {
         Status = status;
     }
 
-    // TODO difference between Time and Timestamp
     public DateTime getTime() {
         return TimeFormatHelpers.fromServerFormatted(Time);
     }
@@ -90,6 +89,9 @@ public class Location extends MojioObject {
         Time = TimeFormatHelpers.toServerFormatted(time);
     }
 
+    /**
+     * @return the same value returned by the {@link #getTime() getTime} method but in UTC.
+     */
     public DateTime getTimestamp() {
         return TimeFormatHelpers.fromServerFormatted(Timestamp);
     }
