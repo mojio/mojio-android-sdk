@@ -26,4 +26,13 @@ public enum AccelerationUnit {
     public String getKey() {
         return key;
     }
+
+    public static AccelerationUnit fromKey(String key) {
+        for (AccelerationUnit unit : AccelerationUnit.values()) {
+            if (unit.getKey().equals(key)) {
+                return unit;
+            }
+        }
+        throw new IllegalArgumentException("Illegal AccelerationUnit value supplied: " + key);
+    }
 }

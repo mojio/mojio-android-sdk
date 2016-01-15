@@ -1,13 +1,12 @@
 package io.moj.mobile.android.sdk.values;
 
 import io.moj.mobile.android.sdk.enums.RiskSeverity;
-import io.moj.mobile.android.sdk.models.values.FloatUnitValue;
 
 /**
  * Model object for a Battery.
  * Created by mhorie on 2016-01-12.
  */
-public class Battery extends FloatUnitValue {
+public class Battery extends Voltage {
 
     private Boolean Connected;
     private RiskSeverity RiskSeverity;

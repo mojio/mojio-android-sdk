@@ -44,11 +44,11 @@ public class User extends MojioObject {
         FirstName = firstName;
     }
 
-    public io.moj.mobile.android.sdk.values.Image getImage() {
+    public Image getImage() {
         return Image;
     }
 
-    public void setImage(io.moj.mobile.android.sdk.values.Image image) {
+    public void setImage(Image image) {
         Image = image;
     }
 

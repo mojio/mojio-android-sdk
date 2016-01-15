@@ -5,7 +5,6 @@ import java.util.Arrays;
 import io.moj.mobile.android.sdk.values.Acceleration;
 import io.moj.mobile.android.sdk.values.FuelEfficiency;
 import io.moj.mobile.android.sdk.values.FuelLevel;
-import io.moj.mobile.android.sdk.values.Location;
 import io.moj.mobile.android.sdk.values.Odometer;
 import io.moj.mobile.android.sdk.values.Rpm;
 import io.moj.mobile.android.sdk.values.Speed;
@@ -96,6 +95,7 @@ public class Trip extends MojioObject {
         EndOdometer = endOdometer;
     }
 
+    // TODO add methods returning DateTime instead of String
     public String getEndTimestamp() {
         return EndTimestamp;
     }
@@ -104,11 +104,11 @@ public class Trip extends MojioObject {
         EndTimestamp = endTimestamp;
     }
 
-    public io.moj.mobile.android.sdk.values.FuelEfficiency getFuelEfficiency() {
+    public FuelEfficiency getFuelEfficiency() {
         return FuelEfficiency;
     }
 
-    public void setFuelEfficiency(io.moj.mobile.android.sdk.values.FuelEfficiency fuelEfficiency) {
+    public void setFuelEfficiency(FuelEfficiency fuelEfficiency) {
         FuelEfficiency = fuelEfficiency;
     }
 
@@ -184,6 +184,7 @@ public class Trip extends MojioObject {
         StartOdometer = startOdometer;
     }
 
+    // TODO add methods returning DateTime instead of String
     public String getStartTimestamp() {
         return StartTimestamp;
     }

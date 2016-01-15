@@ -53,4 +53,13 @@ public enum GPSStatus {
     public String getKey() {
         return key;
     }
+
+    public static GPSStatus fromKey(String key) {
+        for (GPSStatus unit : GPSStatus.values()) {
+            if (unit.getKey().equals(key)) {
+                return unit;
+            }
+        }
+        throw new IllegalArgumentException("Illegal GPSStatus value supplied: " + key);
+    }
 }

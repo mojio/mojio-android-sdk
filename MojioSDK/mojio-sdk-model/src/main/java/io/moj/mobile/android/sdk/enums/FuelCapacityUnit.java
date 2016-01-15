@@ -23,4 +23,13 @@ public enum FuelCapacityUnit {
     public String getKey() {
         return key;
     }
+
+    public static FuelCapacityUnit fromKey(String key) {
+        for (FuelCapacityUnit unit : FuelCapacityUnit.values()) {
+            if (unit.getKey().equals(key)) {
+                return unit;
+            }
+        }
+        throw new IllegalArgumentException("Illegal FuelCapacityUnit value supplied: " + key);
+    }
 }

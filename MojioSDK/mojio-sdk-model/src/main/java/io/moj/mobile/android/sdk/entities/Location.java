@@ -1,12 +1,16 @@
-package io.moj.mobile.android.sdk.values;
+package io.moj.mobile.android.sdk.entities;
 
+import io.moj.mobile.android.sdk.values.Address;
 import io.moj.mobile.android.sdk.enums.GPSStatus;
 
 /**
- * Model object for a Location object.
+ * Model object for a Location object. A Location is what is returned by calls to v2/.../history/locations.
+ * It is not an entity per se as it neither has an ID nor a reference to its parent object when returned
+ * by the server, but it is being subclassed from MojioObject here because it is worth caching or
+ * persisting at the application layer due to its size.
  * Created by mhorie on 2016-01-12.
  */
-public class Location {
+public class Location extends MojioObject {
 
     private Address Address;
     private String Timestamp;
@@ -18,11 +22,11 @@ public class Location {
     private String GeoHash;
     private String Time;
 
-    public io.moj.mobile.android.sdk.values.Address getAddress() {
+    public Address getAddress() {
         return Address;
     }
 
-    public void setAddress(io.moj.mobile.android.sdk.values.Address address) {
+    public void setAddress(Address address) {
         Address = address;
     }
 
@@ -74,6 +78,8 @@ public class Location {
         Status = status;
     }
 
+    // TODO difference between Time and Timestamp
+    // TODO add methods returning DateTime instead of String
     public String getTime() {
         return Time;
     }
@@ -82,6 +88,7 @@ public class Location {
         Time = time;
     }
 
+    // TODO add methods returning DateTime instead of String
     public String getTimestamp() {
         return Timestamp;
     }

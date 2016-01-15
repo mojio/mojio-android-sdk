@@ -26,4 +26,13 @@ public enum PhoneType {
     public String getKey() {
         return key;
     }
+
+    public static PhoneType fromKey(String key) {
+        for (PhoneType unit : PhoneType.values()) {
+            if (unit.getKey().equals(key)) {
+                return unit;
+            }
+        }
+        throw new IllegalArgumentException("Illegal PhoneType value supplied: " + key);
+    }
 }

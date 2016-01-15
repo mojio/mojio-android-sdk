@@ -23,5 +23,14 @@ public enum SpeedUnit {
     public String getKey() {
         return key;
     }
+
+    public static SpeedUnit fromKey(String key) {
+        for (SpeedUnit unit : SpeedUnit.values()) {
+            if (unit.getKey().equals(key)) {
+                return unit;
+            }
+        }
+        throw new IllegalArgumentException("Illegal SpeedUnit value supplied: " + key);
+    }
 }
 

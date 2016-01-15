@@ -32,4 +32,13 @@ public enum RiskSeverity {
     public String getKey() {
         return key;
     }
+
+    public static RiskSeverity fromKey(String key) {
+        for (RiskSeverity unit : RiskSeverity.values()) {
+            if (unit.getKey().equals(key)) {
+                return unit;
+            }
+        }
+        throw new IllegalArgumentException("Illegal RiskSeverity value supplied: " + key);
+    }
 }

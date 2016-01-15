@@ -3,26 +3,24 @@ package io.moj.mobile.android.sdk.values;
 import io.moj.mobile.android.sdk.enums.FuelCapacityUnit;
 
 /**
- * Model object for a Distance value.
+ * Model object for a FuelCapacity value.
  * Created by mhorie on 2016-01-14.
  */
-public class FuelCapacity {
+public class FuelCapacity extends DeviceMeasurement {
 
     public FuelCapacityUnit getBaseFuelCapacityUnit() {
-        // TODO
-        return FuelCapacityUnit.LITERS;
+        return FuelCapacityUnit.fromKey(getBaseUnit());
     }
 
     public void setBaseFuelCapacityUnit(FuelCapacityUnit baseUnit) {
-        // TODO
+        setBaseUnit(baseUnit.getKey());
     }
 
     public FuelCapacityUnit getFuelCapacityUnit() {
-        // TODO
-        return FuelCapacityUnit.LITERS;
+        return FuelCapacityUnit.fromKey(getUnit());
     }
 
     public void setFuelCapacityUnit(FuelCapacityUnit unit) {
-        // TODO
+        setUnit(unit.getKey());
     }
 }

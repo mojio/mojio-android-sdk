@@ -20,4 +20,13 @@ public enum HeadingUnit {
     public String getKey() {
         return key;
     }
+
+    public static HeadingUnit fromKey(String key) {
+        for (HeadingUnit unit : HeadingUnit.values()) {
+            if (unit.getKey().equals(key)) {
+                return unit;
+            }
+        }
+        throw new IllegalArgumentException("Illegal HeadingUnit value supplied: " + key);
+    }
 }

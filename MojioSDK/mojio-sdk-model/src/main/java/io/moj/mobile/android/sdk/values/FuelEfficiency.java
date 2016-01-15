@@ -1,6 +1,6 @@
 package io.moj.mobile.android.sdk.values;
 
-import io.moj.mobile.android.sdk.models.values.FloatUnitValue;
+import io.moj.mobile.android.sdk.enums.FuelEfficiencyUnit;
 
 /**
  * Model object for a FuelEfficiency value.
@@ -12,6 +12,22 @@ public class FuelEfficiency extends DeviceMeasurement {
     private String BenchmarkTime;
     private MeasurementStatistics BenchmarkStatistics;
 
+    public FuelEfficiencyUnit getBaseFuelEfficiencyUnit() {
+        return FuelEfficiencyUnit.fromKey(getBaseUnit());
+    }
+
+    public void setBaseFuelEfficiencyUnit(FuelEfficiencyUnit baseUnit) {
+        setBaseUnit(baseUnit.getKey());
+    }
+
+    public FuelEfficiencyUnit getFuelEfficiencyUnit() {
+        return FuelEfficiencyUnit.fromKey(getUnit());
+    }
+
+    public void setFuelEfficiencyUnit(FuelEfficiencyUnit unit) {
+        setUnit(unit.getKey());
+    }
+
     public MeasurementStatistics getBenchmarkStatistics() {
         return BenchmarkStatistics;
     }
@@ -20,6 +36,7 @@ public class FuelEfficiency extends DeviceMeasurement {
         BenchmarkStatistics = benchmarkStatistics;
     }
 
+    // TODO add methods returning DateTime instead of String
     public String getBenchmarkTime() {
         return BenchmarkTime;
     }

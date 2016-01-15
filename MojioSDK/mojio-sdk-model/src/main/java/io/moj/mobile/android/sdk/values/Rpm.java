@@ -9,20 +9,18 @@ import io.moj.mobile.android.sdk.enums.RpmUnit;
 public class Rpm extends DeviceMeasurement {
 
     public RpmUnit getBaseRpmUnit() {
-        // TODO
-        return RpmUnit.RPM;
+        return RpmUnit.fromKey(getBaseUnit());
     }
 
     public void setBaseRpmUnit(RpmUnit baseUnit) {
-        // TODO
+        setBaseUnit(baseUnit.getKey());
     }
 
     public RpmUnit getRpmUnit() {
-        // TODO
-        return RpmUnit.RPM;
+        return RpmUnit.fromKey(getUnit());
     }
 
     public void setRpmUnit(RpmUnit unit) {
-        // TODO
+        setUnit(unit.getKey());
     }
 }

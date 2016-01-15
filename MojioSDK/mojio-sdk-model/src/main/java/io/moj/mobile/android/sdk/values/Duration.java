@@ -9,20 +9,18 @@ import io.moj.mobile.android.sdk.enums.DurationUnit;
 public class Duration extends DeviceMeasurement {
 
     public DurationUnit getBaseDurationUnit() {
-        // TODO
-        return DurationUnit.HOURS;
+        return DurationUnit.fromKey(getBaseUnit());
     }
 
     public void setBaseDurationUnit(DurationUnit baseUnit) {
-        // TODO
+        setBaseUnit(baseUnit.getKey());
     }
 
     public DurationUnit getDurationUnit() {
-        // TODO
-        return DurationUnit.HOURS;
+        return DurationUnit.fromKey(getUnit());
     }
 
     public void setDurationUnit(DurationUnit unit) {
-        // TODO
+        setUnit(unit.getKey());
     }
 }

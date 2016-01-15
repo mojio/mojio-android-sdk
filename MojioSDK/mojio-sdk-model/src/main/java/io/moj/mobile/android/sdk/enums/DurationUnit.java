@@ -3,7 +3,7 @@ package io.moj.mobile.android.sdk.enums;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Enum for DistanceUnit types.
+ * Enum for DurationUnit types.
  * Created by mhorie on 2016-01-14.
  */
 public enum DurationUnit {
@@ -37,5 +37,14 @@ public enum DurationUnit {
 
     public String getKey() {
         return key;
+    }
+
+    public static DurationUnit fromKey(String key) {
+        for (DurationUnit unit : DurationUnit.values()) {
+            if (unit.getKey().equals(key)) {
+                return unit;
+            }
+        }
+        throw new IllegalArgumentException("Illegal DurationUnit value supplied: " + key);
     }
 }

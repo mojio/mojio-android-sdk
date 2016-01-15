@@ -26,4 +26,13 @@ public enum FuelEfficiencyUnit {
     public String getKey() {
         return key;
     }
+
+    public static FuelEfficiencyUnit fromKey(String key) {
+        for (FuelEfficiencyUnit unit : FuelEfficiencyUnit.values()) {
+            if (unit.getKey().equals(key)) {
+                return unit;
+            }
+        }
+        throw new IllegalArgumentException("Illegal FuelEfficiencyUnit value supplied: " + key);
+    }
 }

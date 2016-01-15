@@ -35,4 +35,13 @@ public enum DistanceUnit {
     public String getKey() {
         return key;
     }
+
+    public static DistanceUnit fromKey(String key) {
+        for (DistanceUnit unit : DistanceUnit.values()) {
+            if (unit.getKey().equals(key)) {
+                return unit;
+            }
+        }
+        throw new IllegalArgumentException("Illegal DistanceUnit value supplied: " + key);
+    }
 }

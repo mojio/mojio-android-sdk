@@ -12,23 +12,22 @@ public class Heading extends DeviceMeasurement {
     private Boolean LeftTurn;
 
     public HeadingUnit getBaseHeadingUnit() {
-        // TODO
-        return HeadingUnit.DEGREE;
+        return HeadingUnit.fromKey(getBaseUnit());
     }
 
     public void setBaseHeadingUnit(HeadingUnit baseUnit) {
-        // TODO
+        setBaseUnit(baseUnit.getKey());
     }
 
     public HeadingUnit getHeadingUnit() {
-        // TODO
-        return HeadingUnit.DEGREE;
+        return HeadingUnit.fromKey(getUnit());
     }
 
     public void setHeadingUnit(HeadingUnit unit) {
-        // TODO
+        setUnit(unit.getKey());
     }
 
+    // TODO: what can be returned here?
     public String getDirection() {
         return Direction;
     }

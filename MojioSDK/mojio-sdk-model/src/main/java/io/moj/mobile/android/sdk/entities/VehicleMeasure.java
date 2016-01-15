@@ -1,13 +1,28 @@
-package io.moj.mobile.android.sdk.values;
+package io.moj.mobile.android.sdk.entities;
 
 import io.moj.mobile.android.sdk.enums.FuelEfficiencyCalculationMethod;
 import io.moj.mobile.android.sdk.enums.FuelType;
+import io.moj.mobile.android.sdk.values.Acceleration;
+import io.moj.mobile.android.sdk.values.Accelerometer;
+import io.moj.mobile.android.sdk.values.Battery;
+import io.moj.mobile.android.sdk.values.BooleanState;
+import io.moj.mobile.android.sdk.values.DiagnosticCode;
+import io.moj.mobile.android.sdk.values.FuelEfficiency;
+import io.moj.mobile.android.sdk.values.FuelLevel;
+import io.moj.mobile.android.sdk.values.Heading;
+import io.moj.mobile.android.sdk.values.Odometer;
+import io.moj.mobile.android.sdk.values.Rpm;
+import io.moj.mobile.android.sdk.values.Speed;
+import io.moj.mobile.android.sdk.values.VinDetails;
 
 /**
- * Model object for an VehicleMeasure.
+ * Model object for an VehicleMeasure. A VehicleMeasure is what is returned by calls to v2/.../history/states.
+ * It is not an entity per se as it neither has an ID nor a reference to its parent object when returned
+ * by the server, but it is being subclassed from MojioObject here because it is worth caching or
+ * persisting at the application layer due to its size.
  * Created by mhorie on 2016-01-13.
  */
-public class VehicleMeasure {
+public class VehicleMeasure extends MojioObject {
 
     public static final String ACCELERATION = "Acceleration";
     public static final String ACCELEROMETER = "Accelerometer";
@@ -50,7 +65,7 @@ public class VehicleMeasure {
     private FuelLevel FuelLevel;
     private FuelType FuelType;
     private String GatewayTime;
-    private HarshEventState HarshEventState;
+    private BooleanState HarshEventState;
     private Heading Heading;
     private BooleanState IdleState;
     private BooleanState IgnitionState;
@@ -155,6 +170,8 @@ public class VehicleMeasure {
         FuelType = fuelType;
     }
 
+    // TODO what is GatewayTime
+    // TODO add methods returning DateTime instead of String
     public String getGatewayTime() {
         return GatewayTime;
     }
@@ -163,11 +180,11 @@ public class VehicleMeasure {
         GatewayTime = gatewayTime;
     }
 
-    public HarshEventState getHarshEventState() {
+    public BooleanState getHarshEventState() {
         return HarshEventState;
     }
 
-    public void setHarshEventState(HarshEventState harshEventState) {
+    public void setHarshEventState(BooleanState harshEventState) {
         HarshEventState = harshEventState;
     }
 

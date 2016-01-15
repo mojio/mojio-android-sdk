@@ -18,6 +18,8 @@ public class Mojio extends MojioObject {
     private String GatewayTime;
     private String[] Tags;
 
+    // TODO add methods returning DateTime instead of String
+    // TODO: What is GatewayTime
     public String getGatewayTime() {
         return GatewayTime;
     }
@@ -34,6 +36,7 @@ public class Mojio extends MojioObject {
         this.IMEI = IMEI;
     }
 
+    // TODO add methods returning DateTime instead of String
     public String getLastContactTime() {
         return LastContactTime;
     }

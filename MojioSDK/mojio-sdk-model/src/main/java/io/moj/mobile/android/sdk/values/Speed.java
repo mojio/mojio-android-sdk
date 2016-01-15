@@ -12,21 +12,19 @@ public class Speed extends DeviceMeasurement {
     private Duration SpeedBandDuration;
 
     public SpeedUnit getBaseSpeedUnit() {
-        // TODO
-        return SpeedUnit.KILOMETERS_PER_HOUR;
+        return SpeedUnit.fromKey(getBaseUnit());
     }
 
     public void setBaseSpeedUnit(SpeedUnit baseUnit) {
-        // TODO
+        setBaseUnit(baseUnit.getKey());
     }
 
     public SpeedUnit getSpeedUnit() {
-        // TODO
-        return SpeedUnit.KILOMETERS_PER_HOUR;
+        return SpeedUnit.fromKey(getUnit());
     }
 
     public void setSpeedUnit(SpeedUnit unit) {
-        // TODO
+        setUnit(unit.getKey());
     }
 
     public Duration getSpeedBandDuration() {

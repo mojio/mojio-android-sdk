@@ -3,7 +3,7 @@ package io.moj.mobile.android.sdk.enums;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Enum for DistanceUnit types.
+ * Enum for FuelLevelUnit types.
  * Created by mhorie on 2016-01-14.
  */
 public enum FuelLevelUnit {
@@ -19,5 +19,14 @@ public enum FuelLevelUnit {
 
     public String getKey() {
         return key;
+    }
+
+    public static FuelLevelUnit fromKey(String key) {
+        for (FuelLevelUnit unit : FuelLevelUnit.values()) {
+            if (unit.getKey().equals(key)) {
+                return unit;
+            }
+        }
+        throw new IllegalArgumentException("Illegal FuelLevelUnit value supplied: " + key);
     }
 }

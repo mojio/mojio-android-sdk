@@ -20,4 +20,13 @@ public enum RpmUnit {
     public String getKey() {
         return key;
     }
+
+    public static RpmUnit fromKey(String key) {
+        for (RpmUnit unit : RpmUnit.values()) {
+            if (unit.getKey().equals(key)) {
+                return unit;
+            }
+        }
+        throw new IllegalArgumentException("Illegal RpmUnit value supplied: " + key);
+    }
 }

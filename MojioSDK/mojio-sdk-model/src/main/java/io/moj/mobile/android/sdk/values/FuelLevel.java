@@ -9,20 +9,18 @@ import io.moj.mobile.android.sdk.enums.FuelLevelUnit;
 public class FuelLevel extends DeviceMeasurement {
 
     public FuelLevelUnit getBaseFuelLevelUnit() {
-        // TODO
-        return FuelLevelUnit.PERCENTAGE;
+        return FuelLevelUnit.fromKey(getBaseUnit());
     }
 
     public void setBaseFuelLevelUnit(FuelLevelUnit baseUnit) {
-        // TODO
+        setBaseUnit(baseUnit.getKey());
     }
 
     public FuelLevelUnit getFuelLevelUnit() {
-        // TODO
-        return FuelLevelUnit.PERCENTAGE;
+        return FuelLevelUnit.fromKey(getUnit());
     }
 
     public void setFuelLevelUnit(FuelLevelUnit unit) {
-        // TODO
+        setUnit(unit.getKey());
     }
 }

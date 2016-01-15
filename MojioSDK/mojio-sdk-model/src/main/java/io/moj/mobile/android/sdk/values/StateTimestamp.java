@@ -8,6 +8,7 @@ public abstract class StateTimestamp {
 
     private String Timestamp;
 
+    // TODO add methods returning DateTime instead of String
     public String getTimestamp() {
         return Timestamp;
     }

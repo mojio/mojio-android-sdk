@@ -1,7 +1,6 @@
 package io.moj.mobile.android.sdk.values;
 
-import io.moj.mobile.android.sdk.enums.AccelerationUnit;
-import io.moj.mobile.android.sdk.enums.DistanceUnit;
+import io.moj.mobile.android.sdk.enums.AccelerometerUnit;
 
 /**
  * Model object for a ProperAcceleration value.
@@ -9,21 +8,19 @@ import io.moj.mobile.android.sdk.enums.DistanceUnit;
  */
 public class ProperAcceleration extends DeviceMeasurement {
 
-    public AccelerationUnit getBaseAccelerationUnit() {
-        // TODO
-        return AccelerationUnit.METERS_PER_SECOND_PER_SECOND;
+    public AccelerometerUnit getBaseAccelerometerUnit() {
+        return AccelerometerUnit.fromKey(getBaseUnit());
     }
 
-    public void setBaseAccelerationUnit(AccelerationUnit baseUnit) {
-        // TODO
+    public void setBaseAccelerometerUnit(AccelerometerUnit baseUnit) {
+        setBaseUnit(baseUnit.getKey());
     }
 
-    public AccelerationUnit getAccelerationUnit() {
-        // TODO
-        return AccelerationUnit.METERS_PER_SECOND_PER_SECOND;
+    public AccelerometerUnit getAccelerometerUnit() {
+        return AccelerometerUnit.fromKey(getUnit());
     }
 
-    public void setAccelerationUnit(AccelerationUnit unit) {
-        // TODO
+    public void setAccelerometerUnit(AccelerometerUnit unit) {
+        setUnit(unit.getKey());
     }
 }

@@ -11,14 +11,6 @@ public abstract class DeviceMeasurement {
     private String Unit;
     private Float Value;
 
-    public String getBaseUnit() {
-        return BaseUnit;
-    }
-
-    public void setBaseUnit(String baseUnit) {
-        BaseUnit = baseUnit;
-    }
-
     public Float getBaseValue() {
         return BaseValue;
     }
@@ -27,20 +19,28 @@ public abstract class DeviceMeasurement {
         BaseValue = baseValue;
     }
 
-    public String getUnit() {
-        return Unit;
-    }
-
-    public void setUnit(String unit) {
-        Unit = unit;
-    }
-
     public Float getValue() {
         return Value;
     }
 
     public void setValue(Float value) {
         Value = value;
+    }
+
+    protected String getBaseUnit() {
+        return BaseUnit;
+    }
+
+    protected void setBaseUnit(String baseUnit) {
+        BaseUnit = baseUnit;
+    }
+
+    protected String getUnit() {
+        return Unit;
+    }
+
+    protected void setUnit(String unit) {
+        Unit = unit;
     }
 
     @Override

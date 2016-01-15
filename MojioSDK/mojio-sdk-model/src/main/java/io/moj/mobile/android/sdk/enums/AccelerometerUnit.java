@@ -35,4 +35,13 @@ public enum AccelerometerUnit {
     public String getKey() {
         return key;
     }
+
+    public static AccelerometerUnit fromKey(String key) {
+        for (AccelerometerUnit unit : AccelerometerUnit.values()) {
+            if (unit.getKey().equals(key)) {
+                return unit;
+            }
+        }
+        throw new IllegalArgumentException("Illegal AccelerometerUnit value supplied: " + key);
+    }
 }

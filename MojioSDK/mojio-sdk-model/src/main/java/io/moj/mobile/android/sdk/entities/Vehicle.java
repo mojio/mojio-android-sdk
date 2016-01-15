@@ -9,10 +9,8 @@ import io.moj.mobile.android.sdk.values.Accelerometer;
 import io.moj.mobile.android.sdk.values.DiagnosticCode;
 import io.moj.mobile.android.sdk.values.FuelEfficiency;
 import io.moj.mobile.android.sdk.values.FuelLevel;
-import io.moj.mobile.android.sdk.values.HarshEventState;
 import io.moj.mobile.android.sdk.values.Heading;
 import io.moj.mobile.android.sdk.values.Image;
-import io.moj.mobile.android.sdk.values.Location;
 import io.moj.mobile.android.sdk.values.Odometer;
 import io.moj.mobile.android.sdk.values.Rpm;
 import io.moj.mobile.android.sdk.values.Speed;
@@ -76,7 +74,7 @@ public class Vehicle extends MojioObject {
     private FuelLevel FuelLevel;
     private FuelType FuelType;
     private String GatewayTime;
-    private HarshEventState HarshEventState;
+    private BooleanState HarshEventState;
     private BooleanState IdleState;
     private BooleanState IgnitionState;
     private Battery Battery;
@@ -184,6 +182,8 @@ public class Vehicle extends MojioObject {
         FuelType = fuelType;
     }
 
+    // TODO what is GatewayTime
+    // TODO add methods returning DateTime instead of String
     public String getGatewayTime() {
         return GatewayTime;
     }
@@ -192,11 +192,11 @@ public class Vehicle extends MojioObject {
         GatewayTime = gatewayTime;
     }
 
-    public HarshEventState getHarshEventState() {
+    public BooleanState getHarshEventState() {
         return HarshEventState;
     }
 
-    public void setHarshEventState(HarshEventState harshEventState) {
+    public void setHarshEventState(BooleanState harshEventState) {
         HarshEventState = harshEventState;
     }
 

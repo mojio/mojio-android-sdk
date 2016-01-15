@@ -8,6 +8,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public enum Link {
 
+    // TODO: Add all Link types
     @SerializedName("Self")
     SELF("Self");
 
@@ -32,4 +33,13 @@ public enum Link {
      "Next": "https://staging-api.moj.io/v2/trips?$skip=2",
      "First": "https://staging-api.moj.io/v2/trips?$skip=0"
      */
+
+    public static Link fromKey(String key) {
+        for (Link unit : Link.values()) {
+            if (unit.getKey().equals(key)) {
+                return unit;
+            }
+        }
+        throw new IllegalArgumentException("Illegal Link value supplied: " + key);
+    }
 }

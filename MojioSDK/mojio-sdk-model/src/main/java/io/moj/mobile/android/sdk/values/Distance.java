@@ -9,20 +9,18 @@ import io.moj.mobile.android.sdk.enums.DistanceUnit;
 public class Distance extends DeviceMeasurement {
 
     public DistanceUnit getBaseDistanceUnit() {
-        // TODO
-        return DistanceUnit.METERS;
+        return DistanceUnit.fromKey(getBaseUnit());
     }
 
     public void setBaseDistanceUnit(DistanceUnit baseUnit) {
-        // TODO
+        setBaseUnit(baseUnit.getKey());
     }
 
     public DistanceUnit getDistanceUnit() {
-        // TODO
-        return DistanceUnit.METERS;
+        return DistanceUnit.fromKey(getUnit());
     }
 
     public void setDistanceUnit(DistanceUnit unit) {
-        // TODO
+        setUnit(unit.getKey());
     }
 }

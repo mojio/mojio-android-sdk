@@ -3,7 +3,7 @@ package io.moj.mobile.android.sdk.enums;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Enum for DistanceUnit types.
+ * Enum for ScoringMethod types.
  * Created by mhorie on 2016-01-14.
  */
 public enum ScoringMethod {
@@ -22,5 +22,14 @@ public enum ScoringMethod {
 
     public String getKey() {
         return key;
+    }
+
+    public static ScoringMethod fromKey(String key) {
+        for (ScoringMethod unit : ScoringMethod.values()) {
+            if (unit.getKey().equals(key)) {
+                return unit;
+            }
+        }
+        throw new IllegalArgumentException("Illegal ScoringMethod value supplied: " + key);
     }
 }

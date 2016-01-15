@@ -29,4 +29,13 @@ public enum FuelType {
     public String getKey() {
         return key;
     }
+
+    public static FuelType fromKey(String key) {
+        for (FuelType unit : FuelType.values()) {
+            if (unit.getKey().equals(key)) {
+                return unit;
+            }
+        }
+        throw new IllegalArgumentException("Illegal FuelType value supplied: " + key);
+    }
 }

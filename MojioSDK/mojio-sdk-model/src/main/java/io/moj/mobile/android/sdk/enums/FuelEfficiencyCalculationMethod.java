@@ -32,4 +32,13 @@ public enum FuelEfficiencyCalculationMethod {
     public String getKey() {
         return key;
     }
+
+    public static FuelEfficiencyCalculationMethod fromKey(String key) {
+        for (FuelEfficiencyCalculationMethod unit : FuelEfficiencyCalculationMethod.values()) {
+            if (unit.getKey().equals(key)) {
+                return unit;
+            }
+        }
+        throw new IllegalArgumentException("Illegal FuelEfficiencyCalculationMethod value supplied: " + key);
+    }
 }

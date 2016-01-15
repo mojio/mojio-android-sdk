@@ -102,6 +102,7 @@ public class VinDetails {
         Success = success;
     }
 
+    // TODO add methods returning DateTime instead of String
     public String getTimestamp() {
         return Timestamp;
     }
