@@ -8,9 +8,32 @@ import com.google.gson.annotations.SerializedName;
  */
 public enum Link {
 
-    // TODO: Add all Link types
     @SerializedName("Self")
-    SELF("Self");
+    SELF("Self"),
+
+    @SerializedName("First")
+    FIRST("First"),
+
+    @SerializedName("Next")
+    NEXT("Next"),
+
+    @SerializedName("Vehicle")
+    VEHICLE("Vehicle"),
+
+    @SerializedName("Mojio")
+    MOJIO("Mojio"),
+
+    @SerializedName("Permissions")
+    PERMISSIONS("Permissions"),
+
+    @SerializedName("Permission")
+    PERMISSION("Permission"),
+
+    @SerializedName("States")
+    STATES("States"),
+
+    @SerializedName("Locations")
+    LOCATIONS("Locations");
 
     private String key;
 
@@ -21,18 +44,6 @@ public enum Link {
     public String getKey() {
         return key;
     }
-
-    /**
-     * "Self": "/v2/trips/e63e85fa-915c-4e6d-ab22-e677e52ef729",
-     "Vehicle": "/v2/vehicles/9e05efa5-e238-499a-b7bc-2d35f756e0b5",
-     "Mojio": "/v2/mojios/61d04264-44fe-4f23-a43b-f2b3cb097412",
-     "Permissions": "/v2/trips/e63e85fa-915c-4e6d-ab22-e677e52ef729/permissions",
-     "Permission": "/v2/trips/e63e85fa-915c-4e6d-ab22-e677e52ef729/permission",
-     "States": "/v2/trips/e63e85fa-915c-4e6d-ab22-e677e52ef729/history/states",
-     "Locations": "/v2/trips/e63e85fa-915c-4e6d-ab22-e677e52ef729/history/locations"
-     "Next": "https://staging-api.moj.io/v2/trips?$skip=2",
-     "First": "https://staging-api.moj.io/v2/trips?$skip=0"
-     */
 
     public static Link fromKey(String key) {
         for (Link unit : Link.values()) {
