@@ -3,8 +3,6 @@ package io.moj.mobile.android.sdk.model.utils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
 
 import java.util.Arrays;
 
@@ -19,20 +17,6 @@ public class TimeFormatHelpers {
     private static final DateTimeFormatter FORMATTER_FROM_SERVER = DateTimeFormat.forPattern(FORMAT_FROM_SERVER);
     private static final DateTimeFormatter FORMATTER_TO_SERVER = DateTimeFormat.forPattern(FORMAT_TO_SERVER);
     private static final int MILLISECOND_PRECISION = 3;
-
-    private static PeriodFormatter FORMATTER_FOR_ELAPSED_TIME = new PeriodFormatterBuilder()
-            .printZeroAlways()
-            .minimumPrintedDigits(2)
-            .appendHours()
-            .appendSeparator(":")
-            .appendMinutes()
-            .printZeroAlways()
-            .minimumPrintedDigits(2)
-            .appendSeparator(":")
-            .appendSeconds()
-            .printZeroAlways()
-            .minimumPrintedDigits(2)
-            .toFormatter();
 
     /**
      * Returns a UTC {@link DateTime} given a UTC date from the server. Note that since the server sends a
