@@ -70,8 +70,9 @@ public abstract class MojioObject {
     @Override
     public String toString() {
         return "MojioObject{" +
-                "CreatedOn='" + CreatedOn + '\'' +
+                "_id=" + _id +
                 ", Id='" + Id + '\'' +
+                ", CreatedOn='" + CreatedOn + '\'' +
                 ", LastModified='" + LastModified + '\'' +
                 ", Links=" + Links +
                 '}';

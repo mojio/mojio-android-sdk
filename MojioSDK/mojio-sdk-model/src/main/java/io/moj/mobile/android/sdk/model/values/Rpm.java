@@ -23,4 +23,9 @@ public class Rpm extends DeviceMeasurement {
     public void setRpmUnit(RpmUnit unit) {
         setUnit(unit.getKey());
     }
+
+    @Override
+    public String toString() {
+        return "Rpm{} " + super.toString();
+    }
 }

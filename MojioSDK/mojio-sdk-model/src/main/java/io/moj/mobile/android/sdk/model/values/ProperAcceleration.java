@@ -23,4 +23,9 @@ public class ProperAcceleration extends DeviceMeasurement {
     public void setAccelerometerUnit(AccelerometerUnit unit) {
         setUnit(unit.getKey());
     }
+
+    @Override
+    public String toString() {
+        return "ProperAcceleration{} " + super.toString();
+    }
 }

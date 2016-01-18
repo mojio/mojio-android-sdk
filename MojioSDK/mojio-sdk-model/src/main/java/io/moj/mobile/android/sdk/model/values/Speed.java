@@ -48,6 +48,6 @@ public class Speed extends DeviceMeasurement {
         return "Speed{" +
                 "SpeedBandDuration=" + SpeedBandDuration +
                 ", SpeedBandId=" + SpeedBandId +
-                '}';
+                "} " + super.toString();
     }
 }

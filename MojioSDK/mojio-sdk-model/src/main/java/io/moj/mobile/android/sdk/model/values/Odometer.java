@@ -20,6 +20,6 @@ public class Odometer extends Distance {
     public String toString() {
         return "Odometer{" +
                 "RolloverValue=" + RolloverValue +
-                '}';
+                "} " + super.toString();
     }
 }

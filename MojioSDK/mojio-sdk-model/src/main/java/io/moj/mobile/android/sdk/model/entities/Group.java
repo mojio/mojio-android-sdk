@@ -56,6 +56,7 @@ public class Group extends MojioObject {
                 "Description='" + Description + '\'' +
                 ", Name='" + Name + '\'' +
                 ", Users=" + Arrays.toString(Users) +
-                '}';
+                ", Tags=" + Arrays.toString(Tags) +
+                "} " + super.toString();
     }
 }

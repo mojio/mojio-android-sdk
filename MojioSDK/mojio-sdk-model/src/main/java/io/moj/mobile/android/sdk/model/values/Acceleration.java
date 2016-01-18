@@ -23,4 +23,9 @@ public class Acceleration extends DeviceMeasurement {
     public void setAccelerationUnit(AccelerationUnit unit) {
         setUnit(unit.getKey());
     }
+
+    @Override
+    public String toString() {
+        return "Acceleration{} " + super.toString();
+    }
 }

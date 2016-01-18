@@ -2,6 +2,8 @@ package io.moj.mobile.android.sdk.model.entities;
 
 import org.joda.time.DateTime;
 
+import java.util.Arrays;
+
 import io.moj.mobile.android.sdk.model.utils.TimeFormatHelpers;
 
 /**
@@ -63,5 +65,16 @@ public class Mojio extends MojioObject {
 
     public void setTags(String[] tags) {
         Tags = tags;
+    }
+
+    @Override
+    public String toString() {
+        return "Mojio{" +
+                "GatewayTime='" + GatewayTime + '\'' +
+                ", Name='" + Name + '\'' +
+                ", IMEI='" + IMEI + '\'' +
+                ", LastContactTime='" + LastContactTime + '\'' +
+                ", Tags=" + Arrays.toString(Tags) +
+                "} " + super.toString();
     }
 }

@@ -232,6 +232,6 @@ public class Trip extends MojioObject {
                 ", FuelEfficiency=" + FuelEfficiency +
                 ", StartFuelLevel=" + StartFuelLevel +
                 ", EndFuelLevel=" + EndFuelLevel +
-                '}';
+                "} " + super.toString();
     }
 }

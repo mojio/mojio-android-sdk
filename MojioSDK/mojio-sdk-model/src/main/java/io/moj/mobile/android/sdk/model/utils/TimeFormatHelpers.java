@@ -81,6 +81,14 @@ public class TimeFormatHelpers {
         return FORMATTER_TO_SERVER.print(dateTime);
     }
 
+    public static DateTimeFormatter getFromServerDateTimeFormatter() {
+        return FORMATTER_FROM_SERVER;
+    }
+
+    public static DateTimeFormatter getToServerDateTimeFormatter() {
+        return FORMATTER_TO_SERVER;
+    }
+
     private static String getPaddedMilliseconds(String milliseconds) {
         milliseconds = milliseconds == null ? "" : milliseconds;
         if (milliseconds.length() == MILLISECOND_PRECISION) {

@@ -23,4 +23,9 @@ public class FuelLevel extends DeviceMeasurement {
     public void setFuelLevelUnit(FuelLevelUnit unit) {
         setUnit(unit.getKey());
     }
+
+    @Override
+    public String toString() {
+        return "FuelLevel{} " + super.toString();
+    }
 }

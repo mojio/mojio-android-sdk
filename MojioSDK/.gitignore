@@ -1,7 +1,35 @@
-.gradle
-/local.properties
-/.idea/workspace.xml
-/.idea/libraries
+# Built application files
+build/
+
+# Gradle generated files
+.gradle/
+
+# Local configuration files
+local.properties
+
+# User-specific IntelliJ files
+app.iml
+.idea/workspace.xml
+.idea/libraries/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/.name
+.idea/compiler.xml
+.idea/copyright/profiles_settings.xml
+.idea/encodings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/scopes/scope_settings.xml
+.idea/vcs.xml
+.idea/libraries
+
+# Java debugger
+.hprof
+
+# OS-specific files
 .DS_Store
-/build
-/captures
+.Spotlight-V100
+.Trashes
+*.swp
+ehthumbs.db
+Thumbs.db

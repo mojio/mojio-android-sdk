@@ -23,4 +23,9 @@ public class Distance extends DeviceMeasurement {
     public void setDistanceUnit(DistanceUnit unit) {
         setUnit(unit.getKey());
     }
+
+    @Override
+    public String toString() {
+        return "Distance{} " + super.toString();
+    }
 }

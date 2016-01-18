@@ -49,9 +49,9 @@ public class Battery extends Voltage {
     public String toString() {
         return "Battery{" +
                 "Connected=" + Connected +
-                ", RiskSeverity='" + RiskSeverity + '\'' +
+                ", RiskSeverity=" + RiskSeverity +
                 ", LowVoltageDuration=" + LowVoltageDuration +
                 ", HighVoltageDuration=" + HighVoltageDuration +
-                '}';
+                "} " + super.toString();
     }
 }

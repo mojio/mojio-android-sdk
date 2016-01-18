@@ -19,4 +19,11 @@ public abstract class StateTimestamp {
     public void setTimestamp(DateTime timestamp) {
         Timestamp = TimeFormatHelpers.toServerFormatted(timestamp);
     }
+
+    @Override
+    public String toString() {
+        return "StateTimestamp{" +
+                "Timestamp='" + Timestamp + '\'' +
+                '}';
+    }
 }

@@ -23,4 +23,9 @@ public class Duration extends DeviceMeasurement {
     public void setDurationUnit(DurationUnit unit) {
         setUnit(unit.getKey());
     }
+
+    @Override
+    public String toString() {
+        return "Duration{} " + super.toString();
+    }
 }

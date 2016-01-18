@@ -53,6 +53,6 @@ public class Heading extends DeviceMeasurement {
         return "Heading{" +
                 "Direction='" + Direction + '\'' +
                 ", LeftTurn=" + LeftTurn +
-                '}';
+                "} " + super.toString();
     }
 }

@@ -112,6 +112,6 @@ public class Location extends MojioObject {
                 ", Altitude=" + Altitude +
                 ", GeoHash='" + GeoHash + '\'' +
                 ", Time='" + Time + '\'' +
-                '}';
+                "} " + super.toString();
     }
 }

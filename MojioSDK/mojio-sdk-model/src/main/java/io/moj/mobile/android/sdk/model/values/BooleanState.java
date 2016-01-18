@@ -15,4 +15,11 @@ public class BooleanState extends StateTimestamp {
     public void setValue(Boolean value) {
         Value = value;
     }
+
+    @Override
+    public String toString() {
+        return "BooleanState{" +
+                "Value=" + Value +
+                "} " + super.toString();
+    }
 }

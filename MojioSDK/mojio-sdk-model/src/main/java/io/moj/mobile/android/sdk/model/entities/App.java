@@ -80,6 +80,7 @@ public class App extends MojioObject {
                 ", Downloads=" + Downloads +
                 ", RedirectUris=" + Arrays.toString(RedirectUris) +
                 ", Image=" + Image +
-                '}';
+                ", Tags=" + Arrays.toString(Tags) +
+                "} " + super.toString();
     }
 }

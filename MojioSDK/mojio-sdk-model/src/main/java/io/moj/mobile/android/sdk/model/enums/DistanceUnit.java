@@ -20,7 +20,7 @@ public enum DistanceUnit {
     @SerializedName("Meters")
     METERS("Meters"),
 
-    @SerializedName("GUnCentiMeterits")
+    @SerializedName("CentiMeter")
     CENTIMETERS("CentiMeter"),
 
     @SerializedName("MilliMeter")

@@ -343,6 +343,6 @@ public class VehicleMeasure extends MojioObject {
                 ", VirtualOdometer=" + VirtualOdometer +
                 ", Odometer=" + Odometer +
                 ", Time='" + Time + '\'' +
-                '}';
+                "} " + super.toString();
     }
 }

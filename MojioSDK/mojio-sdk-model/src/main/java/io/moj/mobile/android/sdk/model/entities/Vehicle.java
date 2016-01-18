@@ -2,6 +2,8 @@ package io.moj.mobile.android.sdk.model.entities;
 
 import org.joda.time.DateTime;
 
+import java.util.Arrays;
+
 import io.moj.mobile.android.sdk.model.enums.FuelEfficiencyCalculationMethod;
 import io.moj.mobile.android.sdk.model.enums.FuelType;
 import io.moj.mobile.android.sdk.model.utils.TimeFormatHelpers;
@@ -338,5 +340,42 @@ public class Vehicle extends MojioObject {
 
     public void setVinDetails(VinDetails vinDetails) {
         VinDetails = vinDetails;
+    }
+
+    @Override
+    public String toString() {
+        return "Vehicle{" +
+                "Acceleration=" + Acceleration +
+                ", Name='" + Name + '\'' +
+                ", LicensePlate='" + LicensePlate + '\'' +
+                ", VIN='" + VIN + '\'' +
+                ", CurrentTrip='" + CurrentTrip + '\'' +
+                ", MojioId='" + MojioId + '\'' +
+                ", Image=" + Image +
+                ", MilStatus=" + MilStatus +
+                ", LastContactTime='" + LastContactTime + '\'' +
+                ", DiagnosticCodes=" + Arrays.toString(DiagnosticCodes) +
+                ", Accelerometer=" + Accelerometer +
+                ", Deceleration=" + Deceleration +
+                ", Speed=" + Speed +
+                ", Odometer=" + Odometer +
+                ", RPM=" + RPM +
+                ", FuelEfficiency=" + FuelEfficiency +
+                ", FuelEfficiencyCalculationMethod=" + FuelEfficiencyCalculationMethod +
+                ", FuelLevel=" + FuelLevel +
+                ", FuelType=" + FuelType +
+                ", GatewayTime='" + GatewayTime + '\'' +
+                ", HarshEventState=" + HarshEventState +
+                ", IdleState=" + IdleState +
+                ", IgnitionState=" + IgnitionState +
+                ", Battery=" + Battery +
+                ", Heading=" + Heading +
+                ", Location=" + Location +
+                ", AccidentState=" + AccidentState +
+                ", VinDetails=" + VinDetails +
+                ", TowState=" + TowState +
+                ", ParkedState=" + ParkedState +
+                ", Tags=" + Arrays.toString(Tags) +
+                "} " + super.toString();
     }
 }

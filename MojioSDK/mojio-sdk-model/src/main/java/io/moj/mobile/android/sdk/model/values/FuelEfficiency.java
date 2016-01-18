@@ -61,6 +61,6 @@ public class FuelEfficiency extends DeviceMeasurement {
                 "BenchmarkStatistics=" + BenchmarkStatistics +
                 ", Statistics=" + Statistics +
                 ", BenchmarkTime='" + BenchmarkTime + '\'' +
-                '}';
+                "} " + super.toString();
     }
 }

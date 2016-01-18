@@ -23,4 +23,9 @@ public class Voltage extends DeviceMeasurement {
     public void setVoltageUnit(VoltageUnit unit) {
         setUnit(unit.getKey());
     }
+
+    @Override
+    public String toString() {
+        return "Voltage{} " + super.toString();
+    }
 }

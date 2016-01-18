@@ -94,6 +94,6 @@ public class User extends MojioObject {
                 ", PhoneNumbers=" + Arrays.toString(PhoneNumbers) +
                 ", Image=" + Image +
                 ", Tags=" + Arrays.toString(Tags) +
-                '}';
+                "} " + super.toString();
     }
 }

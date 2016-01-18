@@ -23,4 +23,9 @@ public class FuelCapacity extends DeviceMeasurement {
     public void setFuelCapacityUnit(FuelCapacityUnit unit) {
         setUnit(unit.getKey());
     }
+
+    @Override
+    public String toString() {
+        return "FuelCapacity{} " + super.toString();
+    }
 }
