@@ -1,17 +1,18 @@
 # Built application files
-build/
+/build
+/captures
 
 # Gradle generated files
-.gradle/
+.gradle
 
 # Local configuration files
 local.properties
 
 # User-specific IntelliJ files
-app.iml
+*.iml
+.idea/*
 .idea/workspace.xml
-.idea/libraries/
-.idea/workspace.xml
+.idea/libraries
 .idea/tasks.xml
 .idea/.name
 .idea/compiler.xml
@@ -24,7 +25,7 @@ app.iml
 .idea/libraries
 
 # Java debugger
-.hprof
+*.hprof
 
 # OS-specific files
 .DS_Store
