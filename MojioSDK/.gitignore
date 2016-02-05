@@ -33,3 +33,6 @@ app.iml
 *.swp
 ehthumbs.db
 Thumbs.db
+
+# Custom local files
+release-*.sh
