@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -77,7 +78,7 @@ public enum Environment {
     }
 
     public String getApiUrl(int version) {
-        return String.format(URL_FORMAT_API, buildUrl(prefix, apiPrefix + URL_SUFFIX_API), version);
+        return String.format(Locale.US, URL_FORMAT_API, buildUrl(prefix, apiPrefix + URL_SUFFIX_API), version);
     }
 
     public String getAuthUrl(String mojioAppId) {
@@ -89,7 +90,7 @@ public enum Environment {
     }
 
     public String getSignalRUrl(int version) {
-        return String.format(URL_FORMAT_SIGNALR, buildUrl(prefix, apiPrefix + URL_SUFFIX_API), version);
+        return String.format(Locale.US, URL_FORMAT_SIGNALR, buildUrl(prefix, apiPrefix + URL_SUFFIX_API), version);
     }
 
     public static Environment getDefault(Context context) {
@@ -120,7 +121,7 @@ public enum Environment {
     }
 
     private static String getApiUrl(Environment environment) {
-        return String.format(URL_FORMAT_API, buildUrl(environment.getPrefix(), environment.getApiPrefix() + URL_SUFFIX_API), DEFAULT_VERSION);
+        return String.format(Locale.US, URL_FORMAT_API, buildUrl(environment.getPrefix(), environment.getApiPrefix() + URL_SUFFIX_API), DEFAULT_VERSION);
     }
 
     private static String buildUrl(String prefix, String suffix) {

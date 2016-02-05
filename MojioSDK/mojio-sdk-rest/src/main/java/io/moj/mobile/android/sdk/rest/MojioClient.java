@@ -20,8 +20,8 @@ import java.util.Map;
 
 import io.moj.mobile.android.sdk.rest.networking.MojioCallback;
 import io.moj.mobile.android.sdk.rest.networking.MojioGlobalCallback;
-import io.moj.mobile.android.sdk.rest.networking.MojioHttpStack;
 import io.moj.mobile.android.sdk.rest.networking.MojioRequest;
+import io.moj.mobile.android.sdk.rest.networking.OkHttp3Stack;
 import io.moj.mobile.android.sdk.rest.util.DeviceUtils;
 
 /**
@@ -158,7 +158,7 @@ public class MojioClient {
 
     private synchronized void initRequestQueue() {
         if (requestQueue == null)
-            requestQueue = Volley.newRequestQueue(context, new MojioHttpStack());
+            requestQueue = Volley.newRequestQueue(context, new OkHttp3Stack());
     }
 
     private synchronized void initGson() {

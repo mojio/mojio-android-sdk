@@ -6,6 +6,7 @@ def artifactId = project.PUBLISH_ARTIFACT_ID
 def version = project.PUBLISH_VERSION
 
 def localReleaseDest = "${buildDir}/release/${version}"
+def archiveFilename = "${artifactId}-${version}.zip"
 
 task androidJavadocs(type: Javadoc) {
     failOnError = false
@@ -37,12 +38,12 @@ uploadArchives {
 task zipRelease(type: Zip) {
     from localReleaseDest
     destinationDir buildDir
-    archiveName "release-${version}.zip"
+    archiveName archiveFilename
 }
 
 task generateRelease << {
     println "Release ${version} can be found at ${localReleaseDest}/"
-    println "Release ${version} zipped can be found ${buildDir}/release-${version}.zip"
+    println "Release ${version} zipped can be found ${buildDir}/${archiveFilename}"
 }
 
 generateRelease.dependsOn(uploadArchives)
