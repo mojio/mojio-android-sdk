@@ -18,7 +18,7 @@ import android.webkit.WebViewClient;
 
 import java.util.Locale;
 
-import io.moj.mobile.android.sdk.oauth.R;
+import io.moj.mobile.android.sdk.Environment;
 
 /**
  * Fragment for guiding the user through the OAuth login flow. This can be used by client apps

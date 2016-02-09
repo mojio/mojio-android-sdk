@@ -1,4 +1,4 @@
-package io.moj.mobile.android.sdk.oauth;
+package io.moj.mobile.android.sdk;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,12 +17,13 @@ public enum Environment {
     STAGING("staging"),
     DEVELOP("develop");
 
-    private static final int DEFAULT_VERSION = 1;
+    private static final int DEFAULT_VERSION = 2;
     private static final String SCHEME = "https://";
     private static final String FORMAT_ACCOUNTS_HOSTNAME = SCHEME + "%s-accounts.moj.io";
     private static final String FORMAT_MY_MOJIO_HOSTNAME = SCHEME + "%s-my.moj.io";
     private static final String FORMAT_API_HOSTNAME = SCHEME + "%s-api.moj.io/v%d";
     private static final String FORMAT_PUSH_HOSTNAME = SCHEME + "%s-push.moj.io/v%d";
+    private static final String PATH_FORGOT_PASSWORD = "/account/forgot-password";
 
     private static final Map<String, Environment> PREFIX_MAP;
     static {
@@ -40,6 +41,10 @@ public enum Environment {
 
     public String getAccountsUrl() {
         return String.format(Locale.US, FORMAT_ACCOUNTS_HOSTNAME, prefix);
+    }
+
+    public String getPasswordRecoveryUrl() {
+        return getAccountsUrl() + PATH_FORGOT_PASSWORD;
     }
 
     public String getApiUrl() {
@@ -67,7 +72,7 @@ public enum Environment {
     }
 
     public static Environment getDefault() {
-        return TRIAL;
+        return PROD;
     }
 
     public static Environment fromPrefix(String prefix) {
