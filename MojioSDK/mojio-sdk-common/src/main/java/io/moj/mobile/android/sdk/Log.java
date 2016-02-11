@@ -4,7 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Util log class that will strip out Log calls at compile time for non-debug builds.
+ * Util log class that enables runtime configuration of behaviour so clients can disable
+ * SDK logging conditionally. Only supports the following log levels:
+ * <ul>
+ *     <li>{@link android.util.Log#VERBOSE}</li>
+ *     <li>{@link android.util.Log#DEBUG}</li>
+ *     <li>{@link android.util.Log#INFO}</li>
+ *     <li>{@link android.util.Log#WARN}</li>
+ *     <li>{@link android.util.Log#ERROR}</li>
+ * </ul>
  *
  * Created by skidson on 16-02-10.
  */
