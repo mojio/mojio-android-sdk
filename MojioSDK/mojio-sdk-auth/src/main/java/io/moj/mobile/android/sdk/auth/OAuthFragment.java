@@ -1,4 +1,4 @@
-package io.moj.mobile.android.sdk.oauth;
+package io.moj.mobile.android.sdk.auth;
 
 import android.app.Activity;
 import android.content.Context;

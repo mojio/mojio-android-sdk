@@ -1,4 +1,4 @@
-package io.moj.mobile.android.sdk.oauth;
+package io.moj.mobile.android.sdk.auth;
 
 import android.content.Context;
 import android.content.Intent;
@@ -26,7 +26,7 @@ import io.moj.mobile.android.sdk.Environment;
  */
 public class OAuthActivity extends FragmentActivity {
 
-    public static final String EXTRA_ENVIRONMENT = "EXTRA_CLIENT_ID";
+    public static final String EXTRA_ENVIRONMENT = "EXTRA_ENVIRONMENT";
     public static final String EXTRA_CLIENT_ID = "EXTRA_CLIENT_ID";
     public static final String EXTRA_SCOPE = "EXTRA_SCOPE";
     public static final String EXTRA_REDIRECT_URI = "EXTRA_REDIRECT_URI";
