@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 ext {
-    SDK_VERSION = '0.0.1'
+    SDK_VERSION = '0.0.2'
     PUBLISH_GROUP_ID = 'io.moj.mobile.android'
     PUBLISH_VERSION = SDK_VERSION
 }
@@ -23,11 +23,6 @@ allprojects {
     repositories {
         jcenter()
         mavenCentral()
-
-        // TODO remove this when all modules are in JCenter
-        maven {
-            url  "http://dl.bintray.com/mojio/maven"
-        }
     }
 }
 
