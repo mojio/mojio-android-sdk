@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 ext {
-    SDK_VERSION = '0.0.2'
+    SDK_VERSION = '0.0.3'
     PUBLISH_GROUP_ID = 'io.moj.mobile.android'
     PUBLISH_VERSION = SDK_VERSION
 }
