@@ -106,6 +106,21 @@ public class Condition {
         return type;
     }
 
+    @Override
+    public String toString() {
+        return "Condition{" +
+                "Delay='" + Delay + '\'' +
+                ", type=" + type +
+                ", Property='" + Property + '\'' +
+                ", Position=" + Position +
+                ", Max=" + Max +
+                ", Min=" + Min +
+                ", TimeProperty='" + TimeProperty + '\'' +
+                ", MinDataPoints=" + MinDataPoints +
+                ", Window='" + Window + '\'' +
+                '}';
+    }
+
     public static Condition onPropertyChanged(String property) {
         Condition c = new Condition(Type.PROPERTY_CHANGED);
         c.setProperty(property);
@@ -128,6 +143,11 @@ public class Condition {
         return c;
     }
 
+    public static Condition debounce(Integer minDataPoints, int days, int hours, int minutes,
+                                     int seconds) {
+        return debounce(minDataPoints, formatDuration(days, hours, minutes, seconds));
+    }
+
     public static Condition minDataPoints(Integer minDataPoints) {
         return debounce(minDataPoints, null);
     }
@@ -137,7 +157,7 @@ public class Condition {
     }
 
     public static Condition delay(int days, int hours, int minutes, int seconds) {
-        return debounce(null, formatDelay(days, hours, minutes, seconds));
+        return debounce(null, days, hours, minutes, seconds);
     }
 
     public static Condition throttle(String timeProperty, String window) {
@@ -147,11 +167,15 @@ public class Condition {
         return c;
     }
 
-    public static Condition throttle(int days, int hours, int minutes, int seconds) {
-        return throttle(null, formatDelay(days, hours, minutes, seconds));
+    public static Condition throttle(String timeProperty, int days, int hours, int minutes, int seconds) {
+        return throttle(timeProperty, formatDuration(days, hours, minutes, seconds));
     }
 
-    private static String formatDelay(int days, int hours, int minutes, int seconds) {
+    public static Condition throttle(int days, int hours, int minutes, int seconds) {
+        return throttle(null, days, hours, minutes, seconds);
+    }
+
+    private static String formatDuration(int days, int hours, int minutes, int seconds) {
         return String.format(Locale.US, TIME_FORMAT, days, hours, minutes, seconds, 0);
     }
 

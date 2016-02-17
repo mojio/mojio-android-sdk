@@ -121,7 +121,7 @@ public class Transport {
         return Topic;
     }
 
-    public Type getTransportType() {
+    public Type getType() {
         return TransportType;
     }
 
@@ -201,12 +201,38 @@ public class Transport {
         Topic = topic;
     }
 
-    public void setTransportType(Type transportType) {
+    public void setType(Type transportType) {
         TransportType = transportType;
     }
 
     public void setUserName(String userName) {
         UserName = userName;
+    }
+
+    @Override
+    public String toString() {
+        return "Transport{" +
+                "Address='" + Address + '\'' +
+                ", TransportType=" + TransportType +
+                ", DeviceRegistrationId='" + DeviceRegistrationId + '\'' +
+                ", DeviceToken='" + DeviceToken + '\'' +
+                ", AppId='" + AppId + '\'' +
+                ", AlertBody='" + AlertBody + '\'' +
+                ", AlertSound='" + AlertSound + '\'' +
+                ", AlertCategory='" + AlertCategory + '\'' +
+                ", Badge=" + Badge +
+                ", HostName='" + HostName + '\'' +
+                ", Topic='" + Topic + '\'' +
+                ", Port=" + Port +
+                ", ConnectionString='" + ConnectionString + '\'' +
+                ", CollectionName='" + CollectionName + '\'' +
+                ", Identifier=" + Identifier +
+                ", HubName='" + HubName + '\'' +
+                ", Callback='" + Callback + '\'' +
+                ", ClientId='" + ClientId + '\'' +
+                ", UserName='" + UserName + '\'' +
+                ", Password='" + Password + '\'' +
+                '}';
     }
 
     public static Transport forAndroid(String deviceRegistrationId) {

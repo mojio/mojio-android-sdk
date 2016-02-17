@@ -111,6 +111,22 @@ public class Observer {
         Type = type;
     }
 
+    @Override
+    public String toString() {
+        return "Observer{" +
+                "Conditions=" + Conditions +
+                ", Key='" + Key + '\'' +
+                ", CreatedOn='" + CreatedOn + '\'' +
+                ", LastModified='" + LastModified + '\'' +
+                ", ExpiryDate='" + ExpiryDate + '\'' +
+                ", Name='" + Name + '\'' +
+                ", Subject='" + Subject + '\'' +
+                ", Type=" + Type +
+                ", Fields=" + Fields +
+                ", Transports=" + Transports +
+                '}';
+    }
+
     public static class Builder {
         private Observer observer;
         private List<String> fields;
