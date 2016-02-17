@@ -28,6 +28,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.5'
 
     testCompile 'junit:junit:4.12'
+    testCompile 'com.google.guava:guava:19.0'
 }
 
 apply from: project.rootProject.file('android-release-aar.gradle')

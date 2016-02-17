@@ -21,6 +21,9 @@ public class Observer {
     private String Subject;
     private Type Type;
     private List<String> Fields;
+
+    // this field only exists for Observer creation
+    private Transport Transport;
     private List<Transport> Transports;
     private Map<Condition.Type, Condition> Conditions;
 
@@ -87,12 +90,34 @@ public class Observer {
         Fields = fields;
     }
 
+    public Transport getTransport() {
+        if (Transport == null && Transports != null && !Transports.isEmpty())
+            Transports.get(0);
+        return Transport;
+    }
+
     public List<Transport> getTransports() {
         return Transports;
     }
 
+    public void setTransport(Transport transport) {
+        this.Transport = transport;
+        if (transport == null) {
+            this.Transports = null;
+            return;
+        }
+
+        if (this.Transports == null) {
+            this.Transports = new ArrayList<>();
+        } else {
+            this.Transports.clear();
+        }
+        this.Transports.add(transport);
+    }
+
     public void setTransports(List<Transport> transports) {
         Transports = transports;
+        this.Transport = (transports != null && !transports.isEmpty()) ? transports.get(0) : null;
     }
 
     public Map<Condition.Type, Condition> getConditions() {
@@ -123,6 +148,7 @@ public class Observer {
                 ", Subject='" + Subject + '\'' +
                 ", Type=" + Type +
                 ", Fields=" + Fields +
+                ", Transport=" + Transport +
                 ", Transports=" + Transports +
                 '}';
     }
@@ -130,7 +156,7 @@ public class Observer {
     public static class Builder {
         private Observer observer;
         private List<String> fields;
-        private List<Transport> transports;
+        private Transport transport;
         private Map<Condition.Type, Condition> conditions;
 
         /**
@@ -175,9 +201,7 @@ public class Observer {
          * @return
          */
         public Builder transport(Transport transport) {
-            if (transports == null)
-                transports = new ArrayList<>();
-            transports.add(transport);
+            this.transport = transport;
             return this;
         }
 
@@ -214,6 +238,13 @@ public class Observer {
          * @return
          */
         public Observer build() {
+            List<Transport> transports = null;
+            observer.Transport = this.transport;
+            if (this.transport != null) {
+                transports = new ArrayList<>();
+                transports.add(this.transport);
+            }
+
             observer.setTransports(transports);
             observer.setConditions(conditions);
             observer.setFields(fields);
