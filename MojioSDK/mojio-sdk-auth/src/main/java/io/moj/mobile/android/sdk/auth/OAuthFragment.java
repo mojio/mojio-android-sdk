@@ -152,4 +152,5 @@ public class OAuthFragment extends Fragment {
             syncManager.sync();
         }
     }
+
 }
