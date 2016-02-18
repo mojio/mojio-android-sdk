@@ -137,7 +137,6 @@ public class Condition {
 
         Condition condition = (Condition) o;
 
-        if (type != condition.type) return false;
         if (Property != null ? !Property.equals(condition.Property) : condition.Property != null)
             return false;
         if (Position != condition.Position) return false;
@@ -154,8 +153,7 @@ public class Condition {
 
     @Override
     public int hashCode() {
-        int result = type != null ? type.hashCode() : 0;
-        result = 31 * result + (Property != null ? Property.hashCode() : 0);
+        int result = Property != null ? Property.hashCode() : 0;
         result = 31 * result + (Position != null ? Position.hashCode() : 0);
         result = 31 * result + (Max != null ? Max.hashCode() : 0);
         result = 31 * result + (Min != null ? Min.hashCode() : 0);

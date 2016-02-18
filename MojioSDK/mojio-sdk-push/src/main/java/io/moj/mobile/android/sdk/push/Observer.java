@@ -22,7 +22,6 @@ public class Observer {
     public static final String SUBJECT = "Subject";
     public static final String TYPE = "Type";
     public static final String FIELDS = "Fields";
-    public static final String TRANSPORT = "Transport";
     public static final String TRANSPORTS = "Transports";
     public static final String CONDITIONS = "Conditions";
 
@@ -37,11 +36,8 @@ public class Observer {
     private String Subject;
     private Type Type;
     private List<String> Fields;
-
-    // this field only exists for Observer creation
-    private Transport Transport;
     private List<Transport> Transports;
-    private Map<String, Condition> Conditions;
+    private List<Condition> Conditions;
 
     public Observer() {}
 
@@ -115,9 +111,9 @@ public class Observer {
     }
 
     public Transport getTransport() {
-        if (Transport == null && Transports != null && !Transports.isEmpty())
-            Transports.get(0);
-        return Transport;
+        if (Transports != null && !Transports.isEmpty())
+            return Transports.get(0);
+        return null;
     }
 
     public List<Transport> getTransports() {
@@ -125,7 +121,6 @@ public class Observer {
     }
 
     public void setTransport(Transport transport) {
-        this.Transport = transport;
         if (transport == null) {
             this.Transports = null;
             return;
@@ -141,14 +136,13 @@ public class Observer {
 
     public void setTransports(List<Transport> transports) {
         Transports = transports;
-        this.Transport = (transports != null && !transports.isEmpty()) ? transports.get(0) : null;
     }
 
-    public Map<String, Condition> getConditions() {
+    public List<Condition> getConditions() {
         return Conditions;
     }
 
-    public void setConditions(Map<String, Condition> conditions) {
+    public void setConditions(List<Condition> conditions) {
         this.Conditions = conditions;
     }
 
@@ -163,7 +157,7 @@ public class Observer {
     @Override
     public String toString() {
         return "Observer{" +
-                "Conditions=" + Conditions +
+                "_id=" + _id +
                 ", Key='" + Key + '\'' +
                 ", CreatedOn='" + CreatedOn + '\'' +
                 ", LastModified='" + LastModified + '\'' +
@@ -172,110 +166,15 @@ public class Observer {
                 ", Subject='" + Subject + '\'' +
                 ", Type=" + Type +
                 ", Fields=" + Fields +
-                ", Transport=" + Transport +
                 ", Transports=" + Transports +
+                ", Conditions=" + Conditions +
                 '}';
     }
 
-    public static class Builder {
-        private Observer observer;
-        private List<String> fields;
-        private Transport transport;
-        private Map<String, Condition> conditions;
-
-        /**
-         * Constructs an Observer builder.
-         * @param key uniquely identifies your observer; it must be unique for the user,
-         *            application and entity. It cannot be edited.
-         */
-        public Builder(String key) {
-            observer = new Observer(key);
-        }
-
-        /**
-         * The Id of the entity that is being observed. If an entity Id is not passed in when
-         * creating an observer it will broadcast changes for all entities of that type that the
-         * user has read permissions for. If an Id is passed in it becomes the Subject on the
-         * observer. This is automatically set on creation and cannot be edited.
-         * @param subject
-         * @return
-         */
-        public Builder subject(String subject) {
-            observer.setSubject(subject);
-            return this;
-        }
-
-        /**
-         * The Type of entity that is being observed. Either {@link Type#MOJIO},
-         * {@link Type#VEHICLE}, or {@link Type#USER}. This is automatically set on creation and
-         * cannot be edited.
-         * @param type
-         * @return
-         */
-        public Builder type(Type type) {
-            observer.setType(type);
-            return this;
-        }
-
-        /**
-         * How the observer should contact your application. Each observer should only have one
-         * transport. If defaults have been set for a specific transport type they will
-         * automatically copied over to the transport.
-         * @param transport
-         * @return
-         */
-        public Builder transport(Transport transport) {
-            this.transport = transport;
-            return this;
-        }
-
-        /**
-         * Limits the behavior of an Observer. An Observer can have up to 4 Conditions, one of each
-         * type. If none of these are set the Observer will broadcast a message anytime the entity
-         * changes in any way.
-         * @param condition
-         * @return
-         */
-        public Builder condition(Condition condition) {
-            if (conditions == null)
-                conditions = new HashMap<>();
-            conditions.put(condition.getType().getKey(), condition);
-            return this;
-        }
-
-        /**
-         * Specifies what fields of the entity will be broadcast when a change occurs. When creating
-         * or updating an Observer passing in an empty array or null will default to all fields the
-         * user has permission for.
-         * @param field
-         * @return
-         */
-        public Builder field(String field) {
-            if (fields == null)
-                fields = new ArrayList<>();
-            fields.add(field);
-            return this;
-        }
-
-        /**
-         * Constructs the {@link Observer}.
-         * @return
-         */
-        public Observer build() {
-            List<Transport> transports = null;
-            observer.Transport = this.transport;
-            if (this.transport != null) {
-                transports = new ArrayList<>();
-                transports.add(this.transport);
-            }
-
-            observer.setTransports(transports);
-            observer.setConditions(conditions);
-            observer.setFields(fields);
-            return observer;
-        }
-    }
-
+    /**
+     * Enumeration of observer types. These are the types of entities an observer can watch for
+     * changes on.
+     */
     public enum Type {
         @SerializedName("mojio")
         MOJIO("mojio"),
@@ -304,4 +203,5 @@ public class Observer {
             return null;
         }
     }
+
 }
