@@ -1,8 +1,13 @@
 package io.moj.mobile.android.sdk.push;
 
+import com.google.gson.Gson;
+
 import org.junit.Test;
 
+import io.moj.mobile.android.sdk.TestJson;
+
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 
 public class ConditionTest {
@@ -126,6 +131,37 @@ public class ConditionTest {
         assertEquals(Condition.Type.THROTTLE, c.getType());
         assertEquals(expectedWindow, c.getWindow());
         assertNull(c.getTimeProperty());
+    }
+
+    @Test
+    public void testSerialization() {
+        Condition condition = new Condition();
+        condition.setWindow("window");
+        condition.setTimeProperty("timeProperty");
+        condition.setDelay("delay");
+        condition.setMinDataPoints(4);
+        condition.setMin(120d);
+        condition.setMax(200d);
+        condition.setPosition(Condition.Position.ABOVE);
+        condition.setProperty("property");
+
+        String json = new Gson().toJson(condition);
+        assertEquals(TestJson.CONDITION, json);
+    }
+
+    @Test
+    public void testDeserialization() {
+        Condition condition = new Gson().fromJson(TestJson.CONDITION, Condition.class);
+
+        assertNotNull(condition);
+        assertEquals("window", condition.getWindow());
+        assertEquals("timeProperty", condition.getTimeProperty());
+        assertEquals("delay", condition.getDelay());
+        assertEquals(4, (int) condition.getMinDataPoints());
+        assertEquals(120d, condition.getMin());
+        assertEquals(200d, condition.getMax());
+        assertEquals(Condition.Position.ABOVE, condition.getPosition());
+        assertEquals("property", condition.getProperty());
     }
 
 }

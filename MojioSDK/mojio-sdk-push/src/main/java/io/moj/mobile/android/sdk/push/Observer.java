@@ -13,6 +13,19 @@ import java.util.Map;
  */
 public class Observer {
 
+    public static final String LOCAL_ID = "_id";
+    public static final String KEY = "Key";
+    public static final String CREATED_ON = "CreatedOn";
+    public static final String LAST_MODIFIED = "LastModified";
+    public static final String EXPIRY_DATE = "ExpiryDate";
+    public static final String NAME = "Name";
+    public static final String SUBJECT = "Subject";
+    public static final String TYPE = "Type";
+    public static final String FIELDS = "Fields";
+    public static final String TRANSPORT = "Transport";
+    public static final String TRANSPORTS = "Transports";
+    public static final String CONDITIONS = "Conditions";
+
     // local _id for storage in SQLite databases
     private Long _id;
 
