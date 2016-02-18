@@ -13,6 +13,9 @@ import java.util.Map;
  */
 public class Observer {
 
+    // local _id for storage in SQLite databases
+    private Long _id;
+
     private String Key;
     private String CreatedOn;
     private String LastModified;
@@ -25,7 +28,7 @@ public class Observer {
     // this field only exists for Observer creation
     private Transport Transport;
     private List<Transport> Transports;
-    private Map<Condition.Type, Condition> Conditions;
+    private Map<String, Condition> Conditions;
 
     public Observer() {}
 
@@ -90,6 +93,14 @@ public class Observer {
         Fields = fields;
     }
 
+    public Long getLocalId() {
+        return _id;
+    }
+
+    public void setLocalId(Long id) {
+        this._id = id;
+    }
+
     public Transport getTransport() {
         if (Transport == null && Transports != null && !Transports.isEmpty())
             Transports.get(0);
@@ -120,11 +131,11 @@ public class Observer {
         this.Transport = (transports != null && !transports.isEmpty()) ? transports.get(0) : null;
     }
 
-    public Map<Condition.Type, Condition> getConditions() {
+    public Map<String, Condition> getConditions() {
         return Conditions;
     }
 
-    public void setConditions(Map<Condition.Type, Condition> conditions) {
+    public void setConditions(Map<String, Condition> conditions) {
         this.Conditions = conditions;
     }
 
@@ -157,7 +168,7 @@ public class Observer {
         private Observer observer;
         private List<String> fields;
         private Transport transport;
-        private Map<Condition.Type, Condition> conditions;
+        private Map<String, Condition> conditions;
 
         /**
          * Constructs an Observer builder.
@@ -215,7 +226,7 @@ public class Observer {
         public Builder condition(Condition condition) {
             if (conditions == null)
                 conditions = new HashMap<>();
-            conditions.put(condition.getType(), condition);
+            conditions.put(condition.getType().getKey(), condition);
             return this;
         }
 

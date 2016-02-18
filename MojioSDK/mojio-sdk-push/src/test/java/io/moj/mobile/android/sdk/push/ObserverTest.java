@@ -46,7 +46,8 @@ public class ObserverTest {
         assertNotNull(o.getConditions());
         assertEquals(conditions.length, o.getConditions().size());
         for (Condition condition : conditions)
-            assertEquals("Wrong condition for '" + condition.getType() + "'", condition, o.getConditions().get(condition.getType()));
+            assertEquals("Wrong condition for '" + condition.getType() + "'",
+                    condition, o.getConditions().get(condition.getType().getKey()));
 
         assertNotNull(o.getFields());
         assertEquals(fields.length, o.getFields().size());
