@@ -400,8 +400,8 @@ public class Transport {
             return key;
         }
 
-        public static Type fromKey(String key) {
-            for (Type type : Type.values()) {
+        public static MongoIdentifierType fromKey(String key) {
+            for (MongoIdentifierType type : values()) {
                 if (type.getKey().equals(key))
                     return type;
             }

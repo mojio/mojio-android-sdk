@@ -1,8 +1,9 @@
-apply plugin: 'com.android.library'
-
 ext {
     PUBLISH_ARTIFACT_ID = 'mojio-sdk-rest'
 }
+
+apply plugin: 'com.android.library'
+apply from: project.rootProject.file('android-release-aar.gradle')
 
 android {
     useLibrary 'org.apache.http.legacy'
@@ -18,7 +19,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            testCoverageEnabled = true
+        }
+
         release {
+            testCoverageEnabled = true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -39,5 +45,3 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'com.squareup.okhttp3:mockwebserver:3.0.1'
 }
-
-apply from: project.rootProject.file('android-release-aar.gradle')

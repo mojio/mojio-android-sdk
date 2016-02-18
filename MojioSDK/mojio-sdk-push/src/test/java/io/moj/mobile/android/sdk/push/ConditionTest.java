@@ -1,14 +1,19 @@
 package io.moj.mobile.android.sdk.push;
 
+import com.google.common.testing.EqualsTester;
 import com.google.gson.Gson;
 
 import org.junit.Test;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import io.moj.mobile.android.sdk.TestJson;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.assertFalse;
 
 public class ConditionTest {
 
@@ -134,18 +139,26 @@ public class ConditionTest {
     }
 
     @Test
-    public void testSerialization() {
-        Condition condition = new Condition();
-        condition.setWindow("window");
-        condition.setTimeProperty("timeProperty");
-        condition.setDelay("delay");
-        condition.setMinDataPoints(4);
-        condition.setMin(120d);
-        condition.setMax(200d);
-        condition.setPosition(Condition.Position.ABOVE);
-        condition.setProperty("property");
+    public void testTypeFromKey() {
+        for (Condition.Type type : Condition.Type.values()) {
+            Condition.Type typeFromKey = Condition.Type.fromKey(type.getKey());
+            assertEquals(type, typeFromKey);
+        }
+        assertNull(Condition.Type.fromKey("NotARealKey"));
+    }
 
-        String json = new Gson().toJson(condition);
+    @Test
+    public void testPositionFromKey() {
+        for (Condition.Position position : Condition.Position.values()) {
+            Condition.Position positionFromKey = Condition.Position.fromKey(position.getKey());
+            assertEquals(position, positionFromKey);
+        }
+        assertNull(Condition.Position.fromKey("NotARealKey"));
+    }
+
+    @Test
+    public void testSerialization() {
+        String json = new Gson().toJson(buildTestCondition());
         assertEquals(TestJson.CONDITION, json);
     }
 
@@ -162,6 +175,21 @@ public class ConditionTest {
         assertEquals(200d, condition.getMax());
         assertEquals(Condition.Position.ABOVE, condition.getPosition());
         assertEquals("property", condition.getProperty());
+
+        new EqualsTester().addEqualityGroup(condition, buildTestCondition()).testEquals();
+    }
+
+    private static Condition buildTestCondition() {
+        Condition condition = new Condition();
+        condition.setWindow("window");
+        condition.setTimeProperty("timeProperty");
+        condition.setDelay("delay");
+        condition.setMinDataPoints(4);
+        condition.setMin(120d);
+        condition.setMax(200d);
+        condition.setPosition(Condition.Position.ABOVE);
+        condition.setProperty("property");
+        return condition;
     }
 
 }

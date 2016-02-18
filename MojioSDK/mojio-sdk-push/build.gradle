@@ -1,8 +1,10 @@
-apply plugin: 'com.android.library'
-
 ext {
     PUBLISH_ARTIFACT_ID = 'mojio-sdk-push'
 }
+
+apply plugin: 'com.android.library'
+apply from: project.rootProject.file('jacoco.gradle')
+apply from: project.rootProject.file('android-release-aar.gradle')
 
 android {
     compileSdkVersion COMPILE_SDK_VERSION
@@ -16,7 +18,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            testCoverageEnabled = true
+        }
+
         release {
+            testCoverageEnabled = true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -28,7 +35,8 @@ dependencies {
     compile 'com.google.code.gson:gson:2.5'
 
     testCompile 'junit:junit:4.12'
-    testCompile 'com.google.guava:guava:19.0'
-}
 
-apply from: project.rootProject.file('android-release-aar.gradle')
+    def guavaVersion = '19.0'
+    testCompile "com.google.guava:guava:${guavaVersion}"
+    testCompile "com.google.guava:guava-testlib:${guavaVersion}"
+}

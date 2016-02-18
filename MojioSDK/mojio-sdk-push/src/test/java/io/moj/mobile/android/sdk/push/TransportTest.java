@@ -1,5 +1,6 @@
 package io.moj.mobile.android.sdk.push;
 
+import com.google.common.testing.EqualsTester;
 import com.google.gson.Gson;
 
 import org.junit.Test;
@@ -47,30 +48,26 @@ public class TransportTest {
     }
 
     @Test
-    public void testSerialization() {
-        Transport t = new Transport();
-        t.setCallback("callback");
-        t.setHubName("hubName");
-        t.setClientId("clientId");
-        t.setDeviceRegistrationId("deviceRegistrationId");
-        t.setAddress("address");
-        t.setAlertBody("alertBody");
-        t.setAlertCategory("alertCategory");
-        t.setAlertSound("alertSound");
-        t.setAppId("appId");
-        t.setBadge(3);
-        t.setCollectionName("collectionName");
-        t.setConnectionString("connectionString");
-        t.setDeviceToken("deviceToken");
-        t.setHostName("hostName");
-        t.setIdentifier(Transport.MongoIdentifierType.DEFAULT);
-        t.setUserName("userName");
-        t.setPassword("password");
-        t.setPort(1337);
-        t.setTopic("topic");
-        t.setType(Transport.Type.HTTP_POST);
+    public void testTypeFromKey() {
+        for (Transport.Type type : Transport.Type.values()) {
+            Transport.Type typeFromKey = Transport.Type.fromKey(type.getKey());
+            assertEquals(type, typeFromKey);
+        }
+        assertNull(Transport.Type.fromKey("NotARealKey"));
+    }
 
-        String json = new Gson().toJson(t);
+    @Test
+    public void testMongoIdentifierTypeFromKey() {
+        for (Transport.MongoIdentifierType type : Transport.MongoIdentifierType.values()) {
+            Transport.MongoIdentifierType typeFromKey = Transport.MongoIdentifierType.fromKey(type.getKey());
+            assertEquals(type, typeFromKey);
+        }
+        assertNull(Transport.MongoIdentifierType.fromKey("NotARealKey"));
+    }
+
+    @Test
+    public void testSerialization() {
+        String json = new Gson().toJson(buildTestTransport());
         assertEquals(TestJson.TRANSPORT, json);
     }
 
@@ -99,6 +96,33 @@ public class TransportTest {
         assertEquals(1337, t.getPort());
         assertEquals("topic", t.getTopic());
         assertEquals(Transport.Type.HTTP_POST, t.getType());
+
+        new EqualsTester().addEqualityGroup(t, buildTestTransport()).testEquals();
+    }
+
+    private static Transport buildTestTransport() {
+        Transport t = new Transport();
+        t.setCallback("callback");
+        t.setHubName("hubName");
+        t.setClientId("clientId");
+        t.setDeviceRegistrationId("deviceRegistrationId");
+        t.setAddress("address");
+        t.setAlertBody("alertBody");
+        t.setAlertCategory("alertCategory");
+        t.setAlertSound("alertSound");
+        t.setAppId("appId");
+        t.setBadge(3);
+        t.setCollectionName("collectionName");
+        t.setConnectionString("connectionString");
+        t.setDeviceToken("deviceToken");
+        t.setHostName("hostName");
+        t.setIdentifier(Transport.MongoIdentifierType.DEFAULT);
+        t.setUserName("userName");
+        t.setPassword("password");
+        t.setPort(1337);
+        t.setTopic("topic");
+        t.setType(Transport.Type.HTTP_POST);
+        return t;
     }
 
 }
