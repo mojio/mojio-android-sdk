@@ -1,8 +1,14 @@
 package io.moj.mobile.android.sdk.push;
 
+import com.google.common.testing.EqualsTester;
+import com.google.gson.Gson;
+
 import org.junit.Test;
 
+import io.moj.mobile.android.sdk.TestJson;
+
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 
 public class TransportTest {
@@ -39,6 +45,84 @@ public class TransportTest {
         assertEquals(clientId, t.getClientId());
         assertEquals(hubName, t.getHubName());
         assertEquals(callback, t.getCallback());
+    }
+
+    @Test
+    public void testTypeFromKey() {
+        for (Transport.Type type : Transport.Type.values()) {
+            Transport.Type typeFromKey = Transport.Type.fromKey(type.getKey());
+            assertEquals(type, typeFromKey);
+        }
+        assertNull(Transport.Type.fromKey("NotARealKey"));
+    }
+
+    @Test
+    public void testMongoIdentifierTypeFromKey() {
+        for (Transport.MongoIdentifierType type : Transport.MongoIdentifierType.values()) {
+            Transport.MongoIdentifierType typeFromKey = Transport.MongoIdentifierType.fromKey(type.getKey());
+            assertEquals(type, typeFromKey);
+        }
+        assertNull(Transport.MongoIdentifierType.fromKey("NotARealKey"));
+    }
+
+    @Test
+    public void testSerialization() {
+        String json = new Gson().toJson(buildTestTransport());
+        assertEquals(TestJson.TRANSPORT, json);
+    }
+
+    @Test
+    public void testDeserialization() {
+        Transport t = new Gson().fromJson(TestJson.TRANSPORT, Transport.class);
+
+        assertNotNull(t);
+        assertEquals("callback", t.getCallback());
+        assertEquals("hubName", t.getHubName());
+        assertEquals("clientId", t.getClientId());
+        assertEquals("deviceRegistrationId", t.getDeviceRegistrationId());
+        assertEquals("address", t.getAddress());
+        assertEquals("alertBody", t.getAlertBody());
+        assertEquals("alertCategory", t.getAlertCategory());
+        assertEquals("alertSound", t.getAlertSound());
+        assertEquals("appId", t.getAppId());
+        assertEquals(3, t.getBadge());
+        assertEquals("collectionName", t.getCollectionName());
+        assertEquals("connectionString", t.getConnectionString());
+        assertEquals("deviceToken", t.getDeviceToken());
+        assertEquals("hostName", t.getHostName());
+        assertEquals(Transport.MongoIdentifierType.DEFAULT, t.getIdentifier());
+        assertEquals("userName", t.getUserName());
+        assertEquals("password", t.getPassword());
+        assertEquals(1337, t.getPort());
+        assertEquals("topic", t.getTopic());
+        assertEquals(Transport.Type.HTTP_POST, t.getType());
+
+        new EqualsTester().addEqualityGroup(t, buildTestTransport()).testEquals();
+    }
+
+    private static Transport buildTestTransport() {
+        Transport t = new Transport();
+        t.setCallback("callback");
+        t.setHubName("hubName");
+        t.setClientId("clientId");
+        t.setDeviceRegistrationId("deviceRegistrationId");
+        t.setAddress("address");
+        t.setAlertBody("alertBody");
+        t.setAlertCategory("alertCategory");
+        t.setAlertSound("alertSound");
+        t.setAppId("appId");
+        t.setBadge(3);
+        t.setCollectionName("collectionName");
+        t.setConnectionString("connectionString");
+        t.setDeviceToken("deviceToken");
+        t.setHostName("hostName");
+        t.setIdentifier(Transport.MongoIdentifierType.DEFAULT);
+        t.setUserName("userName");
+        t.setPassword("password");
+        t.setPort(1337);
+        t.setTopic("topic");
+        t.setType(Transport.Type.HTTP_POST);
+        return t;
     }
 
 }

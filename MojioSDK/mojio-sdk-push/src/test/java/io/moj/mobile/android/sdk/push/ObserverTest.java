@@ -1,8 +1,16 @@
 package io.moj.mobile.android.sdk.push;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.gson.Gson;
 
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import io.moj.mobile.android.sdk.TestJson;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -46,7 +54,8 @@ public class ObserverTest {
         assertNotNull(o.getConditions());
         assertEquals(conditions.length, o.getConditions().size());
         for (Condition condition : conditions)
-            assertEquals("Wrong condition for '" + condition.getType() + "'", condition, o.getConditions().get(condition.getType()));
+            assertEquals("Wrong condition for '" + condition.getType() + "'",
+                    condition, o.getConditions().get(condition.getType().getKey()));
 
         assertNotNull(o.getFields());
         assertEquals(fields.length, o.getFields().size());
@@ -103,6 +112,60 @@ public class ObserverTest {
         assertEquals(transport1, o.getTransports().get(0));
         assertEquals(transport2, o.getTransports().get(1));
         assertEquals(transport1, o.getTransport());
+    }
+
+    @Test
+    public void testSerialization() {
+        Gson gson = new Gson();
+        Condition condition = gson.fromJson(TestJson.CONDITION, Condition.class);
+        Map<String, Condition> conditions = ImmutableMap.of(
+                Condition.Type.DEBOUNCE.getKey(), condition,
+                Condition.Type.THRESHOLD.getKey(), condition,
+                Condition.Type.PROPERTY_CHANGED.getKey(), condition,
+                Condition.Type.THROTTLE.getKey(), condition
+        );
+
+        Observer o = new Observer();
+        o.setTransport(gson.fromJson(TestJson.TRANSPORT, Transport.class));
+        o.setType(Observer.Type.VEHICLE);
+        o.setFields(Lists.newArrayList("field1", "field2"));
+        o.setConditions(conditions);
+        o.setCreatedOn("createdOn");
+        o.setExpiryDate("expiryDate");
+        o.setKey("key");
+        o.setLastModified("lastModified");
+        o.setSubject("subject");
+
+        String json = gson.toJson(o);
+        assertEquals(TestJson.OBSERVER, json);
+    }
+
+    @Test
+    public void testDeserialization() {
+        Gson gson = new Gson();
+        Observer o = gson.fromJson(TestJson.OBSERVER, Observer.class);
+        Transport t = gson.fromJson(TestJson.TRANSPORT, Transport.class);
+        Condition c = gson.fromJson(TestJson.CONDITION, Condition.class);
+        Map<String, Condition> conditions = ImmutableMap.of(
+                Condition.Type.DEBOUNCE.getKey(), c,
+                Condition.Type.THRESHOLD.getKey(), c,
+                Condition.Type.PROPERTY_CHANGED.getKey(), c,
+                Condition.Type.THROTTLE.getKey(), c
+        );
+
+        assertNotNull(o);
+        assertEquals(t, o.getTransport());
+        assertNotNull(o.getTransports());
+        assertEquals(1, o.getTransports().size());
+        assertEquals(t, o.getTransports().get(0));
+        assertEquals(Observer.Type.VEHICLE, o.getType());
+        assertEquals(Lists.newArrayList("field1", "field2"), o.getFields());
+        assertEquals(conditions, o.getConditions());
+        assertEquals("createdOn", o.getCreatedOn());
+        assertEquals("expiryDate", o.getExpiryDate());
+        assertEquals("key", o.getKey());
+        assertEquals("lastModified", o.getLastModified());
+        assertEquals("subject", o.getSubject());
     }
 
 }

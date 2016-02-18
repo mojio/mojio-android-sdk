@@ -16,6 +16,15 @@ public class Condition {
      */
     public static final String TIME_FORMAT = "%d.%02d:%02d:%02d.%04d";
 
+    public static final String PROPERTY = "Property";
+    public static final String POSITION = "Position";
+    public static final String MAX = "Max";
+    public static final String MIN = "Min";
+    public static final String TIME_PROPERTY = "TimeProperty";
+    public static final String DELAY = "Delay";
+    public static final String MIN_DATA_POINTS = "MinDataPoints";
+    public static final String WINDOW = "Window";
+
     private transient Type type;
 
     // Shared
@@ -119,6 +128,42 @@ public class Condition {
                 ", MinDataPoints=" + MinDataPoints +
                 ", Window='" + Window + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Condition condition = (Condition) o;
+
+        if (type != condition.type) return false;
+        if (Property != null ? !Property.equals(condition.Property) : condition.Property != null)
+            return false;
+        if (Position != condition.Position) return false;
+        if (Max != null ? !Max.equals(condition.Max) : condition.Max != null) return false;
+        if (Min != null ? !Min.equals(condition.Min) : condition.Min != null) return false;
+        if (TimeProperty != null ? !TimeProperty.equals(condition.TimeProperty) : condition.TimeProperty != null)
+            return false;
+        if (Delay != null ? !Delay.equals(condition.Delay) : condition.Delay != null) return false;
+        if (MinDataPoints != null ? !MinDataPoints.equals(condition.MinDataPoints) : condition.MinDataPoints != null)
+            return false;
+        return Window != null ? Window.equals(condition.Window) : condition.Window == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = type != null ? type.hashCode() : 0;
+        result = 31 * result + (Property != null ? Property.hashCode() : 0);
+        result = 31 * result + (Position != null ? Position.hashCode() : 0);
+        result = 31 * result + (Max != null ? Max.hashCode() : 0);
+        result = 31 * result + (Min != null ? Min.hashCode() : 0);
+        result = 31 * result + (TimeProperty != null ? TimeProperty.hashCode() : 0);
+        result = 31 * result + (Delay != null ? Delay.hashCode() : 0);
+        result = 31 * result + (MinDataPoints != null ? MinDataPoints.hashCode() : 0);
+        result = 31 * result + (Window != null ? Window.hashCode() : 0);
+        return result;
     }
 
     public static Condition onPropertyChanged(String property) {

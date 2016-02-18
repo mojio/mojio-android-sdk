@@ -13,6 +13,22 @@ import java.util.Map;
  */
 public class Observer {
 
+    public static final String LOCAL_ID = "_id";
+    public static final String KEY = "Key";
+    public static final String CREATED_ON = "CreatedOn";
+    public static final String LAST_MODIFIED = "LastModified";
+    public static final String EXPIRY_DATE = "ExpiryDate";
+    public static final String NAME = "Name";
+    public static final String SUBJECT = "Subject";
+    public static final String TYPE = "Type";
+    public static final String FIELDS = "Fields";
+    public static final String TRANSPORT = "Transport";
+    public static final String TRANSPORTS = "Transports";
+    public static final String CONDITIONS = "Conditions";
+
+    // local _id for storage in SQLite databases
+    private Long _id;
+
     private String Key;
     private String CreatedOn;
     private String LastModified;
@@ -25,7 +41,7 @@ public class Observer {
     // this field only exists for Observer creation
     private Transport Transport;
     private List<Transport> Transports;
-    private Map<Condition.Type, Condition> Conditions;
+    private Map<String, Condition> Conditions;
 
     public Observer() {}
 
@@ -90,6 +106,14 @@ public class Observer {
         Fields = fields;
     }
 
+    public Long getLocalId() {
+        return _id;
+    }
+
+    public void setLocalId(Long id) {
+        this._id = id;
+    }
+
     public Transport getTransport() {
         if (Transport == null && Transports != null && !Transports.isEmpty())
             Transports.get(0);
@@ -120,11 +144,11 @@ public class Observer {
         this.Transport = (transports != null && !transports.isEmpty()) ? transports.get(0) : null;
     }
 
-    public Map<Condition.Type, Condition> getConditions() {
+    public Map<String, Condition> getConditions() {
         return Conditions;
     }
 
-    public void setConditions(Map<Condition.Type, Condition> conditions) {
+    public void setConditions(Map<String, Condition> conditions) {
         this.Conditions = conditions;
     }
 
@@ -157,7 +181,7 @@ public class Observer {
         private Observer observer;
         private List<String> fields;
         private Transport transport;
-        private Map<Condition.Type, Condition> conditions;
+        private Map<String, Condition> conditions;
 
         /**
          * Constructs an Observer builder.
@@ -215,7 +239,7 @@ public class Observer {
         public Builder condition(Condition condition) {
             if (conditions == null)
                 conditions = new HashMap<>();
-            conditions.put(condition.getType(), condition);
+            conditions.put(condition.getType().getKey(), condition);
             return this;
         }
 

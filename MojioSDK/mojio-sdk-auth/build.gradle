@@ -1,8 +1,10 @@
-apply plugin: 'com.android.library'
-
 ext {
     PUBLISH_ARTIFACT_ID = 'mojio-sdk-auth'
 }
+
+apply plugin: 'com.android.library'
+apply from: project.rootProject.file('jacoco.gradle')
+apply from: project.rootProject.file('android-release-aar.gradle')
 
 android {
     compileSdkVersion COMPILE_SDK_VERSION
@@ -16,7 +18,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            testCoverageEnabled = true
+        }
+
         release {
+            testCoverageEnabled = true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -26,9 +33,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'io.moj.mobile.android:mojio-sdk-common:0.0.4'
+    compile 'io.moj.mobile.android:mojio-sdk-common:0.0.5'
 
     testCompile 'junit:junit:4.12'
 }
-
-apply from: project.rootProject.file('android-release-aar.gradle')
