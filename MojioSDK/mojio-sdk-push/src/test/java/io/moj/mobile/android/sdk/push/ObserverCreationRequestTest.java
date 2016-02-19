@@ -19,19 +19,16 @@ public class ObserverCreationRequestTest {
         String subject = "subject";
         Observer.Type type = Observer.Type.MOJIO;
         Transport transport = Transport.forAndroid("gcmRegId");
-
-        Condition[] conditions = new Condition[] {
-                Condition.delay(2, 0, 0, 0),
-                Condition.throttle("Speed.Value", "0.00:01:00.0000")
-        };
         String[] fields = new String[] { "LastContactTime", "LastContactTime" };
 
         ObserverCreationRequest o = new ObserverCreationRequest.Builder(key)
                 .subject(subject)
                 .type(type)
                 .transport(transport)
-                .condition(conditions[0])
-                .condition(conditions[1])
+                .condition(Condition.onPropertyChanged("Property"))
+                .condition(Condition.onThreshold("Property", Condition.Position.ABOVE, 1d, 2d))
+                .condition(Condition.throttle("Speed.Value", "0.00:01:00.0000"))
+                .condition(Condition.debounce(1, 2, 3, 4, 5))
                 .field(fields[0])
                 .field(fields[1])
                 .build();

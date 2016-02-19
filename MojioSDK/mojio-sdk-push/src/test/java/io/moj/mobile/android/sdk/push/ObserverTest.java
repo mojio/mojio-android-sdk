@@ -1,22 +1,17 @@
 package io.moj.mobile.android.sdk.push;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 
 import org.junit.Test;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import io.moj.mobile.android.sdk.TestJson;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
 
 public class ObserverTest {
 
@@ -51,6 +46,19 @@ public class ObserverTest {
         assertEquals(transport1, o.getTransports().get(0));
         assertEquals(transport2, o.getTransports().get(1));
         assertEquals(transport1, o.getTransport());
+
+        o.setTransport(null);
+        assertNull(o.getTransport());
+        assertNull(o.getTransports());
+    }
+
+    @Test
+    public void testTypeFromKey() {
+        for (Observer.Type type : Observer.Type.values()) {
+            Observer.Type typeFromKey = Observer.Type.fromKey(type.getKey());
+            assertEquals(type, typeFromKey);
+        }
+        assertNull(Observer.Type.fromKey("NotARealKey"));
     }
 
     @Test
