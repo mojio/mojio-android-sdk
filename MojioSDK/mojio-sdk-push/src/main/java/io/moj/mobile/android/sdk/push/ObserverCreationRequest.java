@@ -16,7 +16,7 @@ public class ObserverCreationRequest {
     private String Name;
     private String Subject;
     private List<String> Fields;
-    private Condition PropertyChanged;
+    private String PropertyChanged;
     private Condition Threshold;
     private Condition Debounce;
     private Condition Throttle;
@@ -83,7 +83,7 @@ public class ObserverCreationRequest {
         public Builder condition(Condition condition) {
             switch (condition.getType()) {
                 case PROPERTY_CHANGED:
-                    request.PropertyChanged = condition;
+                    request.PropertyChanged = condition.getProperty();
                     break;
                 case THRESHOLD:
                     request.Threshold = condition;
