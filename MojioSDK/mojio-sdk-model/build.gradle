@@ -1,10 +1,11 @@
 ext {
     PUBLISH_ARTIFACT_ID = 'mojio-sdk-model'
+    COVERAGE_EXCLUDES = ['**/entities/**']
 }
 
 apply plugin: 'com.android.library'
 apply from: project.rootProject.file('jacoco.gradle')
-apply from: project.rootProject.file('android-release-aar.gradle')
+apply from: project.rootProject.file('maven.gradle')
 
 android {
     compileSdkVersion COMPILE_SDK_VERSION

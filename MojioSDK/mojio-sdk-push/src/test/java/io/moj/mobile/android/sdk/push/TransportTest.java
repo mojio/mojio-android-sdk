@@ -5,10 +5,15 @@ import com.google.gson.Gson;
 
 import org.junit.Test;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import io.moj.mobile.android.sdk.TestJson;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNotSame;
 import static junit.framework.Assert.assertNull;
 
 public class TransportTest {
@@ -98,6 +103,33 @@ public class TransportTest {
         assertEquals(Transport.Type.HTTP_POST, t.getType());
 
         new EqualsTester().addEqualityGroup(t, buildTestTransport()).testEquals();
+    }
+
+    @Test
+    public void testEquality() throws IllegalAccessException {
+        Transport c1 = buildTestTransport();
+        Transport c2 = buildTestTransport();
+        new EqualsTester().addEqualityGroup(c1, c2).testEquals();
+
+        for (Method method : Transport.class.getMethods()) {
+            c2 = buildTestTransport();
+            if (method.getName().startsWith("set")) {
+                try {
+                    Class argType = method.getParameterTypes()[0];
+                    method.invoke(c2, argType.isPrimitive() ? 4 : argType.newInstance());
+                    assertFalse("Equality did not change after modifying " + method.getName() + "()", c1.equals(c2));
+                    assertFalse("Hash code did not change after modifying " + method.getName() + "()", c1.hashCode() == c2.hashCode());
+
+                    if (!argType.isPrimitive()) {
+                        method.invoke(c2, new Object[] { null } );
+                        assertFalse("Equality did not change after modifying " + method.getName() + "()", c1.equals(c2));
+                        assertFalse("Hash code did not change after modifying " + method.getName() + "()", c1.hashCode() == c2.hashCode());
+                    }
+                } catch (IllegalArgumentException | InvocationTargetException | InstantiationException e) {
+                    System.err.println("Could not invoke " + method.getName() + "(): " + e.getMessage());
+                }
+            }
+        }
     }
 
     private static Transport buildTestTransport() {

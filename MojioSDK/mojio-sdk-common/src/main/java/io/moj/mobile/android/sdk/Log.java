@@ -20,12 +20,7 @@ public class Log {
 
     private static final List<Logger> LOGGERS = new ArrayList<>();
     static {
-        LOGGERS.add(new Logger() {
-            @Override
-            public void log(int level, String tag, String msg, Throwable tr) {
-                android.util.Log.println(level, tag, msg + (tr == null ? "" : ('\n' + android.util.Log.getStackTraceString(tr))));
-            }
-        });
+        LOGGERS.add(new LogcatLogger());
     }
 
     /**
@@ -107,5 +102,16 @@ public class Log {
 
     public interface Logger {
         void log(int level, String tag, String msg, Throwable tr);
+    }
+
+    /**
+     * Default implementation of {@link Logger} that outputs to Android's logcat.
+     */
+    public static class LogcatLogger implements Logger {
+        @Override
+        public void log(int level, String tag, String msg, Throwable tr) {
+            android.util.Log.println(level, tag, msg +
+                    (tr == null ? "" : ('\n' + android.util.Log.getStackTraceString(tr))));
+        }
     }
 }

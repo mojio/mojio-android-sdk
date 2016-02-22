@@ -3,6 +3,8 @@ package io.moj.mobile.android.sdk.push;
 import com.google.common.testing.EqualsTester;
 import com.google.gson.Gson;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
@@ -11,12 +13,13 @@ import java.lang.reflect.Method;
 import io.moj.mobile.android.sdk.TestJson;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
-import static org.junit.Assert.assertFalse;
 
 public class ConditionTest {
 
+    /* PropertyChanged Tests - Tests for the various different builder methods for PropertyChanged conditions  */
     @Test
     public void testOnPropertyChanged() {
         String property = "Speed.Value";
@@ -38,6 +41,7 @@ public class ConditionTest {
         assertEquals(max, c.getMax());
     }
 
+    /* Debounce Tests - Tests for the various different builder methods for Debounce conditions  */
     @Test
     public void testDebounce() {
         int minDataPoints = 4;
@@ -98,6 +102,7 @@ public class ConditionTest {
         assertNull(c.getMinDataPoints());
     }
 
+    /* Throttle Tests - Tests for the various different builder methods for Throttle conditions  */
     @Test
     public void testThrottle_timeProperty_window_strings() {
         String timeProperty = "LastContactTime";
@@ -154,6 +159,33 @@ public class ConditionTest {
             assertEquals(position, positionFromKey);
         }
         assertNull(Condition.Position.fromKey("NotARealKey"));
+    }
+
+    @Test
+    public void testEquality() throws IllegalAccessException {
+        Condition c1 = buildTestCondition();
+        Condition c2 = buildTestCondition();
+        new EqualsTester().addEqualityGroup(c1, c2).testEquals();
+
+        for (Method method : Condition.class.getMethods()) {
+            c2 = buildTestCondition();
+            if (method.getName().startsWith("set")) {
+                try {
+                    Class argType = method.getParameterTypes()[0];
+                    method.invoke(c2, argType.isPrimitive() ? 4 : argType.newInstance());
+                    assertFalse("Equality did not change after invoking " + method.getName() + "()", c1.equals(c2));
+                    assertFalse("Hash code did not change after invoking " + method.getName() + "()", c1.hashCode() == c2.hashCode());
+
+                    if (!argType.isPrimitive()) {
+                        method.invoke(c2, new Object[] { null } );
+                        assertFalse("Equality did not change after modifying " + method.getName() + "()", c1.equals(c2));
+                        assertFalse("Hash code did not change after modifying " + method.getName() + "()", c1.hashCode() == c2.hashCode());
+                    }
+                } catch (IllegalArgumentException | InvocationTargetException | InstantiationException e) {
+                    System.err.println("Could not invoke " + method.getName() + "(): " + e.getMessage());
+                }
+            }
+        }
     }
 
     @Test

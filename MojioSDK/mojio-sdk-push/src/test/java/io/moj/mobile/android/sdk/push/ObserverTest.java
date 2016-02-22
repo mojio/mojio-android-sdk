@@ -1,85 +1,19 @@
 package io.moj.mobile.android.sdk.push;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import io.moj.mobile.android.sdk.TestJson;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
 
 public class ObserverTest {
-
-    @Test
-    public void testBuilder() {
-        String key = "key";
-        String subject = "subject";
-        Observer.Type type = Observer.Type.MOJIO;
-        Transport transport = Transport.forAndroid("gcmRegId");
-
-        Condition[] conditions = new Condition[] {
-                Condition.delay(2, 0, 0, 0),
-                Condition.throttle("Speed.Value", "0.00:01:00.0000")
-        };
-        String[] fields = new String[] { "LastContactTime", "LastContactTime" };
-
-        Observer o = new Observer.Builder(key)
-            .subject(subject)
-            .type(type)
-            .transport(transport)
-            .condition(conditions[0])
-            .condition(conditions[1])
-            .field(fields[0])
-            .field(fields[1])
-            .build();
-
-        assertEquals(key, o.getKey());
-        assertEquals(subject, o.getSubject());
-        assertEquals(type, o.getType());
-
-        assertNotNull(o.getTransports());
-        assertEquals(1, o.getTransports().size());
-        assertEquals(transport, o.getTransports().get(0));
-        assertEquals(transport, o.getTransport());
-
-        assertNotNull(o.getConditions());
-        assertEquals(conditions.length, o.getConditions().size());
-        for (Condition condition : conditions)
-            assertEquals("Wrong condition for '" + condition.getType() + "'",
-                    condition, o.getConditions().get(condition.getType().getKey()));
-
-        assertNotNull(o.getFields());
-        assertEquals(fields.length, o.getFields().size());
-        for (String field : fields)
-            assertTrue("Missing field '" + field + "'", o.getFields().contains(field));
-    }
-
-    @Test
-    public void testBuilder_multipleTransports() {
-        Observer.Type type = Observer.Type.MOJIO;
-        Transport transport1 = Transport.forAndroid("gcmRegId");
-        Transport transport2 = Transport.forSignalR("clientId", "hubName");
-
-        Observer o = new Observer.Builder("key")
-                .transport(transport1)
-                .transport(transport2)
-                .build();
-
-        // currently observer POST apis only support one transport
-        assertNotNull(o.getTransports());
-        assertEquals(1, o.getTransports().size());
-        assertEquals(transport2, o.getTransports().get(0));
-        assertEquals(transport2, o.getTransport());
-    }
 
     @Test
     public void testSetTransport() {
@@ -112,17 +46,34 @@ public class ObserverTest {
         assertEquals(transport1, o.getTransports().get(0));
         assertEquals(transport2, o.getTransports().get(1));
         assertEquals(transport1, o.getTransport());
+
+        o.setTransport(null);
+        assertNull(o.getTransport());
+        assertNull(o.getTransports());
+    }
+
+    @Test
+    public void testTypeFromKey() {
+        for (Observer.Type type : Observer.Type.values()) {
+            Observer.Type typeFromKey = Observer.Type.fromKey(type.getKey());
+            assertEquals(type, typeFromKey);
+        }
+        assertNull(Observer.Type.fromKey("NotARealKey"));
     }
 
     @Test
     public void testSerialization() {
         Gson gson = new Gson();
-        Condition condition = gson.fromJson(TestJson.CONDITION, Condition.class);
-        Map<String, Condition> conditions = ImmutableMap.of(
-                Condition.Type.DEBOUNCE.getKey(), condition,
-                Condition.Type.THRESHOLD.getKey(), condition,
-                Condition.Type.PROPERTY_CHANGED.getKey(), condition,
-                Condition.Type.THROTTLE.getKey(), condition
+        Condition condition1 = Condition.debounce(1, 2, 3, 4, 5);
+        Condition condition2 = Condition.delay(6, 7, 8, 9);
+        Condition condition3 = Condition.onPropertyChanged("Property");
+        Condition condition4 = Condition.throttle(0, 3, 6, 9);
+
+        List<Condition> conditions = Lists.newArrayList(
+                condition1,
+                condition2,
+                condition3,
+                condition4
         );
 
         Observer o = new Observer();
@@ -145,12 +96,16 @@ public class ObserverTest {
         Gson gson = new Gson();
         Observer o = gson.fromJson(TestJson.OBSERVER, Observer.class);
         Transport t = gson.fromJson(TestJson.TRANSPORT, Transport.class);
-        Condition c = gson.fromJson(TestJson.CONDITION, Condition.class);
-        Map<String, Condition> conditions = ImmutableMap.of(
-                Condition.Type.DEBOUNCE.getKey(), c,
-                Condition.Type.THRESHOLD.getKey(), c,
-                Condition.Type.PROPERTY_CHANGED.getKey(), c,
-                Condition.Type.THROTTLE.getKey(), c
+        Condition condition1 = Condition.debounce(1, 2, 3, 4, 5);
+        Condition condition2 = Condition.delay(6, 7, 8, 9);
+        Condition condition3 = Condition.onPropertyChanged("Property");
+        Condition condition4 = Condition.throttle(0, 3, 6, 9);
+
+        List<Condition> conditions = Lists.newArrayList(
+                condition1,
+                condition2,
+                condition3,
+                condition4
         );
 
         assertNotNull(o);

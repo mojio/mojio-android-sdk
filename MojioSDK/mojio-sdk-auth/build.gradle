@@ -4,7 +4,7 @@ ext {
 
 apply plugin: 'com.android.library'
 apply from: project.rootProject.file('jacoco.gradle')
-apply from: project.rootProject.file('android-release-aar.gradle')
+apply from: project.rootProject.file('maven.gradle')
 
 android {
     compileSdkVersion COMPILE_SDK_VERSION
@@ -33,7 +33,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'io.moj.mobile.android:mojio-sdk-common:0.0.5'
+    compile project(':mojio-sdk-common')
 
     testCompile 'junit:junit:4.12'
 }
