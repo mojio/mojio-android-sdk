@@ -164,12 +164,32 @@ public class Condition {
         return result;
     }
 
+    /**
+     * Limits the Observer to only broadcast when the specified property changes.
+     * @param property the name of the property whose value must be changed on the entity being
+     *                 observed. Note, only top-level properties are currently supported (e.g. on
+     *                 a Vehicle observer "Location" is a valid property but not "Location.Lat".
+     * @return
+     */
     public static Condition onPropertyChanged(String property) {
         Condition c = new Condition(Type.PROPERTY_CHANGED);
         c.setProperty(property);
         return c;
     }
 
+    /**
+     * Limits the Observer to only broadcast when the specified property is {@link Position#ABOVE},
+     * {@link Position#BELOW}, or {@link Position#BETWEEN} the given Min and Max.
+     * @param property The property on the entity whose change in value is subject to this threshold
+     * @param position defines how the Min and Max values are interpreted when deciding if the
+     *                 observer will fire.
+     * @param min The lower bound for this threshold. See {@link Position} for information on how
+     *            this value is used.
+     * @param max The upper bound for this threshold. See {@link Position} for information on how
+     *            this value is used.
+     * @see Position
+     * @return
+     */
     public static Condition onThreshold(String property, Position position, Double min, Double max) {
         Condition c = new Condition(Type.THRESHOLD);
         c.setProperty(property);
@@ -179,6 +199,18 @@ public class Condition {
         return c;
     }
 
+    /**
+     * Limits an observer to only broadcast when a certain number of data points have already
+     * been received and/or the condition has been maintained for a certain amount of time.
+     * @param minDataPoints the minimum number of times in a row the entity must satisfy all other
+     *                      conditions before the observer will broadcast.
+     * @param delay The amount of time that the condition must be maintained for before it can be
+     *              broadcast. Delay is represented in JSON as a string of the format
+     *              "0.00:00:00.0000" where "0.01:35:11.0000" Would be 1 hour 35 minutes and 11
+     *              seconds. See {@link #TIME_FORMAT}.
+     * @return
+     * @see #TIME_FORMAT
+     */
     public static Condition debounce(Integer minDataPoints, String delay) {
         Condition c = new Condition(Type.DEBOUNCE);
         c.setMinDataPoints(minDataPoints);
@@ -186,23 +218,77 @@ public class Condition {
         return c;
     }
 
+    /**
+     * Limits an observer to only broadcast when a certain number of data points have already
+     * been received and/or the condition has been maintained for a certain amount of time.
+     * @param minDataPoints the minimum number of times in a row the entity must satisfy all other
+     *                      conditions before the observer will broadcast.
+     * @param days the number of days the condition must be maintained for before it can be
+     *             broadcast. Added with the other time properties.
+     * @param hours the number of horus the condition must be maintained for before it can be
+     *              broadcast. Added with the other time properties.
+     * @param minutes the number of minutes the condition must be maintained for before it can be
+     *                broadcast. Added with the other time properties.
+     * @param seconds the number of seconds the condition must be maintained for before it can be
+     *                broadcast. Added with the other time properties.
+     * @return
+     */
     public static Condition debounce(Integer minDataPoints, int days, int hours, int minutes,
                                      int seconds) {
         return debounce(minDataPoints, formatDuration(days, hours, minutes, seconds));
     }
 
+    /**
+     * Limits an observer to only broadcast when a certain number of data points have already
+     * been received.
+     * @param minDataPoints the minimum number of times in a row the entity must satisfy all other
+     *                      conditions before the observer will broadcast.
+     * @return
+     */
     public static Condition minDataPoints(Integer minDataPoints) {
         return debounce(minDataPoints, null);
     }
 
+    /**
+     * Limits an observer to only broadcast when the conditions have been maintained for a certain
+     * amount of time.
+     * @param delay The amount of time that the condition must be maintained for before it can be
+     *              broadcast. Delay is represented in JSON as a string of the format
+     *              "0.00:00:00.0000" where "0.01:35:11.0000" Would be 1 hour 35 minutes and 11
+     *              seconds. See {@link #TIME_FORMAT}.
+     * @return
+     */
     public static Condition delay(String delay) {
         return debounce(null, delay);
     }
 
+    /**
+     * Limits an observer to only broadcast when the conditions have been maintained for a certain
+     * amount of time.
+     * @param days the number of days the condition must be maintained for before it can be
+     *             broadcast. Added with the other time properties.
+     * @param hours the number of horus the condition must be maintained for before it can be
+     *              broadcast. Added with the other time properties.
+     * @param minutes the number of minutes the condition must be maintained for before it can be
+     *                broadcast. Added with the other time properties.
+     * @param seconds the number of seconds the condition must be maintained for before it can be
+     *                broadcast. Added with the other time properties.
+     */
     public static Condition delay(int days, int hours, int minutes, int seconds) {
         return debounce(null, days, hours, minutes, seconds);
     }
 
+    /**
+     * Limits the observer to only broadcast if there has been a certain amount of time since the
+     * last successful broadcast of the condition.
+     * @param timeProperty The property to base the time off of. If nothing is specified this will
+     *                     default to the current UTC time.
+     * @param window The amount of time that must have passed before the Observer will broadcast
+     *               again. Window is represented in JSON as a string of the format
+     *               "0.00:00:00.0000" where "0.01:35:11.0000" Would be 1 hour 35 minutes and 11
+     *               seconds.
+     * @return
+     */
     public static Condition throttle(String timeProperty, String window) {
         Condition c = new Condition(Type.THROTTLE);
         c.setTimeProperty(timeProperty);
@@ -210,10 +296,38 @@ public class Condition {
         return c;
     }
 
+    /**
+     * Limits the observer to only broadcast if there has been a certain amount of time since the
+     * last successful broadcast of the condition.
+     * @param timeProperty The property to base the time off of. If nothing is specified this will
+     *                     default to the current UTC time.
+     * @param days the number of days that must have passed before the Observer will broadcast
+     *             again. Added with the other time properties.
+     * @param hours the number of hours that must have passed before the Observer will broadcast
+     *             again. Added with the other time properties.
+     * @param minutes the number of minutes that must have passed before the Observer will broadcast
+     *             again. Added with the other time properties.
+     * @param seconds the number of seconds that must have passed before the Observer will broadcast
+     *             again. Added with the other time properties.
+     * @return
+     */
     public static Condition throttle(String timeProperty, int days, int hours, int minutes, int seconds) {
         return throttle(timeProperty, formatDuration(days, hours, minutes, seconds));
     }
 
+    /**
+     * Limits the observer to only broadcast if there has been a certain amount of time since the
+     * last successful broadcast of the condition.
+     * @param days the number of days that must have passed before the Observer will broadcast
+     *             again. Added with the other time properties.
+     * @param hours the number of hours that must have passed before the Observer will broadcast
+     *             again. Added with the other time properties.
+     * @param minutes the number of minutes that must have passed before the Observer will broadcast
+     *             again. Added with the other time properties.
+     * @param seconds the number of seconds that must have passed before the Observer will broadcast
+     *             again. Added with the other time properties.
+     * @return
+     */
     public static Condition throttle(int days, int hours, int minutes, int seconds) {
         return throttle(null, days, hours, minutes, seconds);
     }

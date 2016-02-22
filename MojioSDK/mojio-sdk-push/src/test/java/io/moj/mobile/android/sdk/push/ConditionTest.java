@@ -19,6 +19,7 @@ import static junit.framework.Assert.assertNull;
 
 public class ConditionTest {
 
+    /* PropertyChanged Tests - Tests for the various different builder methods for PropertyChanged conditions  */
     @Test
     public void testOnPropertyChanged() {
         String property = "Speed.Value";
@@ -40,6 +41,7 @@ public class ConditionTest {
         assertEquals(max, c.getMax());
     }
 
+    /* Debounce Tests - Tests for the various different builder methods for Debounce conditions  */
     @Test
     public void testDebounce() {
         int minDataPoints = 4;
@@ -100,6 +102,7 @@ public class ConditionTest {
         assertNull(c.getMinDataPoints());
     }
 
+    /* Throttle Tests - Tests for the various different builder methods for Throttle conditions  */
     @Test
     public void testThrottle_timeProperty_window_strings() {
         String timeProperty = "LastContactTime";
