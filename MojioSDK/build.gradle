@@ -1,6 +1,8 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-apply plugin: 'java'
 apply plugin: 'jacoco'
+jacoco {
+    toolVersion = "0.7.5.201505241946"
+}
 
 ext {
     BUILD_TOOLS_VERSION = '23.0.2'
@@ -38,16 +40,7 @@ task clean(type: Delete, group: 'Root') {
     delete rootProject.buildDir
 }
 
-task jacocoMerge(type: JacocoMerge, group: 'Reporting') {
-    description = "Merges Jacoco reports from all subprojects"
-
-    def executionFiles = []
-    project.subprojects.each {
-        executionFiles.add("${it.buildDir}/jacoco/testReleaseUnitTest.exec")
-    }
-    executionData files(executionFiles).findAll { it.exists() }
-}
-
+/* Jacoco Unit Test Coverage */
 def coverageExcludes = [
         '**/R.class',
         '**/R$*.class',
@@ -57,17 +50,32 @@ def coverageExcludes = [
         '**/Manifest*.*'
 ]
 
+task jacocoMerge(type: JacocoMerge, group: 'Reporting') {
+    description = "Merges Jacoco reports from all subprojects"
+
+    def executionFiles = []
+    project.subprojects.each {
+        def file = file("${it.buildDir}/jacoco/testReleaseUnitTest.exec")
+        if (file.exists())
+            executionFiles += file.absolutePath
+    }
+
+    executionData = files(executionFiles)
+    destinationFile = file("${buildDir}/jacoco/jacocoMerge.exec")
+}
+
 task reportUnitTestCoverage(type: JacocoReport, group: 'Reporting') {
     description = "Generates a unified Jacoco coverage report for all modules"
+    dependsOn jacocoMerge
 
-    def classDirs = files()
+    def classDirs = fileTree(dir: "${buildDir}/classes/debug", exclude: '**/R*.class')
     def sourceDirs = []
     project.subprojects.each {
         classDirs = classDirs.plus(fileTree(dir: "${it.buildDir}/intermediates/classes/release", excludes: coverageExcludes))
         sourceDirs += "${it.projectDir}/src/main/java"
     }
 
-    executionData = files("${buildDir}/jacoco/testRelease.exec")
+    executionData = files(jacocoMerge.destinationFile)
     classDirectories = classDirs
     sourceDirectories = files(sourceDirs)
     additionalSourceDirs = files(sourceDirs)
@@ -77,26 +85,3 @@ task reportUnitTestCoverage(type: JacocoReport, group: 'Reporting') {
         html.enabled = true
     }
 }
-
-/*
-task reportUnitTestCoverage(type: JacocoReport, group: 'Reporting') {
-    description = "Generates a unified Jacoco coverage report for all modules"
-    dependsOn build
-
-    def classDirs = []
-    def sourceDirs = []
-    project.subprojects.each {
-        classDirs += fileTree(dir: "${it.buildDir}/intermediates/classes/release", excludes: coverageExcludes)
-        sourceDirs += "${it.projectDir}/src"
-    }
-
-    classDirectories = files(classDirs)
-    sourceDirectories = files(sourceDirs)
-    executionData = files("${buildDir}/jacoco/testRelease.exec")
-
-    reports {
-        xml.enabled = false
-        html.enabled = true
-    }
-}
-*/
