@@ -1,4 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+apply plugin: 'java'
+apply plugin: 'jacoco'
 
 ext {
     BUILD_TOOLS_VERSION = '23.0.2'
@@ -31,6 +33,70 @@ allprojects {
     }
 }
 
-task clean(type: Delete) {
+task clean(type: Delete, group: 'Root') {
+    description = "Deletes the root build directory."
     delete rootProject.buildDir
 }
+
+task jacocoMerge(type: JacocoMerge, group: 'Reporting') {
+    description = "Merges Jacoco reports from all subprojects"
+
+    def executionFiles = []
+    project.subprojects.each {
+        executionFiles.add("${it.buildDir}/jacoco/testReleaseUnitTest.exec")
+    }
+    executionData files(executionFiles).findAll { it.exists() }
+}
+
+def coverageExcludes = [
+        '**/R.class',
+        '**/R$*.class',
+        '**/*$ViewInjector*.*',
+        '**/*$ViewBinder*.*',
+        '**/BuildConfig.*',
+        '**/Manifest*.*'
+]
+
+task reportUnitTestCoverage(type: JacocoReport, group: 'Reporting') {
+    description = "Generates a unified Jacoco coverage report for all modules"
+
+    def classDirs = files()
+    def sourceDirs = []
+    project.subprojects.each {
+        classDirs = classDirs.plus(fileTree(dir: "${it.buildDir}/intermediates/classes/release", excludes: coverageExcludes))
+        sourceDirs += "${it.projectDir}/src/main/java"
+    }
+
+    executionData = files("${buildDir}/jacoco/testRelease.exec")
+    classDirectories = classDirs
+    sourceDirectories = files(sourceDirs)
+    additionalSourceDirs = files(sourceDirs)
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+/*
+task reportUnitTestCoverage(type: JacocoReport, group: 'Reporting') {
+    description = "Generates a unified Jacoco coverage report for all modules"
+    dependsOn build
+
+    def classDirs = []
+    def sourceDirs = []
+    project.subprojects.each {
+        classDirs += fileTree(dir: "${it.buildDir}/intermediates/classes/release", excludes: coverageExcludes)
+        sourceDirs += "${it.projectDir}/src"
+    }
+
+    classDirectories = files(classDirs)
+    sourceDirectories = files(sourceDirs)
+    executionData = files("${buildDir}/jacoco/testRelease.exec")
+
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+}
+*/

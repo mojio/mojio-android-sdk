@@ -26,6 +26,7 @@ task androidSourcesJar(type: Jar) {
 }
 
 uploadArchives {
+    group = "Maven"
     repositories.mavenDeployer {
         pom.groupId = groupId
         pom.artifactId = artifactId
@@ -35,15 +36,18 @@ uploadArchives {
     }
 }
 
-task zipRelease(type: Zip) {
+task zipRelease(type: Zip, group: 'Maven') {
     from localReleaseDest
     destinationDir buildDir
     archiveName archiveFilename
 }
 
-task generateRelease << {
-    println "Release ${version} can be found at ${localReleaseDest}/"
-    println "Release ${version} zipped can be found ${buildDir}/${archiveFilename}"
+task generateRelease(group: 'Maven') {
+    description = "Generates a .zip file containing jars and poms for hosting on a Maven repo"
+    doLast {
+        println "Release ${version} can be found at ${localReleaseDest}/"
+        println "Release ${version} zipped can be found ${buildDir}/${archiveFilename}"
+    }
 }
 
 generateRelease.dependsOn(uploadArchives)
