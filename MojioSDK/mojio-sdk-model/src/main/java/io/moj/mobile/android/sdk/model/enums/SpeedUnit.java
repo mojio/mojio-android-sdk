@@ -30,7 +30,7 @@ public enum SpeedUnit {
                 return unit;
             }
         }
-        throw new IllegalArgumentException("Illegal SpeedUnit value supplied: " + key);
+        return null;
     }
 }
 

@@ -1,10 +1,6 @@
-package io.moj.mobile.android.sdk.model.entities;
-
-import org.joda.time.DateTime;
+package io.moj.mobile.android.sdk.model;
 
 import java.util.Arrays;
-
-import io.moj.mobile.android.sdk.model.utils.TimeFormatHelpers;
 
 /**
  * Model object for an Mojio.
@@ -27,12 +23,12 @@ public class Mojio extends MojioObject {
     /**
      * @return the time the server received the message from the device
      */
-    public DateTime getGatewayTime() {
-        return TimeFormatHelpers.fromServerFormatted(GatewayTime);
+    public String getGatewayTime() {
+        return GatewayTime;
     }
 
-    public void setGatewayTime(DateTime gatewayTime) {
-        GatewayTime = TimeFormatHelpers.toServerFormatted(gatewayTime);
+    public void setGatewayTime(String gatewayTime) {
+        GatewayTime = gatewayTime;
     }
 
     public String getIMEI() {
@@ -43,12 +39,12 @@ public class Mojio extends MojioObject {
         this.IMEI = IMEI;
     }
 
-    public DateTime getLastContactTime() {
-        return TimeFormatHelpers.fromServerFormatted(LastContactTime);
+    public String getLastContactTime() {
+        return LastContactTime;
     }
 
-    public void setLastContactTime(DateTime lastContactTime) {
-        LastContactTime = TimeFormatHelpers.toServerFormatted(lastContactTime);
+    public void setLastContactTime(String lastContactTime) {
+        LastContactTime = lastContactTime;
     }
 
     public String getName() {

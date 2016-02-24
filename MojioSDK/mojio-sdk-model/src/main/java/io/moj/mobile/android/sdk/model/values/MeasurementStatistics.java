@@ -6,63 +6,63 @@ package io.moj.mobile.android.sdk.model.values;
  */
 public class MeasurementStatistics {
 
-    private float NumOfSamples;
-    private float Average;
-    private float Variance;
-    private float StdDev;
-    private float IndexOfDispersion;
-    private float CoeffOfVariation;
-    private float M2;
-    private float Min;
-    private float Max;
+    private Float NumOfSamples;
+    private Float Average;
+    private Float Variance;
+    private Float StdDev;
+    private Float IndexOfDispersion;
+    private Float CoeffOfVariation;
+    private Float M2;
+    private Float Min;
+    private Float Max;
     private Score StandardScore;
     private Score MinMaxScore;
 
-    public float getAverage() {
+    public Float getAverage() {
         return Average;
     }
 
-    public void setAverage(float average) {
+    public void setAverage(Float average) {
         Average = average;
     }
 
-    public float getCoeffOfVariation() {
+    public Float getCoeffOfVariation() {
         return CoeffOfVariation;
     }
 
-    public void setCoeffOfVariation(float coeffOfVariation) {
+    public void setCoeffOfVariation(Float coeffOfVariation) {
         CoeffOfVariation = coeffOfVariation;
     }
 
-    public float getIndexOfDispersion() {
+    public Float getIndexOfDispersion() {
         return IndexOfDispersion;
     }
 
-    public void setIndexOfDispersion(float indexOfDispersion) {
+    public void setIndexOfDispersion(Float indexOfDispersion) {
         IndexOfDispersion = indexOfDispersion;
     }
 
-    public float getM2() {
+    public Float getM2() {
         return M2;
     }
 
-    public void setM2(float m2) {
+    public void setM2(Float m2) {
         M2 = m2;
     }
 
-    public float getMax() {
+    public Float getMax() {
         return Max;
     }
 
-    public void setMax(float max) {
+    public void setMax(Float max) {
         Max = max;
     }
 
-    public float getMin() {
+    public Float getMin() {
         return Min;
     }
 
-    public void setMin(float min) {
+    public void setMin(Float min) {
         Min = min;
     }
 
@@ -74,11 +74,11 @@ public class MeasurementStatistics {
         MinMaxScore = minMaxScore;
     }
 
-    public float getNumOfSamples() {
+    public Float getNumOfSamples() {
         return NumOfSamples;
     }
 
-    public void setNumOfSamples(float numOfSamples) {
+    public void setNumOfSamples(Float numOfSamples) {
         NumOfSamples = numOfSamples;
     }
 
@@ -90,19 +90,19 @@ public class MeasurementStatistics {
         StandardScore = standardScore;
     }
 
-    public float getStdDev() {
+    public Float getStdDev() {
         return StdDev;
     }
 
-    public void setStdDev(float stdDev) {
+    public void setStdDev(Float stdDev) {
         StdDev = stdDev;
     }
 
-    public float getVariance() {
+    public Float getVariance() {
         return Variance;
     }
 
-    public void setVariance(float variance) {
+    public void setVariance(Float variance) {
         Variance = variance;
     }
 

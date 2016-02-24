@@ -1,4 +1,4 @@
-package io.moj.mobile.android.sdk.model.entities;
+package io.moj.mobile.android.sdk.model;
 
 import java.util.Arrays;
 

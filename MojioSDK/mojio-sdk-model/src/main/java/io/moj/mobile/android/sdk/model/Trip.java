@@ -1,10 +1,7 @@
-package io.moj.mobile.android.sdk.model.entities;
-
-import org.joda.time.DateTime;
+package io.moj.mobile.android.sdk.model;
 
 import java.util.Arrays;
 
-import io.moj.mobile.android.sdk.model.utils.TimeFormatHelpers;
 import io.moj.mobile.android.sdk.model.values.Acceleration;
 import io.moj.mobile.android.sdk.model.values.FuelEfficiency;
 import io.moj.mobile.android.sdk.model.values.FuelLevel;
@@ -42,7 +39,7 @@ public class Trip extends MojioObject {
     private String Name;
     private String[] Tags;
     private String MojioId;
-    private boolean Completed;
+    private Boolean Completed;
     private String Duration;
     private String StartTimestamp;
     private String EndTimestamp;
@@ -58,11 +55,11 @@ public class Trip extends MojioObject {
     private FuelLevel StartFuelLevel;
     private FuelLevel EndFuelLevel;
 
-    public boolean isCompleted() {
+    public Boolean getCompleted() {
         return Completed;
     }
 
-    public void setCompleted(boolean completed) {
+    public void setCompleted(Boolean completed) {
         Completed = completed;
     }
 
@@ -98,12 +95,12 @@ public class Trip extends MojioObject {
         EndOdometer = endOdometer;
     }
 
-    public DateTime getEndTimestamp() {
-        return TimeFormatHelpers.fromServerFormatted(EndTimestamp);
+    public String getEndTimestamp() {
+        return EndTimestamp;
     }
 
-    public void setEndTimestamp(DateTime endTimestamp) {
-        EndTimestamp = TimeFormatHelpers.toServerFormatted(endTimestamp);
+    public void setEndTimestamp(String endTimestamp) {
+        EndTimestamp = endTimestamp;
     }
 
     public FuelEfficiency getFuelEfficiency() {
@@ -186,12 +183,12 @@ public class Trip extends MojioObject {
         StartOdometer = startOdometer;
     }
 
-    public DateTime getStartTimestamp() {
-        return TimeFormatHelpers.fromServerFormatted(StartTimestamp);
+    public String getStartTimestamp() {
+        return StartTimestamp;
     }
 
-    public void setStartTimestamp(DateTime startTimestamp) {
-        StartTimestamp = TimeFormatHelpers.toServerFormatted(startTimestamp);
+    public void setStartTimestamp(String startTimestamp) {
+        StartTimestamp = startTimestamp;
     }
 
     public String[] getTags() {

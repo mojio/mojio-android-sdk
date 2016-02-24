@@ -13,6 +13,15 @@ ext {
 
     PUBLISH_GROUP_ID = 'io.moj.mobile.android'
     PUBLISH_VERSION = '0.0.7'
+    COVERAGE_EXCLUDES = [
+            '**/R.class',
+            '**/R$*.class',
+            '**/*$ViewInjector*.*',
+            '**/*$ViewBinder*.*',
+            '**/BuildConfig.*',
+            '**/Manifest*.*',
+            '**/io/moj/mobile/android/sdk/test/**'
+    ]
 }
 
 buildscript {
@@ -41,15 +50,6 @@ task clean(type: Delete, group: 'Root') {
 }
 
 /* Jacoco Unit Test Coverage */
-def coverageExcludes = [
-        '**/R.class',
-        '**/R$*.class',
-        '**/*$ViewInjector*.*',
-        '**/*$ViewBinder*.*',
-        '**/BuildConfig.*',
-        '**/Manifest*.*'
-]
-
 task jacocoMerge(type: JacocoMerge, group: 'Reporting') {
     description = "Merges Jacoco reports from all subprojects"
 
@@ -60,6 +60,7 @@ task jacocoMerge(type: JacocoMerge, group: 'Reporting') {
             executionFiles += file.absolutePath
     }
 
+    println("Merging Jacoco reports: ${executionFiles}...")
     executionData = files(executionFiles)
     destinationFile = file("${buildDir}/jacoco/jacocoMerge.exec")
 }
@@ -68,10 +69,10 @@ task reportUnitTestCoverage(type: JacocoReport, group: 'Reporting') {
     description = "Generates a unified Jacoco coverage report for all modules"
     dependsOn jacocoMerge
 
-    def classDirs = fileTree(dir: "${buildDir}/classes/debug", exclude: '**/R*.class')
+    def classDirs = fileTree(dir: "${buildDir}/classes/debug", excludes: COVERAGE_EXCLUDES)
     def sourceDirs = []
     project.subprojects.each {
-        classDirs = classDirs.plus(fileTree(dir: "${it.buildDir}/intermediates/classes/release", excludes: coverageExcludes))
+        classDirs = classDirs.plus(fileTree(dir: "${it.buildDir}/intermediates/classes/release", excludes: COVERAGE_EXCLUDES))
         sourceDirs += "${it.projectDir}/src/main/java"
     }
 

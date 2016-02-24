@@ -1,10 +1,7 @@
-package io.moj.mobile.android.sdk.model.entities;
-
-import org.joda.time.DateTime;
+package io.moj.mobile.android.sdk.model;
 
 import io.moj.mobile.android.sdk.model.enums.FuelEfficiencyCalculationMethod;
 import io.moj.mobile.android.sdk.model.enums.FuelType;
-import io.moj.mobile.android.sdk.model.utils.TimeFormatHelpers;
 import io.moj.mobile.android.sdk.model.values.Acceleration;
 import io.moj.mobile.android.sdk.model.values.Accelerometer;
 import io.moj.mobile.android.sdk.model.values.Battery;
@@ -176,12 +173,12 @@ public class VehicleMeasure extends MojioObject {
     /**
      * @return the time the server received the message from the device
      */
-    public DateTime getGatewayTime() {
-        return TimeFormatHelpers.fromServerFormatted(GatewayTime);
+    public String getGatewayTime() {
+        return GatewayTime;
     }
 
-    public void setGatewayTime(DateTime gatewayTime) {
-        GatewayTime = TimeFormatHelpers.toServerFormatted(gatewayTime);
+    public void setGatewayTime(String gatewayTime) {
+        GatewayTime = gatewayTime;
     }
 
     public BooleanState getHarshEventState() {

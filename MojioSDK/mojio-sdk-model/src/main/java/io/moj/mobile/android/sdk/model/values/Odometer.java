@@ -12,7 +12,7 @@ public class Odometer extends Distance {
         return RolloverValue;
     }
 
-    public void setRolloverValue(float rolloverValue) {
+    public void setRolloverValue(Float rolloverValue) {
         RolloverValue = rolloverValue;
     }
 

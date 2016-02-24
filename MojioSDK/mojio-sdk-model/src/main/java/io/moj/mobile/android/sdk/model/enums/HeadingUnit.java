@@ -27,6 +27,6 @@ public enum HeadingUnit {
                 return unit;
             }
         }
-        throw new IllegalArgumentException("Illegal HeadingUnit value supplied: " + key);
+        return null;
     }
 }

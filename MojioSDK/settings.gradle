@@ -1,1 +1,1 @@
-include ':mojio-sdk-auth', ':mojio-sdk-model', ':mojio-sdk-common', ':mojio-sdk-push'
+include ':mojio-sdk-auth', ':mojio-sdk-model', ':mojio-sdk-common', ':mojio-sdk-push', ':mojio-sdk-test'

@@ -33,11 +33,5 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    testCompile 'junit:junit:4.12'
-
-    def powermockVersion = '1.6.4'
-    testCompile "org.powermock:powermock-module-junit4:${powermockVersion}"
-    testCompile "org.powermock:powermock-module-junit4-rule:${powermockVersion}"
-    testCompile "org.powermock:powermock-api-mockito:${powermockVersion}"
-    testCompile "org.powermock:powermock-classloading-xstream:${powermockVersion}"
+    testCompile project(":mojio-sdk-test")
 }

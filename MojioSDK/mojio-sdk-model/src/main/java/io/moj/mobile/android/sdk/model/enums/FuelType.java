@@ -36,6 +36,6 @@ public enum FuelType {
                 return unit;
             }
         }
-        throw new IllegalArgumentException("Illegal FuelType value supplied: " + key);
+        return null;
     }
 }

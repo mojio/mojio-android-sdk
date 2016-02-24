@@ -9,15 +9,15 @@ import io.moj.mobile.android.sdk.model.enums.ScoringMethod;
 public class Score {
 
     private ScoringMethod ScoringMethod;
-    private float Value;
-    private float Percentile;
-    private float Average;
+    private Float Value;
+    private Float Percentile;
+    private Float Average;
 
-    public float getAverage() {
+    public Float getAverage() {
         return Average;
     }
 
-    public void setAverage(float average) {
+    public void setAverage(Float average) {
         Average = average;
     }
 
@@ -25,15 +25,15 @@ public class Score {
         return Percentile;
     }
 
-    public void setPercentile(float percentile) {
+    public void setPercentile(Float percentile) {
         Percentile = percentile;
     }
 
-    public io.moj.mobile.android.sdk.model.enums.ScoringMethod getScoringMethod() {
+    public ScoringMethod getScoringMethod() {
         return ScoringMethod;
     }
 
-    public void setScoringMethod(io.moj.mobile.android.sdk.model.enums.ScoringMethod scoringMethod) {
+    public void setScoringMethod(ScoringMethod scoringMethod) {
         ScoringMethod = scoringMethod;
     }
 
@@ -41,7 +41,7 @@ public class Score {
         return Value;
     }
 
-    public void setValue(float value) {
+    public void setValue(Float value) {
         Value = value;
     }
 

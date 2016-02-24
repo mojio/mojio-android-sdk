@@ -51,6 +51,6 @@ public enum Link {
                 return unit;
             }
         }
-        throw new IllegalArgumentException("Illegal Link value supplied: " + key);
+        return null;
     }
 }

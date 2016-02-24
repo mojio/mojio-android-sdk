@@ -1,11 +1,8 @@
-package io.moj.mobile.android.sdk.model.entities;
-
-import org.joda.time.DateTime;
+package io.moj.mobile.android.sdk.model;
 
 import java.util.Map;
 
 import io.moj.mobile.android.sdk.model.enums.Link;
-import io.moj.mobile.android.sdk.model.utils.TimeFormatHelpers;
 
 /**
  * Base model for objects returned by the server.
@@ -27,12 +24,12 @@ public abstract class MojioObject {
     private String LastModified;
     private Map<Link, String> Links;
 
-    public DateTime getCreatedOn() {
-        return TimeFormatHelpers.fromServerFormatted(CreatedOn);
+    public String getCreatedOn() {
+        return CreatedOn;
     }
 
-    public void setCreatedOn(DateTime createdOn) {
-        CreatedOn = TimeFormatHelpers.toServerFormatted(createdOn);
+    public void setCreatedOn(String createdOn) {
+        CreatedOn = createdOn;
     }
 
     public String getId() {
@@ -43,12 +40,12 @@ public abstract class MojioObject {
         Id = id;
     }
 
-    public DateTime getLastModified() {
-        return TimeFormatHelpers.fromServerFormatted(LastModified);
+    public String getLastModified() {
+        return LastModified;
     }
 
-    public void setLastModified(DateTime lastModified) {
-        LastModified = TimeFormatHelpers.toServerFormatted(lastModified);
+    public void setLastModified(String lastModified) {
+        LastModified = lastModified;
     }
 
     public Map<Link, String> getLinks() {

@@ -1,10 +1,7 @@
-package io.moj.mobile.android.sdk.model.entities;
+package io.moj.mobile.android.sdk.model;
 
-import org.joda.time.DateTime;
-
-import io.moj.mobile.android.sdk.model.utils.TimeFormatHelpers;
-import io.moj.mobile.android.sdk.model.values.Address;
 import io.moj.mobile.android.sdk.model.enums.GPSStatus;
+import io.moj.mobile.android.sdk.model.values.Address;
 
 /**
  * Model object for a Location object. A Location is what is returned by calls to v2/.../history/locations.
@@ -81,23 +78,23 @@ public class Location extends MojioObject {
         Status = status;
     }
 
-    public DateTime getTime() {
-        return TimeFormatHelpers.fromServerFormatted(Time);
+    public String getTime() {
+        return Time;
     }
 
-    public void setTime(DateTime time) {
-        Time = TimeFormatHelpers.toServerFormatted(time);
+    public void setTime(String time) {
+        Time = time;
     }
 
     /**
      * @return the same value returned by the {@link #getTime() getTime} method but in UTC.
      */
-    public DateTime getTimestamp() {
-        return TimeFormatHelpers.fromServerFormatted(Timestamp);
+    public String getTimestamp() {
+        return Timestamp;
     }
 
-    public void setTimestamp(DateTime timestamp) {
-        Timestamp = TimeFormatHelpers.toServerFormatted(timestamp);
+    public void setTimestamp(String timestamp) {
+        Timestamp = timestamp;
     }
 
     @Override

@@ -33,7 +33,11 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.1.1'
-    compile project(':mojio-sdk-common')
+    compile 'io.moj.mobile.android:mojio-sdk-common:0.0.6'
 
-    testCompile 'junit:junit:4.12'
+    testCompile project(":mojio-sdk-test")
+
+    def robolectricVersion = '3.0';
+    testCompile "org.robolectric:robolectric:${robolectricVersion}"
+    testCompile "org.robolectric:shadows-support-v4:${robolectricVersion}"
 }

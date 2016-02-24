@@ -39,6 +39,6 @@ public enum RiskSeverity {
                 return unit;
             }
         }
-        throw new IllegalArgumentException("Illegal RiskSeverity value supplied: " + key);
+        return null;
     }
 }

@@ -13,7 +13,7 @@ public class Battery extends Voltage {
     private Duration LowVoltageDuration;
     private Duration HighVoltageDuration;
 
-    public Boolean isConnected() {
+    public Boolean getConnected() {
         return Connected;
     }
 

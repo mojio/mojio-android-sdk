@@ -1,4 +1,4 @@
-package io.moj.mobile.android.sdk.model.entities;
+package io.moj.mobile.android.sdk.model;
 
 import java.util.Arrays;
 
@@ -19,7 +19,7 @@ public class App extends MojioObject {
 
     private String Name;
     private String Description;
-    private int Downloads;
+    private Integer Downloads;
     private String[] RedirectUris;
     private Image Image;
     private String[] Tags;
@@ -36,15 +36,15 @@ public class App extends MojioObject {
         return Downloads;
     }
 
-    public void setDownloads(int downloads) {
+    public void setDownloads(Integer downloads) {
         Downloads = downloads;
     }
 
-    public io.moj.mobile.android.sdk.model.values.Image getImage() {
+    public Image getImage() {
         return Image;
     }
 
-    public void setImage(io.moj.mobile.android.sdk.model.values.Image image) {
+    public void setImage(Image image) {
         Image = image;
     }
 
