@@ -55,6 +55,7 @@ task jacocoMerge(type: JacocoMerge, group: 'Reporting') {
 
     def executionFiles = []
     project.subprojects.each {
+        dependsOn("${it.path}:testReleaseUnitTest")
         def file = file("${it.buildDir}/jacoco/testReleaseUnitTest.exec")
         if (file.exists())
             executionFiles += file.absolutePath

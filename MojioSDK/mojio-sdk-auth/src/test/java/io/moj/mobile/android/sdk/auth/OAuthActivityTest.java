@@ -22,7 +22,7 @@ public class OAuthActivityTest {
 
     @Before
     public void setup() {
-        activity = Robolectric.buildActivity(OAuthActivity.class).create().get();
+        //activity = Robolectric.buildActivity(OAuthActivity.class).create().get();
     }
 
     @Test
