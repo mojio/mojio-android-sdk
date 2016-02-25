@@ -47,6 +47,8 @@ public class OAuthFragment extends Fragment {
     private static final String ARG_CLIENT_ID = "ARG_CLIENT_ID";
     private static final String ARG_SCOPE = "ARG_SCOPE";
     private static final String ARG_REDIRECT_URI = "ARG_REDIRECT_URI";
+
+    // TODO support response_type=code
     private static final String FORMAT_OAUTH_URL = "%1$s/oauth2/authorize?response_type=token&redirect_uri=%2$s&client_id=%3$s&scope=%4$s";
 
     private String authUrl;

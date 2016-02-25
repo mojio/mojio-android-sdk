@@ -1,10 +1,10 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 apply plugin: 'jacoco'
-jacoco {
-    toolVersion = "0.7.5.201505241946"
-}
-
 ext {
+    // forced to use 0.7.2 due to https://github.com/jacoco/jacoco/pull/288
+    // should be able to update after Gradle 2.13 (https://github.com/gradle/gradle/pull/575) using
+    // includeNoLocationClasses = true
+    JACOCO_VERSION = "0.7.2.201409121644"
     BUILD_TOOLS_VERSION = '23.0.2'
     COMPILE_SDK_VERSION = 23
     TARGET_SDK_VERSION = 23
@@ -13,7 +13,7 @@ ext {
 
     PUBLISH_GROUP_ID = 'io.moj.mobile.android'
     PUBLISH_VERSION = '0.0.7'
-    COVERAGE_EXCLUDES = [
+    GLOBAL_COVERAGE_EXCLUDES = [
             '**/R.class',
             '**/R$*.class',
             '**/*$ViewInjector*.*',
@@ -24,6 +24,10 @@ ext {
     ]
 }
 
+jacoco {
+    toolVersion = JACOCO_VERSION
+}
+
 buildscript {
     repositories {
         jcenter()
@@ -31,6 +35,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:2.0.0-beta5'
+        classpath "org.jacoco:org.jacoco.core:0.7.2.201409121644"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -50,19 +55,26 @@ task clean(type: Delete, group: 'Root') {
 }
 
 /* Jacoco Unit Test Coverage */
+def jacocoModuleTask = "testDebugUnitTest"
+
 task jacocoMerge(type: JacocoMerge, group: 'Reporting') {
     description = "Merges Jacoco reports from all subprojects"
 
-    def executionFiles = []
     project.subprojects.each {
-        dependsOn("${it.path}:testReleaseUnitTest")
-        def file = file("${it.buildDir}/jacoco/testReleaseUnitTest.exec")
-        if (file.exists())
-            executionFiles += file.absolutePath
+        dependsOn("${it.path}:${jacocoModuleTask}")
     }
 
-    println("Merging Jacoco reports: ${executionFiles}...")
-    executionData = files(executionFiles)
+    executionData = files()
+    doFirst {
+        def executionFiles = []
+        project.subprojects.each {
+            def file = file("${it.buildDir}/jacoco/${jacocoModuleTask}.exec")
+            if (file.exists())
+                executionFiles += file.absolutePath
+        }
+        executionData = files(executionFiles)
+    }
+
     destinationFile = file("${buildDir}/jacoco/jacocoMerge.exec")
 }
 
@@ -70,10 +82,10 @@ task reportUnitTestCoverage(type: JacocoReport, group: 'Reporting') {
     description = "Generates a unified Jacoco coverage report for all modules"
     dependsOn jacocoMerge
 
-    def classDirs = fileTree(dir: "${buildDir}/classes/debug", excludes: COVERAGE_EXCLUDES)
+    def classDirs = fileTree(dir: "${buildDir}/classes/debug", excludes: GLOBAL_COVERAGE_EXCLUDES)
     def sourceDirs = []
     project.subprojects.each {
-        classDirs = classDirs.plus(fileTree(dir: "${it.buildDir}/intermediates/classes/release", excludes: COVERAGE_EXCLUDES))
+        classDirs = classDirs.plus(fileTree(dir: "${it.buildDir}/intermediates/classes/debug", excludes: GLOBAL_COVERAGE_EXCLUDES))
         sourceDirs += "${it.projectDir}/src/main/java"
     }
 

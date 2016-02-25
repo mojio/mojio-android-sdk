@@ -1,17 +1,22 @@
 apply plugin: 'jacoco'
 
 jacoco {
-    toolVersion = "0.7.5.201505241946"
+    toolVersion = JACOCO_VERSION
 }
 
 def coverageExcludes = [ ]
+if (project.hasProperty('GLOBAL_COVERAGE_EXCLUDES')) {
+    coverageExcludes.addAll(project.GLOBAL_COVERAGE_EXCLUDES)
+}
+
 if (project.hasProperty('COVERAGE_EXCLUDES')) {
     coverageExcludes.addAll(project.COVERAGE_EXCLUDES)
 }
 
 project.afterEvaluate {
     // Grab all build types and product flavors
-    def buildTypes = android.buildTypes.collect { type -> type.name }
+    def buildTypes = android.buildTypes.findAll { type -> type.testCoverageEnabled }
+                                       .collect { type -> type.name }
     def productFlavors = android.productFlavors.collect { flavor -> flavor.name }
 
     // When no product flavors defined, use empty
