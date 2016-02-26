@@ -46,6 +46,11 @@ allprojects {
     repositories {
         jcenter()
         mavenCentral()
+
+        // we distribute to JCenter but this repo is updated faster
+        maven {
+            url 'https://dl.bintray.com/mojio/maven'
+        }
     }
 }
 
