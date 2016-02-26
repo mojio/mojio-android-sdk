@@ -42,6 +42,6 @@ public enum DistanceUnit {
                 return unit;
             }
         }
-        throw new IllegalArgumentException("Illegal DistanceUnit value supplied: " + key);
+        return null;
     }
 }

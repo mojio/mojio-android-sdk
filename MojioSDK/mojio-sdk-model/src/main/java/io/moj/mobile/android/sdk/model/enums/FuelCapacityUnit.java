@@ -30,6 +30,6 @@ public enum FuelCapacityUnit {
                 return unit;
             }
         }
-        throw new IllegalArgumentException("Illegal FuelCapacityUnit value supplied: " + key);
+        return null;
     }
 }

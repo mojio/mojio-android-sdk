@@ -30,6 +30,6 @@ public enum ScoringMethod {
                 return unit;
             }
         }
-        throw new IllegalArgumentException("Illegal ScoringMethod value supplied: " + key);
+        return null;
     }
 }

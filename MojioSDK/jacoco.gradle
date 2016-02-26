@@ -1,24 +1,22 @@
 apply plugin: 'jacoco'
 
 jacoco {
-    toolVersion = "0.7.5.201505241946"
+    toolVersion = JACOCO_VERSION
 }
 
-def coverageExcludes = [
-        '**/R.class',
-        '**/R$*.class',
-        '**/*$ViewInjector*.*',
-        '**/*$ViewBinder*.*',
-        '**/BuildConfig.*',
-        '**/Manifest*.*'
-]
+def coverageExcludes = [ ]
+if (project.hasProperty('GLOBAL_COVERAGE_EXCLUDES')) {
+    coverageExcludes.addAll(project.GLOBAL_COVERAGE_EXCLUDES)
+}
+
 if (project.hasProperty('COVERAGE_EXCLUDES')) {
     coverageExcludes.addAll(project.COVERAGE_EXCLUDES)
 }
 
 project.afterEvaluate {
     // Grab all build types and product flavors
-    def buildTypes = android.buildTypes.collect { type -> type.name }
+    def buildTypes = android.buildTypes.findAll { type -> type.testCoverageEnabled }
+                                       .collect { type -> type.name }
     def productFlavors = android.productFlavors.collect { flavor -> flavor.name }
 
     // When no product flavors defined, use empty
@@ -36,9 +34,9 @@ project.afterEvaluate {
             def testTaskName = "test${sourceName.capitalize()}UnitTest"
 
             // Create coverage task of form 'testFlavorTypeCoverage' depending on 'testFlavorTypeUnitTest'
-            task "${testTaskName}Coverage" (type:JacocoReport, dependsOn: "$testTaskName") {
+            task "${testTaskName}Coverage" (type: JacocoReport, dependsOn: "$testTaskName") {
                 group = "Reporting"
-                description = "Generate Jacoco coverage reports on the ${sourceName.capitalize()} build."
+                description = "Generate Jacoco coverage reports on the $sourceName build."
 
                 classDirectories = fileTree(
                         dir: "${project.buildDir}/intermediates/classes/${sourcePath}",
@@ -50,9 +48,10 @@ project.afterEvaluate {
                         "src/$productFlavorName/java",
                         "src/$buildTypeName/java"
                 ]
+
                 additionalSourceDirs = files(coverageSourceDirs)
                 sourceDirectories = files(coverageSourceDirs)
-                executionData = files("${project.buildDir}/jacoco/${testTaskName}.exec")
+                executionData = files("${project.buildDir}/jacoco/${testTaskName}.exec");
 
                 reports {
                     xml.enabled = true

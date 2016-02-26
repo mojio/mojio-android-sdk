@@ -5,9 +5,11 @@ import com.google.gson.Gson;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.moj.mobile.android.sdk.TestJson;
+import io.moj.mobile.android.sdk.test.TestUtils;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -121,6 +123,24 @@ public class ObserverTest {
         assertEquals("key", o.getKey());
         assertEquals("lastModified", o.getLastModified());
         assertEquals("subject", o.getSubject());
+    }
+
+    @Test
+    public void testToString() throws IllegalAccessException {
+        Observer o = new Gson().fromJson(TestJson.OBSERVER, Observer.class);
+        TestUtils.assertToStringContainsAllFields(o);
+    }
+
+    @Test
+    public void testGettersAndSetters() throws IllegalAccessException {
+        Observer o = new Gson().fromJson(TestJson.OBSERVER, Observer.class);
+        TestUtils.assertGettersAndSetters(o);
+
+        o.setTransport(null);
+        assertNull(o.getTransport());
+
+        o.setTransports(new ArrayList<Transport>());
+        assertNull(o.getTransport());
     }
 
 }

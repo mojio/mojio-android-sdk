@@ -6,7 +6,7 @@ package io.moj.mobile.android.sdk.model.values;
  */
 public class Email {
 
-    private boolean Verified;
+    private Boolean Verified;
     private String Address;
 
     public String getAddress() {
@@ -17,11 +17,11 @@ public class Email {
         Address = address;
     }
 
-    public boolean isVerified() {
+    public boolean getVerified() {
         return Verified;
     }
 
-    public void setVerified(boolean verified) {
+    public void setVerified(Boolean verified) {
         Verified = verified;
     }
 

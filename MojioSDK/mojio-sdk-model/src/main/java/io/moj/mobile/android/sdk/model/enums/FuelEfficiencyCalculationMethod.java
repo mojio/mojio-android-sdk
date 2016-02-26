@@ -39,6 +39,6 @@ public enum FuelEfficiencyCalculationMethod {
                 return unit;
             }
         }
-        throw new IllegalArgumentException("Illegal FuelEfficiencyCalculationMethod value supplied: " + key);
+        return null;
     }
 }

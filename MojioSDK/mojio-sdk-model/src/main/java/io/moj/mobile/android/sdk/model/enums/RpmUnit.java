@@ -27,6 +27,6 @@ public enum RpmUnit {
                 return unit;
             }
         }
-        throw new IllegalArgumentException("Illegal RpmUnit value supplied: " + key);
+        return null;
     }
 }

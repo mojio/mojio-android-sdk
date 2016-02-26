@@ -9,24 +9,24 @@ import io.moj.mobile.android.sdk.model.enums.PhoneType;
 public class PhoneNumber {
 
     private PhoneType Type;
-    private int CountryCode;
-    private int AreaCode;
-    private int Number;
+    private Integer CountryCode;
+    private Integer AreaCode;
+    private Integer Number;
     private Integer Ext;
 
-    public int getAreaCode() {
+    public Integer getAreaCode() {
         return AreaCode;
     }
 
-    public void setAreaCode(int areaCode) {
+    public void setAreaCode(Integer areaCode) {
         AreaCode = areaCode;
     }
 
-    public int getCountryCode() {
+    public Integer getCountryCode() {
         return CountryCode;
     }
 
-    public void setCountryCode(int countryCode) {
+    public void setCountryCode(Integer countryCode) {
         CountryCode = countryCode;
     }
 
@@ -38,11 +38,11 @@ public class PhoneNumber {
         Ext = ext;
     }
 
-    public int getNumber() {
+    public Integer getNumber() {
         return Number;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(Integer number) {
         Number = number;
     }
 

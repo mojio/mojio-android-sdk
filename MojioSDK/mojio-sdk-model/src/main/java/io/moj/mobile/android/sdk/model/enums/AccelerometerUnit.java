@@ -42,6 +42,6 @@ public enum AccelerometerUnit {
                 return unit;
             }
         }
-        throw new IllegalArgumentException("Illegal AccelerometerUnit value supplied: " + key);
+        return null;
     }
 }

@@ -1,9 +1,6 @@
 package io.moj.mobile.android.sdk.model.values;
 
-import org.joda.time.DateTime;
-
 import io.moj.mobile.android.sdk.model.enums.FuelEfficiencyUnit;
-import io.moj.mobile.android.sdk.model.utils.TimeFormatHelpers;
 
 /**
  * Model object for a FuelEfficiency value.
@@ -39,12 +36,12 @@ public class FuelEfficiency extends DeviceMeasurement {
         BenchmarkStatistics = benchmarkStatistics;
     }
 
-    public DateTime getBenchmarkTime() {
-        return TimeFormatHelpers.fromServerFormatted(BenchmarkTime);
+    public String getBenchmarkTime() {
+        return BenchmarkTime;
     }
 
-    public void setBenchmarkTime(DateTime benchmarkTime) {
-        BenchmarkTime = TimeFormatHelpers.toServerFormatted(benchmarkTime);
+    public void setBenchmarkTime(String benchmarkTime) {
+        BenchmarkTime = benchmarkTime;
     }
 
     public MeasurementStatistics getStatistics() {

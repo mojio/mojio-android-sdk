@@ -45,6 +45,6 @@ public enum DurationUnit {
                 return unit;
             }
         }
-        throw new IllegalArgumentException("Illegal DurationUnit value supplied: " + key);
+        return null;
     }
 }

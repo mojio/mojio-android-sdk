@@ -30,6 +30,6 @@ public enum VoltageUnit {
                 return unit;
             }
         }
-        throw new IllegalArgumentException("Illegal VoltageUnit value supplied: " + key);
+        return null;
     }
 }

@@ -60,6 +60,6 @@ public enum GPSStatus {
                 return unit;
             }
         }
-        throw new IllegalArgumentException("Illegal GPSStatus value supplied: " + key);
+        return null;
     }
 }

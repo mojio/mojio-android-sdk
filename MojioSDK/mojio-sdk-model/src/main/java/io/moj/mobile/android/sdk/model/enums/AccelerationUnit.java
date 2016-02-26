@@ -33,6 +33,6 @@ public enum AccelerationUnit {
                 return unit;
             }
         }
-        throw new IllegalArgumentException("Illegal AccelerationUnit value supplied: " + key);
+        return null;
     }
 }

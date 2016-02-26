@@ -1,9 +1,5 @@
 package io.moj.mobile.android.sdk.model.values;
 
-import org.joda.time.DateTime;
-
-import io.moj.mobile.android.sdk.model.utils.TimeFormatHelpers;
-
 /**
  * Model object for an VehicleMeasure.
  * Created by mhorie on 2016-01-14.
@@ -12,41 +8,41 @@ public class VinDetails {
 
     private String Timestamp;
     private String Vin;
-    private int Year;
+    private Integer Year;
     private String Make;
     private String Model;
     private String Engine;
-    private int Cylinders;
+    private Integer Cylinders;
     private FuelCapacity TotalFuelCapacity;
     private String FuelType;
-    private float CityFuelEfficiency;
-    private float HighwayFuelEfficiency;
-    private float CombinedFuelEfficiency ;
+    private Float CityFuelEfficiency;
+    private Float HighwayFuelEfficiency;
+    private Float CombinedFuelEfficiency ;
     private String Transmission;
     private String Message;
-    private boolean Success;
+    private Boolean Success;
 
-    public float getCityFuelEfficiency() {
+    public Float getCityFuelEfficiency() {
         return CityFuelEfficiency;
     }
 
-    public void setCityFuelEfficiency(float cityFuelEfficiency) {
+    public void setCityFuelEfficiency(Float cityFuelEfficiency) {
         CityFuelEfficiency = cityFuelEfficiency;
     }
 
-    public float getCombinedFuelEfficiency() {
+    public Float getCombinedFuelEfficiency() {
         return CombinedFuelEfficiency;
     }
 
-    public void setCombinedFuelEfficiency(float combinedFuelEfficiency) {
+    public void setCombinedFuelEfficiency(Float combinedFuelEfficiency) {
         CombinedFuelEfficiency = combinedFuelEfficiency;
     }
 
-    public int getCylinders() {
+    public Integer getCylinders() {
         return Cylinders;
     }
 
-    public void setCylinders(int cylinders) {
+    public void setCylinders(Integer cylinders) {
         Cylinders = cylinders;
     }
 
@@ -66,11 +62,11 @@ public class VinDetails {
         FuelType = fuelType;
     }
 
-    public float getHighwayFuelEfficiency() {
+    public Float getHighwayFuelEfficiency() {
         return HighwayFuelEfficiency;
     }
 
-    public void setHighwayFuelEfficiency(float highwayFuelEfficiency) {
+    public void setHighwayFuelEfficiency(Float highwayFuelEfficiency) {
         HighwayFuelEfficiency = highwayFuelEfficiency;
     }
 
@@ -98,20 +94,20 @@ public class VinDetails {
         Model = model;
     }
 
-    public boolean isSuccess() {
+    public Boolean getSuccess() {
         return Success;
     }
 
-    public void setSuccess(boolean success) {
+    public void setSuccess(Boolean success) {
         Success = success;
     }
 
-    public DateTime getTimestamp() {
-        return TimeFormatHelpers.fromServerFormatted(Timestamp);
+    public String getTimestamp() {
+        return Timestamp;
     }
 
-    public void setTimestamp(DateTime timestamp) {
-        Timestamp = TimeFormatHelpers.toServerFormatted(timestamp);
+    public void setTimestamp(String timestamp) {
+        Timestamp = timestamp;
     }
 
     public FuelCapacity getTotalFuelCapacity() {
@@ -138,11 +134,11 @@ public class VinDetails {
         Vin = vin;
     }
 
-    public int getYear() {
+    public Integer getYear() {
         return Year;
     }
 
-    public void setYear(int year) {
+    public void setYear(Integer year) {
         Year = year;
     }
 

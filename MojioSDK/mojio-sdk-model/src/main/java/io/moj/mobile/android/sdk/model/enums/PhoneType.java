@@ -33,6 +33,6 @@ public enum PhoneType {
                 return unit;
             }
         }
-        throw new IllegalArgumentException("Illegal PhoneType value supplied: " + key);
+        return null;
     }
 }
