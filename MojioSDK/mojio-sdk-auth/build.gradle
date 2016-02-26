@@ -41,7 +41,7 @@ dependencies {
 
     testCompile project(":mojio-sdk-test")
 
-    def robolectricVersion = '3.0';
+    def robolectricVersion = '3.0-rc3';
     testCompile "org.robolectric:robolectric:${robolectricVersion}"
     testCompile "org.robolectric:shadows-support-v4:${robolectricVersion}"
 }
