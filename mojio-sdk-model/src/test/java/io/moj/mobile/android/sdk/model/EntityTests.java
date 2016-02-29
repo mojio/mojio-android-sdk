@@ -25,6 +25,13 @@ public class EntityTests {
     }
 
     @Test
+    public void testListResponse() throws IllegalAccessException {
+        ListResponse response = new ListResponse();
+        assertToStringContainsAllFields(response);
+        assertGettersAndSetters(response);
+    }
+
+    @Test
     public void testLocation() throws IllegalAccessException {
         Location location = new Location();
         assertToStringContainsAllFields(location);
