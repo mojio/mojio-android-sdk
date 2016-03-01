@@ -17,14 +17,14 @@ compile 'io.moj.mobile.android:mojio-sdk-common:0.0.9'
 ## Instructions ##
 The Mojio SDK uses a simple [Logger](https://github.com/mojio/mojio-android-sdk/blob/develop/MojioSDK/mojio-sdk-common/src/main/java/io/moj/mobile/android/sdk/Log.java)
 interface. This allows your app to change how and what the SDK logs at runtime without bringing in
-new dependencies (such as [Timber](https://github.com/JakeWharton/timber).
+new dependencies (such as [Timber](https://github.com/JakeWharton/timber)).
 
 The default logger prints to Logcat, below is some sample code to disable this logging in release
 builds (do this in your Application's onCreate() method):
 
 ```java
 if (!BuildConfig.DEBUG) {
-    Log.clearLoggers();
+    io.moj.mobile.android.sdk.Log.clearLoggers();
 }
 ```
 
