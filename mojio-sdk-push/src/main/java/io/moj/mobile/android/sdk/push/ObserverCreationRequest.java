@@ -142,7 +142,7 @@ public class ObserverCreationRequest {
          */
         public ObserverCreationRequest build() {
             return new ObserverCreationRequest(key, subject, type, transport, propertyChanged,
-                    threshold, debounce, throttle, fields);
+                    threshold, debounce, throttle, new ArrayList<>(fields));
         }
     }
 
