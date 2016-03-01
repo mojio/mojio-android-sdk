@@ -47,6 +47,18 @@ public class Condition {
         this.type = type;
     }
 
+    public Condition(Condition other) {
+        this.type = other.type;
+        this.Property = other.Property;
+        this.Position = other.Position;
+        this.Max = other.Max;
+        this.Min = other.Min;
+        this.TimeProperty = other.TimeProperty;
+        this.Delay = other.Delay;
+        this.MinDataPoints = other.MinDataPoints;
+        this.Window = other.Window;
+    }
+
     public String getDelay() {
         return Delay;
     }

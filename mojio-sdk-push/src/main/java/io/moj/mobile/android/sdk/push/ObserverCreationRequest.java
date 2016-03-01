@@ -23,6 +23,24 @@ public class ObserverCreationRequest {
     private Transport Transport;
     private Observer.Type Type;
 
+    public ObserverCreationRequest() {}
+
+    public ObserverCreationRequest(ObserverCreationRequest other) {
+        this.Key = other.Key;
+        this.CreatedOn = other.CreatedOn;
+        this.LastModified = other.LastModified;
+        this.ExpiryDate = other.ExpiryDate;
+        this.Name = other.Name;
+        this.Subject = other.Subject;
+        this.Fields = other.Fields;
+        this.PropertyChanged = other.PropertyChanged;
+        this.Threshold = other.Threshold;
+        this.Debounce = other.Debounce;
+        this.Throttle = other.Throttle;
+        this.Transport = other.Transport;
+        this.Type = other.Type;
+    }
+
     public static class Builder {
         private ObserverCreationRequest request;
 
@@ -117,7 +135,7 @@ public class ObserverCreationRequest {
          * @return
          */
         public ObserverCreationRequest build() {
-            return request;
+            return new ObserverCreationRequest(request);
         }
     }
 
