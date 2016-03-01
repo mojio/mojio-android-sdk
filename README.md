@@ -4,7 +4,7 @@ Android SDK for integrating with the Mojio platform.
 
 For more information please see the [developer website](http://developer.moj.io/)
 
-![](static/logo_mojio.png)
+![](static/banner_mojio.png)
 
 ### Disclaimer ###
 **UNDER ACTIVE DEVELOPMENT**
