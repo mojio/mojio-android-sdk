@@ -3,7 +3,7 @@
 
 Android SDK for integrating with the Mojio platform.
 
-For more information please see the [developer website](http://developer.moj.io/)
+For more information please see the [developer website](http://developer.moj.io/).
 
 ### Disclaimer ###
 **UNDER ACTIVE DEVELOPMENT**
@@ -19,7 +19,7 @@ compile 'io.moj.mobile.android:mojio-sdk-model:0.0.8'
 compile 'io.moj.mobile.android:mojio-sdk-push:0.0.8'
 ```
 
-The Mojio Android SDK requires at minimum Android 3.0 (API 11)
+The Mojio Android SDK requires a minimum of Android 2.1 (API 7)
 
 ## Structure ##
 The SDK is broken into modules - you may choose to use some or all of them for your application.

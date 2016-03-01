@@ -136,7 +136,7 @@ public class OAuthFragment extends Fragment {
     }
 
     private boolean isRedirectUri(Uri uri) {
-        return uri.buildUpon().fragment("").clearQuery().build().equals(redirectUri);
+        return uri.toString().startsWith(redirectUri.toString());
     }
 
     @SuppressWarnings("deprecation")
