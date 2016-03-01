@@ -1,14 +1,39 @@
-*.class
+# Built application files
+/build
+/captures
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+# Gradle generated files
+.gradle
 
-# Package Files #
+# Local configuration files
+local.properties
 
+# User-specific IntelliJ files
+*.iml
+.idea/*
+.idea/workspace.xml
+.idea/libraries
+.idea/tasks.xml
+.idea/.name
+.idea/compiler.xml
+.idea/copyright/profiles_settings.xml
+.idea/encodings.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/scopes/scope_settings.xml
+.idea/vcs.xml
+.idea/libraries
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+# Java debugger
+*.hprof
 
-*/bin/
-.metadata/
-*/gen/
+# OS-specific files
+.DS_Store
+.Spotlight-V100
+.Trashes
+*.swp
+ehthumbs.db
+Thumbs.db
+
+# Custom local files
+release-*.sh
