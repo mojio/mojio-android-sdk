@@ -11,7 +11,7 @@ configurable, logger.
 
 ## Download ##
 ```gradle
-compile 'io.moj.mobile.android:mojio-sdk-common:0.0.8'
+compile 'io.moj.mobile.android:mojio-sdk-common:0.0.9'
 ```
 
 ## Instructions ##
