@@ -18,7 +18,7 @@ compile 'io.moj.mobile.android:mojio-sdk-push:0.0.9'
 
 The Mojio Push SDK is most easily implemented using [Retrofit](http://square.github.io/retrofit/).
 Some examples for setting up Retrofit can be found in the [mojio-sdk-model](../mojio-sdk-model)
-documentation. An example Retrofit interface for the Mojio Push API would look as follows:
+documentation. n simple example of a Retrofit interface for the Mojio Push API would look as follows:
 
 ```java
 package io.moj.mobile.android.motion.service;
@@ -76,7 +76,7 @@ architecture. Currently, however, we have a dependency on [Gson](https://github.
 The mojio-sdk-push module contains some fluent constructors to make creating observers easy. Some
 examples can be found below.
 
-#### Notify when any vehicle's location changes #### 
+#### Notify when any vehicle location changes ####
 This will send the JSON body of the vehicle whose location changes to your specified _transport_.
 
 ```java
