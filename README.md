@@ -4,63 +4,63 @@ Android SDK for integrating with the Mojio platform.
 
 For more information please see the [developer website](http://developer.moj.io/)
 
-### UNDER ACTIVE DEVELOPMENT ###
-* Methods may change without notice
-* Current provided "AS IS"
+![](static/logo_mojio.png)
 
-### Examples ###
-If you are new to the Mojio platform, it may be beneficial to fork the example projects which will provide some basic structure out of the box:
-* https://github.com/mojio/mojio-android-example-oAuth2
-* https://github.com/mojio/mojio-android-myFirstMojioApp
+### Disclaimer ###
+**UNDER ACTIVE DEVELOPMENT**
+
+* Methods may change without notice
+* Currently provided "AS IS"
 
 ## Download ##
-
-### Using a dependency manager ###
-_Maven and Gradle instructions coming soon_
-
-### Using the prebuilt AAR project library ###
-
-1. Clone this repo
-
-2. Create a new project in Android Studio
-
-3. Copy the mojiosrc-release.aar file to your application's libs folder; this is found under the releases/aar folder in this repo. Note, you may have to switch to the *Project* view instead of the *Android* view to see the libs folder)
-
-4. Copy the signalr libs to your app's libs folder; these are found under the releases/libs folder in this repo.
-
-5. Add the following to your app's build.gradle file:
-
-```
-repositories{
-    flatDir{
-        dirs 'libs'
-    }
-}
-
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:21.0.3'
-   
-    // Mojio SDK dependencies
-    compile 'com.google.code.gson:gson:2.2.4'
-    compile 'com.mcxiaoke.volley:library:1.0.+'
-    compile 'joda-time:joda-time:2.5'
-    compile files('libs/signalr-client-sdk.jar')
-    compile files('libs/signalr-client-sdk-android.jar')
-    compile 'io.moj.mobile.android.sdk:mojiosdksrc-release:1.0.1@aar'
-}
+```gradle
+compile 'io.moj.mobile.android:mojio-sdk-auth:0.0.8'
+compile 'io.moj.mobile.android:mojio-sdk-common:0.0.8'
+compile 'io.moj.mobile.android:mojio-sdk-model:0.0.8'
+compile 'io.moj.mobile.android:mojio-sdk-push:0.0.8'
 ```
 
-6. Build your project to make sure the dependencies were applied correctly.
+The Mojio Android SDK requires at minimum Android 3.0 (API 11)
 
 ## Structure ##
-The SDK is broken into three modules - you may choose to use some or all of them for your application:
+The SDK is broken into modules - you may choose to use some or all of them for your application.
+See each module's subdirectory for more detailed instructions.
 
-### 1. [mojio-sdk-auth](https://github.com/mojio/mojio-android-sdk/tree/develop/MojioSDK/mojio-sdk-auth) ###
-  Implementation of OAuthActivity and OAuthFragment for retrieving an access token 
+### 1. [mojio-sdk-auth](https://github.com/mojio/mojio-android-sdk/tree/develop/mojio-sdk-auth) ###
+  Implementation of OAuthActivity and OAuthFragment for retrieving an access token using our
+  web-based login flow.
 
-### 2. [mojio-sdk-model](https://github.com/mojio/mojio-android-sdk/tree/develop/MojioSDK/mojio-sdk-model) ###
-  Model objects entities retrieved from the REST API. These objects are annotated for use with GSON.
+### 2. [mojio-sdk-model](https://github.com/mojio/mojio-android-sdk/tree/develop/mojio-sdk-model) ###
+  Model classes for use with the Mojio REST API. These objects are annotated for serialization with
+  GSON.
 
-### 3. [mojio-sdk-rest](https://github.com/mojio/mojio-android-sdk/tree/develop/MojioSDK/mojio-sdk-rest) ###
-  A fluent API for making structured REST calls to the Mojio API. Uses Volley and OKHttp.
+### 3. [mojio-sdk-push](https://github.com/mojio/mojio-android-sdk/tree/develop/mojio-sdk-push) ###
+  Model classes for use with the Mojio PUSH API. These objects are annotated for serialization with
+  GSON.
+  
+### 4. [mojio-sdk-common](https://github.com/mojio/mojio-android-sdk/tree/develop/mojio-sdk-common) ###
+  Common functionality used by other modules such as environment info and a lightweight,
+  configurable, logger.
+  
+### 5. [mojio-sdk-test](https://github.com/mojio/mojio-android-sdk/tree/develop/mojio-sdk-test) ###
+  A module purely for common functionality used for each module's tests. You probably only care
+  about this module if you are forking or building from scratch.
+  
+As much as possible we have tried to reduce the number of dependencies our SDK brings into your app.
+Some models, unfortunately, require distinct serialization behaviour (in particular enums) and we
+have opted to annotate these classes using GSON's @SerializedName annotation.
+
+## License ##
+    Copyright 2016 Mojio, Inc
+    
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+       http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.

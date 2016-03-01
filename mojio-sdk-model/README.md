@@ -1,7 +1,7 @@
-# Mojio Android Common SDK #
+# Mojio Android Model SDK #
 
-Common functionality used by other modules such as environment info and a lightweight, 
-configurable, logger.
+Model classes for use with the Mojio REST API. These objects are annotated for serialization with
+GSON.
 
 ## Disclaimer ##
 **UNDER ACTIVE DEVELOPMENT**
@@ -11,40 +11,95 @@ configurable, logger.
 
 ## Download ##
 ```gradle
-compile 'io.moj.mobile.android:mojio-sdk-common:0.0.8'
+compile 'io.moj.mobile.android:mojio-sdk-model:0.0.8'
 ```
 
 ## Instructions ##
-The Mojio SDK uses a simple [Logger](https://github.com/mojio/mojio-android-sdk/blob/develop/MojioSDK/mojio-sdk-common/src/main/java/io/moj/mobile/android/sdk/Log.java)
-interface. This allows your app to change how and what the SDK logs at runtime without bringing in
-new dependencies (such as [Timber](https://github.com/JakeWharton/timber).
 
-The default logger prints to Logcat, below is some sample code to disable this logging in release
-builds (do this in your Application's onCreate() method):
+The easiest way to use Mojio's Model SDK is with [Retrofit](http://square.github.io/retrofit/). The
+following is an example Retrofit interface for some common usecases. 
 
 ```java
-if (!BuildConfig.DEBUG) {
-    Log.clearLoggers();
+package io.moj.example;
+
+import io.moj.mobile.android.sdk.model.ListResponse;
+import io.moj.mobile.android.sdk.model.User;
+import io.moj.mobile.android.sdk.model.Vehicle;
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
+
+/**
+ * Retrofit interface for the Mojio REST API.
+ */
+public interface MojioApi {
+
+    @GET("vehicles")
+    Call<ListResponse<Vehicle>> getVehicles();
+
+    @GET("vehicles/{id}")
+    Call<Vehicle> getVehicle(@Path("id") id);
+    
+    @PUT("vehicles/{id}")
+    Call<Vehicle> updateVehicle(@Path("id") id, @Body Vehicle vehicle);
+    
+    @GET("vehicles/{id}/history/states")
+    Call<ListResponse<VehicleMeasure>> getTripHistory(@Path("id") id);
+    
+    @GET("vehicles/{id}/history/states")
+    Call<ListResponse<VehicleMeasure>> getTripHistory(@Path("id") id, @Query("skip") int skip, @Query("take") int take);
+
 }
 ```
 
-You can also change the logging behaviour by adding your own logger. The sample code below removes
-the default logcat logger but logs to Crashlytics in your release build:
+Here's an example of how to embed access tokens in requests that require authentication using an
+OkHttp Interceptor:
 
 ```java
-if (!BuildConfig.DEBUG) {
-    // Log to Crashlytics instead of Logcat in release builds
-    Fabric.with(this, new Crashlytics());
-    Log.clearLoggers();
-    Log.append(new Log.Logger() {
-        @Override
-        public void log(int level, String tag, String msg, Throwable tr) {
-            Crashlytics.log(tag + ": " + msg);
-            if (tr != null)
-                Crashlytics.logException(tr);
-        }
-    });
-}
+OkHttpClient httpClient = new OkHttpClient.Builder()
+        .addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request request = chain.request();
+            
+                // set the access token in the header if we have it
+                if (!TextUtils.isEmpty(accessToken)) {
+                    request = request.newBuilder()
+                            .header("Authorization", "Bearer " + accessToken)
+                            .header("Accept", "application/json")
+                            .build();
+                }
+                return response;
+            }
+        })
+        .build();
+mojioApi = new Retrofit.Builder()
+        .baseUrl("https://api.moj.io/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .client(httpClientBuilder.build())
+        .build().create(MojioApi.class);
+```
+
+Even if you're not using Retrofit, the mojio-sdk-model module can be plugged into your existing
+architecture. Currently, however, we have a dependency on [Gson](https://github.com/google/gson).
+
+### Persisting model objects ###
+Each Mojio entity (not including enums or units) such as Vehicle, Mojio, and User extends
+MojioObject which includes a Long "_id" field to facilitate usage of Android's Cursor framework.
+ 
+The private fields inside model objects also follow non-standard cases for Java to match the
+entities exactly as returned by the API. We've abstracted this detail away with getters and setters
+and the benefit is that your SQLite tables, when generated from these model objects with an ORM such
+as [Cupboard](https://bitbucket.org/littlerobots/cupboard), will exactly mirror the API.
+
+To help build queries with whatever framework you're using, each model class defines static
+constants for each of it's fields:
+
+```java
+SQLiteQueryBuilder query = new SQLiteQueryBuilder(); 
+query.setTables(Vehicle.class.getSimpleName()); 
+query.appendWhere(Vehicle.ID + "="); 
+Cursor cursor = qBuilder.query(db, projection, selection, selectionArgs, null, null, orderBy); 
 ```
   
 ## License ##
