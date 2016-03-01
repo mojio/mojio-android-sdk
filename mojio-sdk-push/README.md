@@ -42,19 +42,19 @@ public interface MojioPushApi {
     Call<Observer> getVehicleObservers(@Path("id") String id);
 
     @POST("vehicles")
-    Call<Observer> observeVehicles(@Body Observer observer);
+    Call<Observer> observeVehicles(@Body ObserverCreationRequest request);
 
     @POST("vehicles/{id}")
-    Call<Observer> observeVehicle(@Path("id") String id, @Body Observer observer);
+    Call<Observer> observeVehicle(@Path("id") String id, @Body ObserverCreationRequest request);
 
     @POST("mojios")
-    Call<Observer> observeMojios(@Body Observer observer);
+    Call<Observer> observeMojios(@Body ObserverCreationRequest request);
 
     @POST("mojios/{id}")
-    Call<Observer> observeMojio(@Path("id") String id, @Body Observer observer);
+    Call<Observer> observeMojio(@Path("id") String id, @Body ObserverCreationRequest request);
 
     @POST("users/{id}")
-    Call<Observer> observeUser(@Path("id") String id, @Body Observer observer);
+    Call<Observer> observeUser(@Path("id") String id, @Body ObserverCreationRequest request);
 
 }
 ```
