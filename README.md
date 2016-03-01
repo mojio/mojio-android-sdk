@@ -1,5 +1,6 @@
 ![](static/banner_mojio.png)
 # Mojio Android SDK #
+![](http://ci.moj.io/app/rest/builds/buildType:(id:Mobile_MojioSDK_Android_Development)/statusIcon)
 
 Android SDK for integrating with the Mojio platform.
 
