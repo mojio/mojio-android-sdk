@@ -25,29 +25,29 @@ The Mojio Android SDK requires a minimum of Android 2.1 (API 7)
 The SDK is broken into modules - you may choose to use some or all of them for your application.
 See each module's subdirectory for more detailed instructions.
 
-### 1. [mojio-sdk-auth](https://github.com/mojio/mojio-android-sdk/tree/develop/mojio-sdk-auth) ###
+As much as possible we have tried to reduce the number of dependencies our SDK brings into your app.
+Some models, unfortunately, require distinct serialization behaviour (in particular enums) and we
+have opted to annotate these classes using [GSON](https://github.com/google/gson).
+
+### [mojio-sdk-auth](https://github.com/mojio/mojio-android-sdk/tree/develop/mojio-sdk-auth) ###
   Implementation of OAuthActivity and OAuthFragment for retrieving an access token using our
   web-based login flow.
 
-### 2. [mojio-sdk-model](https://github.com/mojio/mojio-android-sdk/tree/develop/mojio-sdk-model) ###
+### [mojio-sdk-model](https://github.com/mojio/mojio-android-sdk/tree/develop/mojio-sdk-model) ###
   Model classes for use with the Mojio REST API. These objects are annotated for serialization with
   GSON.
 
-### 3. [mojio-sdk-push](https://github.com/mojio/mojio-android-sdk/tree/develop/mojio-sdk-push) ###
+### [mojio-sdk-push](https://github.com/mojio/mojio-android-sdk/tree/develop/mojio-sdk-push) ###
   Model classes for use with the Mojio PUSH API. These objects are annotated for serialization with
   GSON.
   
-### 4. [mojio-sdk-common](https://github.com/mojio/mojio-android-sdk/tree/develop/mojio-sdk-common) ###
+### [mojio-sdk-common](https://github.com/mojio/mojio-android-sdk/tree/develop/mojio-sdk-common) ###
   Common functionality used by other modules such as environment info and a lightweight,
   configurable, logger.
   
-### 5. [mojio-sdk-test](https://github.com/mojio/mojio-android-sdk/tree/develop/mojio-sdk-test) ###
+### [mojio-sdk-test](https://github.com/mojio/mojio-android-sdk/tree/develop/mojio-sdk-test) ###
   A module purely for common functionality used for each module's tests. You probably only care
   about this module if you are forking or building from scratch.
-  
-As much as possible we have tried to reduce the number of dependencies our SDK brings into your app.
-Some models, unfortunately, require distinct serialization behaviour (in particular enums) and we
-have opted to annotate these classes using GSON's @SerializedName annotation.
 
 ## License ##
     Copyright 2016 Mojio, Inc

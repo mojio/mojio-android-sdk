@@ -15,17 +15,19 @@ compile 'io.moj.mobile.android:mojio-sdk-auth:0.0.9'
 ```
 
 ## Instructions ##
-The following steps are taken in the sample to perform basic OAuth2; if you wish to add authentication into your personal Mojio applications please follow the following steps:
-
-1. Give your application Internet access in the AndroidManifest.xml file; if you do not do this, then the web view will fail to load with a rather undesciptive "Webpage not available" message
+All approaches to implementing authentication require the INTERNET permission. If you are seeing a
+"Webpage not available" message, missing this is usually the cause:
   
   ```xml
   <uses-permission android:name="android.permission.INTERNET" />
   ````
 
-2. Your application can implement the OAuth2 WebView in one of two ways:
+Your application can implement the OAuth2 WebView in one of two ways:
 
 #### OAuthActivity ####
+  This approach involves calling our OAuthActivity via startActivityForResult() and then pulling
+  the access token out of the resulting Intent.
+
   1. Add **io.moj.mobile.android.sdk.oauth.OAuthActivity** to your AndroidManifest.xml
   
   ```xml
@@ -64,12 +66,11 @@ This approach is useful if you want more flexibility around the UI for the login
   1. Create a layout with a container the OAuthFragment will be added to
   
     ```xml
-    ...
+    <?xml version="1.0" encoding="utf-8"?>
     <FrameLayout
         android:id="@+id/container_oauth"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-    ...
     ```
     
   2. Create and add an instance of OAuthFragment in onCreate()
@@ -108,7 +109,8 @@ This approach is useful if you want more flexibility around the UI for the login
   ```
   
   4. Override the method that will receive the result
-  If you used android:launchmode="singleTask" as above, this will call onNewIntent() in your current activity:
+  If you used android:launchmode="singleTask" as above, this will call onNewIntent() in your current
+  activity:
   
   ```java
   @Override
@@ -122,7 +124,8 @@ This approach is useful if you want more flexibility around the UI for the login
   }
   ```
   
-  Otherwise the activity you set the IntentFilter on can get the data via getIntent().
+  Otherwise the activity you set the IntentFilter on can retrieve the data via getIntent() after it
+  has been started.
   
 ## License ##
     Copyright 2016 Mojio, Inc
