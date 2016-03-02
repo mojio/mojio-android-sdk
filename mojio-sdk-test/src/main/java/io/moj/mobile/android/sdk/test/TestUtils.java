@@ -58,7 +58,10 @@ public final class TestUtils {
     }
 
     public static void assertGettersAndSetters(Object pojo) {
-        List<Method> methods = getAllMethods(pojo);
+        assertGettersAndSetters(pojo, getAllMethods(pojo));
+    }
+
+    public static void assertGettersAndSetters(Object pojo, List<Method> methods) {
         Set<String> methodNames =
                 new HashSet<>(Lists.transform(methods, FUNCTION_EXTRACT_METHOD_NAMES));
 
@@ -102,7 +105,6 @@ public final class TestUtils {
                         e.getClass().getSimpleName() + " - " + e.getMessage());
             }
         }
-
     }
 
     /**
@@ -110,7 +112,7 @@ public final class TestUtils {
      * @param pojo
      * @return
      */
-    private static List<Field> getAllFields(Object pojo) {
+    public static List<Field> getAllFields(Object pojo) {
         Class pojoClass = pojo.getClass();
         List<Field> fields = Lists.newArrayList(pojoClass.getDeclaredFields());
 
@@ -122,7 +124,12 @@ public final class TestUtils {
         return fields;
     }
 
-    private static List<Method> getAllMethods(Object pojo) {
+    /**
+     * Returns all methods of an object and all it's superclasses.
+     * @param pojo
+     * @return
+     */
+    public static List<Method> getAllMethods(Object pojo) {
         Class pojoClass = pojo.getClass();
         List<Method> methods = Lists.newArrayList(pojoClass.getDeclaredMethods());
 
