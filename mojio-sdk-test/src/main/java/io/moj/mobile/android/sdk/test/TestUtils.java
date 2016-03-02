@@ -16,6 +16,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth.assertWithMessage;
 import static org.powermock.api.mockito.PowerMockito.mock;
 
 /**
@@ -92,7 +93,8 @@ public final class TestUtils {
                 method.setAccessible(true);
                 method.invoke(pojo, arg);
                 Method getMethod = pojo.getClass().getMethod(method.getName().replace("set", "get"));
-                assertThat(getMethod.invoke(pojo)).isEqualTo(arg);
+                assertWithMessage(method.getName() + "(" + arg + ") followed by " + getMethod.getName() + "()")
+                        .that(getMethod.invoke(pojo)).isEqualTo(arg);
                 method.setAccessible(accessible);
             } catch (IllegalArgumentException | InvocationTargetException | IllegalAccessException |
                     NoSuchMethodException e) {
