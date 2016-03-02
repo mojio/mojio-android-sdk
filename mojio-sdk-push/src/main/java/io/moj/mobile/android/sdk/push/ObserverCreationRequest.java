@@ -23,8 +23,33 @@ public class ObserverCreationRequest {
     private Transport Transport;
     private Observer.Type Type;
 
+    public ObserverCreationRequest() {}
+
+    private ObserverCreationRequest(String key, String subject, Observer.Type type,
+                                    Transport transport, String propertyChanged,
+                                    Condition threshold, Condition debounce, Condition throttle,
+                                    List<String> fields) {
+        this.Key = key;
+        this.Subject = subject;
+        this.Type = type;
+        this.Transport = transport;
+        this.PropertyChanged = propertyChanged;
+        this.Threshold = threshold;
+        this.Debounce = debounce;
+        this.Throttle = throttle;
+        this.Fields = fields;
+    }
+
     public static class Builder {
-        private ObserverCreationRequest request;
+        private String key;
+        private String subject;
+        private Observer.Type type;
+        private Transport transport;
+        private String propertyChanged;
+        private Condition threshold;
+        private Condition debounce;
+        private Condition throttle;
+        private List<String> fields;
 
         /**
          * Constructs an Observer builder.
@@ -32,8 +57,7 @@ public class ObserverCreationRequest {
          *            application and entity. It cannot be edited.
          */
         public Builder(String key) {
-            request = new ObserverCreationRequest();
-            request.Key = key;
+            this.key = key;
         }
 
         /**
@@ -45,7 +69,7 @@ public class ObserverCreationRequest {
          * @return
          */
         public Builder subject(String subject) {
-            request.Subject = subject;
+            this.subject = subject;
             return this;
         }
 
@@ -57,7 +81,7 @@ public class ObserverCreationRequest {
          * @return
          */
         public Builder type(Observer.Type type) {
-            request.Type = type;
+            this.type = type;
             return this;
         }
 
@@ -69,7 +93,7 @@ public class ObserverCreationRequest {
          * @return
          */
         public Builder transport(Transport transport) {
-            request.Transport = transport;
+            this.transport = transport;
             return this;
         }
 
@@ -83,16 +107,16 @@ public class ObserverCreationRequest {
         public Builder condition(Condition condition) {
             switch (condition.getType()) {
                 case PROPERTY_CHANGED:
-                    request.PropertyChanged = condition.getProperty();
+                    this.propertyChanged = condition.getProperty();
                     break;
                 case THRESHOLD:
-                    request.Threshold = condition;
+                    this.threshold = condition;
                     break;
                 case DEBOUNCE:
-                    request.Debounce = condition;
+                    this.debounce = condition;
                     break;
                 case THROTTLE:
-                    request.Throttle = condition;
+                    this.throttle = condition;
                     break;
             }
             return this;
@@ -106,9 +130,9 @@ public class ObserverCreationRequest {
          * @return
          */
         public Builder field(String field) {
-            if (request.Fields == null)
-                request.Fields = new ArrayList<>();
-            request.Fields.add(field);
+            if (fields == null)
+                fields = new ArrayList<>();
+            fields.add(field);
             return this;
         }
 
@@ -117,7 +141,8 @@ public class ObserverCreationRequest {
          * @return
          */
         public ObserverCreationRequest build() {
-            return request;
+            return new ObserverCreationRequest(key, subject, type, transport, propertyChanged,
+                    threshold, debounce, throttle, new ArrayList<>(fields));
         }
     }
 

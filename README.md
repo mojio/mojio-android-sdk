@@ -1,5 +1,6 @@
 ![](static/banner_mojio.png)
 # Mojio Android SDK #
+![](http://ci.moj.io/app/rest/builds/buildType:(id:Mobile_MojioSDK_Android_Development)/statusIcon)
 
 Android SDK for integrating with the Mojio platform.
 
@@ -13,10 +14,10 @@ For more information please see the [developer website](http://developer.moj.io/
 
 ## Download ##
 ```gradle
-compile 'io.moj.mobile.android:mojio-sdk-auth:0.0.9'
-compile 'io.moj.mobile.android:mojio-sdk-common:0.0.9'
-compile 'io.moj.mobile.android:mojio-sdk-model:0.0.9'
-compile 'io.moj.mobile.android:mojio-sdk-push:0.0.9'
+compile 'io.moj.mobile.android:mojio-sdk-auth:0.0.10'
+compile 'io.moj.mobile.android:mojio-sdk-common:0.0.10'
+compile 'io.moj.mobile.android:mojio-sdk-model:0.0.10'
+compile 'io.moj.mobile.android:mojio-sdk-push:0.0.10'
 ```
 
 The Mojio Android SDK requires a minimum of Android 2.1 (API 7)
