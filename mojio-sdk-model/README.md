@@ -69,7 +69,7 @@ OkHttpClient httpClient = new OkHttpClient.Builder()
                             .header("Accept", "application/json")
                             .build();
                 }
-                return response;
+                return chain.proceed(request);
             }
         })
         .build();
