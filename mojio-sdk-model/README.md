@@ -76,7 +76,7 @@ OkHttpClient httpClient = new OkHttpClient.Builder()
 mojioApi = new Retrofit.Builder()
         .baseUrl("https://api.moj.io/")
         .addConverterFactory(GsonConverterFactory.create())
-        .client(httpClientBuilder.build())
+        .client(httpClient)
         .build().create(MojioApi.class);
 ```
 
