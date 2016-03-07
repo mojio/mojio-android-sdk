@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import io.moj.mobile.android.sdk.TestJson;
 
+import static com.google.common.truth.Truth.assertThat;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 
@@ -60,6 +61,25 @@ public class ObserverCreationRequestTest {
         ObserverCreationRequest requestA = builder.build();
         ObserverCreationRequest requestB = builder.build();
         assertFalse(requestA == requestB);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testBuild_empty() {
+        String key = "key";
+        new ObserverCreationRequest.Builder(key).build();
+    }
+
+    @Test
+    public void testSerialization_minimal() {
+        String key = "key";
+        Observer.Type type = Observer.Type.MOJIO;
+
+        ObserverCreationRequest request = new ObserverCreationRequest.Builder(key)
+                .type(type).build();
+        assertThat(request).isNotNull();
+
+        String json = new Gson().toJson(request, ObserverCreationRequest.class);
+        assertThat(json).isEqualTo("{\"Key\":\"key\",\"Type\":\"mojio\"}");
     }
 
 }
