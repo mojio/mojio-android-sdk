@@ -1,5 +1,7 @@
 package io.moj.mobile.android.sdk.push;
 
+import android.text.TextUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class ObserverCreationRequest {
 
     public ObserverCreationRequest() {}
 
-    private ObserverCreationRequest(String key, String subject, Observer.Type type,
+    private ObserverCreationRequest(String key, Observer.Type type, String subject,
                                     Transport transport, String propertyChanged,
                                     Condition threshold, Condition debounce, Condition throttle,
                                     List<String> fields) {
@@ -141,8 +143,10 @@ public class ObserverCreationRequest {
          * @return
          */
         public ObserverCreationRequest build() {
-            return new ObserverCreationRequest(key, subject, type, transport, propertyChanged,
-                    threshold, debounce, throttle, new ArrayList<>(fields));
+            if (type == null)
+                throw new IllegalStateException("Type must not be null");
+            return new ObserverCreationRequest(key, type, subject, transport, propertyChanged,
+                    threshold, debounce, throttle, fields == null ? null : new ArrayList<>(fields));
         }
     }
 
