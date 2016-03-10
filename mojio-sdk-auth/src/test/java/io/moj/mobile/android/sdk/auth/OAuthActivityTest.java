@@ -10,10 +10,15 @@ import android.webkit.WebViewClient;
 import com.google.common.collect.Sets;
 
 import org.junit.Test;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Implementation;
+import org.robolectric.annotation.Implements;
+import org.robolectric.annotation.RealObject;
 import org.robolectric.shadows.ShadowActivity;
+import org.robolectric.shadows.support.v4.SupportFragmentTestUtil;
 
 import java.util.Set;
 
@@ -21,8 +26,15 @@ import io.moj.mobile.android.sdk.Environment;
 import io.moj.mobile.android.sdk.RobolectricTest;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.doReturn;
+import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 /**
@@ -81,6 +93,33 @@ public class OAuthActivityTest extends RobolectricTest {
                 .findFragmentById(R.id.container_content);
         assertThat(f).isNotNull();
         assertThat(f).isInstanceOf(OAuthFragment.class);
+    }
+
+    @Test
+    public void testOnBackPressed() throws Exception {
+        Context context = RuntimeEnvironment.application;
+        Environment environment = Environment.STAGING;
+        String clientId = "testClientId";
+        String scope = "testScope";
+        String redirectUri = "testRedirectUri";
+        Intent intent = OAuthActivity.newIntent(context, environment, clientId, scope, redirectUri);
+
+        OAuthActivity activity = Robolectric.buildActivity(OAuthActivity.class)
+                .withIntent(intent).create().get();
+
+        // replace the OAuthFragment with our spied one (stub out implementation to avoid null WebView)
+        OAuthFragment oAuthFragment = (OAuthFragment) activity.getSupportFragmentManager()
+                .findFragmentById(R.id.container_content);
+        OAuthFragment spyOAuthFragment = spy(oAuthFragment);
+        doReturn(false).when(spyOAuthFragment).onBackPressed();
+
+        activity.getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container_content, spyOAuthFragment)
+                .commit();
+
+        // verify the activity forwards onBackPressed() to OAuthFragment
+        activity.onBackPressed();
+        verify(spyOAuthFragment).onBackPressed();
     }
 
 }
