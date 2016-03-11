@@ -56,6 +56,8 @@ public class OAuthFragment extends Fragment {
     private String scope;
     private Uri redirectUri;
 
+    private WebView webView;
+
     /**
      * Instantiates a new {@link OAuthFragment} instance.
      * @param clientId your app's identification token
@@ -103,8 +105,8 @@ public class OAuthFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         clearCookies(getContext());
         View root = inflater.inflate(R.layout.fragment_oauth, container, false);
-        WebView webview = (WebView) root.findViewById(R.id.webview);
-        webview.setWebViewClient(new WebViewClient() {
+        webView = (WebView) root.findViewById(R.id.webview);
+        webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 // OAuth2 RFC specifies the token to use the fragment (#) instead of ? for parameters
@@ -130,9 +132,17 @@ public class OAuthFragment extends Fragment {
 
         String oauthUrl = String.format(Locale.US, FORMAT_OAUTH_URL,
                 authUrl, redirectUri, clientId, scope);
-        webview.loadUrl(oauthUrl);
+        webView.loadUrl(oauthUrl);
 
         return root;
+    }
+
+    public boolean onBackPressed() {
+        if (webView.canGoBack()) {
+            webView.goBack();
+            return true;
+        }
+        return false;
     }
 
     private boolean isRedirectUri(Uri uri) {

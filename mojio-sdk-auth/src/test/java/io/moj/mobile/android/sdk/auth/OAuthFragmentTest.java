@@ -130,4 +130,24 @@ public class OAuthFragmentTest extends RobolectricTest {
         assertThat(extras.getString(OAuthActivity.EXTRA_TOKEN_TYPE)).isEqualTo(expectedTokenType);
     }
 
+    @Test
+    public void testOnBackPressed() {
+        Environment environment = Environment.getDefault();
+        String clientId = "testClientId";
+        String scope = "testScope";
+        String redirectUri = "test://oauth.redirect";
+        OAuthFragment f = OAuthFragment.newInstance(environment, clientId, scope, redirectUri);
+
+        // assert onBackPressed() does not consume event if WebView is at initial page
+        SupportFragmentTestUtil.startVisibleFragment(f);
+        View rootView = f.getView();
+        assertThat(rootView).isNotNull();
+        assertThat(f.onBackPressed()).isFalse();
+
+        // assert onBackPressed() does consume the event if WebView has loaded a subsequent page
+        WebView webView = (WebView) rootView.findViewById(R.id.webview);
+        shadowOf(webView).setCanGoBack(true);
+        assertThat(f.onBackPressed()).isTrue();
+    }
+
 }

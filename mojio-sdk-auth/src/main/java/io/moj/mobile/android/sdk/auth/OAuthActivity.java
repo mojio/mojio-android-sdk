@@ -35,6 +35,8 @@ public class OAuthActivity extends FragmentActivity {
     public static final String EXTRA_EXPIRES_IN = "io.moj.mobile.android.sdk.intent.extra.EXPIRES_IN";
     public static final String EXTRA_TOKEN_TYPE = "io.moj.mobile.android.sdk.intent.extra.TOKEN_TYPE";
 
+    private static final String TAG_OAUTH_FRAGMENT = OAuthFragment.class.getName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,8 +49,20 @@ public class OAuthActivity extends FragmentActivity {
 
         OAuthFragment f = OAuthFragment.newInstance(environment, clientId, scope, redirectUri);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container_content, f)
+                .replace(R.id.container_content, f, TAG_OAUTH_FRAGMENT)
                 .commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        OAuthFragment f = getOAuthFragment();
+        if (f == null || !f.onBackPressed()) {
+            super.onBackPressed();
+        }
+    }
+
+    private OAuthFragment getOAuthFragment() {
+        return (OAuthFragment) getSupportFragmentManager().findFragmentByTag(TAG_OAUTH_FRAGMENT);
     }
 
     /**
