@@ -65,6 +65,12 @@ public class ValueTests {
     }
 
     @Test
+    public void testEngine() throws IllegalAccessException {
+        assertToStringContainsAllFields(new Engine());
+        assertGettersAndSetters(new Engine());
+    }
+
+    @Test
     public void testFuelCapacity() throws IllegalAccessException {
         assertToStringContainsAllFields(new FuelCapacity());
         assertGettersAndSetters(new FuelCapacity());
@@ -101,6 +107,12 @@ public class ValueTests {
     }
 
     @Test
+    public void testNextServiceSchedule() throws IllegalAccessException {
+        assertToStringContainsAllFields(new NextServiceSchedule());
+        assertGettersAndSetters(new NextServiceSchedule());
+    }
+
+    @Test
     public void testOdometer() throws IllegalAccessException {
         assertToStringContainsAllFields(new Odometer());
         assertGettersAndSetters(new Odometer());
@@ -125,6 +137,12 @@ public class ValueTests {
     }
 
     @Test
+    public void testRecall() throws IllegalAccessException {
+        assertToStringContainsAllFields(new Recall());
+        assertGettersAndSetters(new Recall());
+    }
+
+    @Test
     public void testRpm() throws IllegalAccessException {
         assertToStringContainsAllFields(new Rpm());
         assertGettersAndSetters(new Rpm());
@@ -137,9 +155,27 @@ public class ValueTests {
     }
 
     @Test
+    public void testServiceBulletin() throws IllegalAccessException {
+        assertToStringContainsAllFields(new ServiceBulletin());
+        assertGettersAndSetters(new ServiceBulletin());
+    }
+
+    @Test
+    public void testServiceSchedule() throws IllegalAccessException {
+        assertToStringContainsAllFields(new ServiceSchedule());
+        assertGettersAndSetters(new ServiceSchedule());
+    }
+
+    @Test
     public void testSpeed() throws IllegalAccessException {
         assertToStringContainsAllFields(new Speed());
         assertGettersAndSetters(new Speed());
+    }
+
+    @Test
+    public void testTransmission() throws IllegalAccessException {
+        assertToStringContainsAllFields(new Transmission());
+        assertGettersAndSetters(new Transmission());
     }
 
     @Test
@@ -152,6 +188,12 @@ public class ValueTests {
     public void testVoltage() throws IllegalAccessException {
         assertToStringContainsAllFields(new Voltage());
         assertGettersAndSetters(new Voltage());
+    }
+
+    @Test
+    public void testWarranty() throws IllegalAccessException {
+        assertToStringContainsAllFields(new Warranty());
+        assertGettersAndSetters(new Warranty());
     }
 
 }
