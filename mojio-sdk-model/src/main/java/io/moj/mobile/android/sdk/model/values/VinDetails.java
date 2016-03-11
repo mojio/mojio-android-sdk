@@ -19,8 +19,8 @@ public class VinDetails {
     private String DriveType;
     private Double FuelTankSize;
     private Double EPAFuelEfficiency;
-    private Engine Engine;
-    private Transmission Transmission;
+    private String Engine;
+    private String Transmission;
     private List<Warranty> Warranties;
     private List<Recall> Recalls;
     private List<ServiceBulletin> ServiceBulletins;
@@ -39,14 +39,6 @@ public class VinDetails {
 
     public void setDriveType(String driveType) {
         DriveType = driveType;
-    }
-
-    public io.moj.mobile.android.sdk.model.values.Engine getEngine() {
-        return Engine;
-    }
-
-    public void setEngine(io.moj.mobile.android.sdk.model.values.Engine engine) {
-        Engine = engine;
     }
 
     public Double getEPAFuelEfficiency() {
@@ -113,14 +105,6 @@ public class VinDetails {
         Timestamp = timestamp;
     }
 
-    public io.moj.mobile.android.sdk.model.values.Transmission getTransmission() {
-        return Transmission;
-    }
-
-    public void setTransmission(io.moj.mobile.android.sdk.model.values.Transmission transmission) {
-        Transmission = transmission;
-    }
-
     public String getVehicleType() {
         return VehicleType;
     }
@@ -153,6 +137,22 @@ public class VinDetails {
         Year = year;
     }
 
+    public String getEngine() {
+        return Engine;
+    }
+
+    public void setEngine(String engine) {
+        Engine = engine;
+    }
+
+    public String getTransmission() {
+        return Transmission;
+    }
+
+    public void setTransmission(String transmission) {
+        Transmission = transmission;
+    }
+
     @Override
     public String toString() {
         return "VinDetails{" +
@@ -167,8 +167,8 @@ public class VinDetails {
                 ", DriveType='" + DriveType + '\'' +
                 ", FuelTankSize=" + FuelTankSize +
                 ", EPAFuelEfficiency=" + EPAFuelEfficiency +
-                ", Engine=" + Engine +
-                ", Transmission=" + Transmission +
+                ", Engine='" + Engine + '\'' +
+                ", Transmission='" + Transmission + '\'' +
                 ", Warranties=" + Warranties +
                 ", Recalls=" + Recalls +
                 ", ServiceBulletins=" + ServiceBulletins +
