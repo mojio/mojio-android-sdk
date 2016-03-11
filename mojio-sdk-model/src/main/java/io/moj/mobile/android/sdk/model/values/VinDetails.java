@@ -1,73 +1,68 @@
 package io.moj.mobile.android.sdk.model.values;
 
+import java.util.List;
+
 /**
- * Model object for an VehicleMeasure.
+ * Model object for vehicle details based on VIN.
  * Created by mhorie on 2016-01-14.
  */
 public class VinDetails {
 
-    private String Timestamp;
     private String Vin;
+    private String Timestamp;
+    private String Market;
     private Integer Year;
     private String Make;
     private String Model;
-    private String Engine;
-    private Integer Cylinders;
-    private FuelCapacity TotalFuelCapacity;
-    private String FuelType;
-    private Float CityFuelEfficiency;
-    private Float HighwayFuelEfficiency;
-    private Float CombinedFuelEfficiency ;
-    private String Transmission;
-    private String Message;
-    private Boolean Success;
+    private String VehicleType;
+    private String BodyType;
+    private String DriveType;
+    private Double FuelTankSize;
+    private Double EPAFuelEfficiency;
+    private Engine Engine;
+    private Transmission Transmission;
+    private List<Warranty> Warranties;
+    private List<Recall> Recalls;
+    private List<ServiceBulletin> ServiceBulletins;
 
-    public Float getCityFuelEfficiency() {
-        return CityFuelEfficiency;
+    public String getBodyType() {
+        return BodyType;
     }
 
-    public void setCityFuelEfficiency(Float cityFuelEfficiency) {
-        CityFuelEfficiency = cityFuelEfficiency;
+    public void setBodyType(String bodyType) {
+        BodyType = bodyType;
     }
 
-    public Float getCombinedFuelEfficiency() {
-        return CombinedFuelEfficiency;
+    public String getDriveType() {
+        return DriveType;
     }
 
-    public void setCombinedFuelEfficiency(Float combinedFuelEfficiency) {
-        CombinedFuelEfficiency = combinedFuelEfficiency;
+    public void setDriveType(String driveType) {
+        DriveType = driveType;
     }
 
-    public Integer getCylinders() {
-        return Cylinders;
-    }
-
-    public void setCylinders(Integer cylinders) {
-        Cylinders = cylinders;
-    }
-
-    public String getEngine() {
+    public io.moj.mobile.android.sdk.model.values.Engine getEngine() {
         return Engine;
     }
 
-    public void setEngine(String engine) {
+    public void setEngine(io.moj.mobile.android.sdk.model.values.Engine engine) {
         Engine = engine;
     }
 
-    public String getFuelType() {
-        return FuelType;
+    public Double getEPAFuelEfficiency() {
+        return EPAFuelEfficiency;
     }
 
-    public void setFuelType(String fuelType) {
-        FuelType = fuelType;
+    public void setEPAFuelEfficiency(Double EPAFuelEfficiency) {
+        this.EPAFuelEfficiency = EPAFuelEfficiency;
     }
 
-    public Float getHighwayFuelEfficiency() {
-        return HighwayFuelEfficiency;
+    public Double getFuelTankSize() {
+        return FuelTankSize;
     }
 
-    public void setHighwayFuelEfficiency(Float highwayFuelEfficiency) {
-        HighwayFuelEfficiency = highwayFuelEfficiency;
+    public void setFuelTankSize(Double fuelTankSize) {
+        FuelTankSize = fuelTankSize;
     }
 
     public String getMake() {
@@ -78,12 +73,12 @@ public class VinDetails {
         Make = make;
     }
 
-    public String getMessage() {
-        return Message;
+    public String getMarket() {
+        return Market;
     }
 
-    public void setMessage(String message) {
-        Message = message;
+    public void setMarket(String market) {
+        Market = market;
     }
 
     public String getModel() {
@@ -94,12 +89,20 @@ public class VinDetails {
         Model = model;
     }
 
-    public Boolean getSuccess() {
-        return Success;
+    public List<Recall> getRecalls() {
+        return Recalls;
     }
 
-    public void setSuccess(Boolean success) {
-        Success = success;
+    public void setRecalls(List<Recall> recalls) {
+        Recalls = recalls;
+    }
+
+    public List<ServiceBulletin> getServiceBulletins() {
+        return ServiceBulletins;
+    }
+
+    public void setServiceBulletins(List<ServiceBulletin> serviceBulletins) {
+        ServiceBulletins = serviceBulletins;
     }
 
     public String getTimestamp() {
@@ -110,20 +113,20 @@ public class VinDetails {
         Timestamp = timestamp;
     }
 
-    public FuelCapacity getTotalFuelCapacity() {
-        return TotalFuelCapacity;
-    }
-
-    public void setTotalFuelCapacity(FuelCapacity totalFuelCapacity) {
-        TotalFuelCapacity = totalFuelCapacity;
-    }
-
-    public String getTransmission() {
+    public io.moj.mobile.android.sdk.model.values.Transmission getTransmission() {
         return Transmission;
     }
 
-    public void setTransmission(String transmission) {
+    public void setTransmission(io.moj.mobile.android.sdk.model.values.Transmission transmission) {
         Transmission = transmission;
+    }
+
+    public String getVehicleType() {
+        return VehicleType;
+    }
+
+    public void setVehicleType(String vehicleType) {
+        VehicleType = vehicleType;
     }
 
     public String getVin() {
@@ -132,6 +135,14 @@ public class VinDetails {
 
     public void setVin(String vin) {
         Vin = vin;
+    }
+
+    public List<Warranty> getWarranties() {
+        return Warranties;
+    }
+
+    public void setWarranties(List<Warranty> warranties) {
+        Warranties = warranties;
     }
 
     public Integer getYear() {
@@ -145,21 +156,22 @@ public class VinDetails {
     @Override
     public String toString() {
         return "VinDetails{" +
-                "CityFuelEfficiency=" + CityFuelEfficiency +
-                ", Timestamp='" + Timestamp + '\'' +
+                "BodyType='" + BodyType + '\'' +
                 ", Vin='" + Vin + '\'' +
+                ", Timestamp='" + Timestamp + '\'' +
+                ", Market='" + Market + '\'' +
                 ", Year=" + Year +
                 ", Make='" + Make + '\'' +
                 ", Model='" + Model + '\'' +
-                ", Engine='" + Engine + '\'' +
-                ", Cylinders=" + Cylinders +
-                ", TotalFuelCapacity=" + TotalFuelCapacity +
-                ", FuelType='" + FuelType + '\'' +
-                ", HighwayFuelEfficiency=" + HighwayFuelEfficiency +
-                ", CombinedFuelEfficiency=" + CombinedFuelEfficiency +
-                ", Transmission='" + Transmission + '\'' +
-                ", Message='" + Message + '\'' +
-                ", Success=" + Success +
+                ", VehicleType='" + VehicleType + '\'' +
+                ", DriveType='" + DriveType + '\'' +
+                ", FuelTankSize=" + FuelTankSize +
+                ", EPAFuelEfficiency=" + EPAFuelEfficiency +
+                ", Engine=" + Engine +
+                ", Transmission=" + Transmission +
+                ", Warranties=" + Warranties +
+                ", Recalls=" + Recalls +
+                ", ServiceBulletins=" + ServiceBulletins +
                 '}';
     }
 }
