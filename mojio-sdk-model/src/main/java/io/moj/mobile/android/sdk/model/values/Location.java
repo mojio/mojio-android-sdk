@@ -1,16 +1,13 @@
-package io.moj.mobile.android.sdk.model;
+package io.moj.mobile.android.sdk.model.values;
 
 import io.moj.mobile.android.sdk.model.enums.GPSStatus;
 import io.moj.mobile.android.sdk.model.values.Address;
 
 /**
- * Model object for a Location object. A Location is what is returned by calls to v2/.../history/locations.
- * It is not an entity per se as it neither has an ID nor a reference to its parent object when returned
- * by the server, but it is being subclassed from MojioObject here because it is worth caching or
- * persisting at the application layer due to its size.
+ * Model object for a Location.
  * Created by mhorie on 2016-01-12.
  */
-public class Location extends MojioObject {
+public class Location {
 
     private Address Address;
     private String Timestamp;

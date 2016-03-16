@@ -1,8 +1,6 @@
 package io.moj.mobile.android.sdk.model;
 
-import java.util.Map;
-
-import io.moj.mobile.android.sdk.model.enums.Link;
+import io.moj.mobile.android.sdk.model.values.LinkInfo;
 
 /**
  * Base model for objects returned by the server.
@@ -22,7 +20,7 @@ public abstract class MojioObject {
     private Long _id;
     private String CreatedOn;
     private String LastModified;
-    private Map<Link, String> Links;
+    private LinkInfo Links;
 
     public String getCreatedOn() {
         return CreatedOn;
@@ -48,20 +46,20 @@ public abstract class MojioObject {
         LastModified = lastModified;
     }
 
-    public Map<Link, String> getLinks() {
-        return Links;
-    }
-
-    public void setLinks(Map<Link, String> links) {
-        Links = links;
-    }
-
     public Long getLocalId() {
         return _id;
     }
 
     public void setLocalId(Long id) {
         this._id = id;
+    }
+
+    public LinkInfo getLinks() {
+        return Links;
+    }
+
+    public void setLinks(LinkInfo links) {
+        Links = links;
     }
 
     @Override

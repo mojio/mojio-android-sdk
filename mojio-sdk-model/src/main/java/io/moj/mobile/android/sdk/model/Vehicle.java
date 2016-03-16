@@ -13,6 +13,7 @@ import io.moj.mobile.android.sdk.model.values.FuelEfficiency;
 import io.moj.mobile.android.sdk.model.values.FuelLevel;
 import io.moj.mobile.android.sdk.model.values.Heading;
 import io.moj.mobile.android.sdk.model.values.Image;
+import io.moj.mobile.android.sdk.model.values.Location;
 import io.moj.mobile.android.sdk.model.values.Odometer;
 import io.moj.mobile.android.sdk.model.values.Rpm;
 import io.moj.mobile.android.sdk.model.values.Speed;
@@ -112,7 +113,7 @@ public class Vehicle extends MojioObject {
         AccidentState = accidentState;
     }
 
-    public Location getLocation() {
+    public io.moj.mobile.android.sdk.model.values.Location getLocation() {
         return Location;
     }
 

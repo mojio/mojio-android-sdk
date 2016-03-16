@@ -101,6 +101,18 @@ public class ValueTests {
     }
 
     @Test
+    public void testLocation() throws IllegalAccessException {
+        assertToStringContainsAllFields(new Location());
+        assertGettersAndSetters(new Location());
+    }
+
+    @Test
+    public void testLinkInfo() throws IllegalAccessException {
+        assertToStringContainsAllFields(new LinkInfo());
+        assertGettersAndSetters(new LinkInfo());
+    }
+
+    @Test
     public void testMeasurementStatistics() throws IllegalAccessException {
         assertToStringContainsAllFields(new MeasurementStatistics());
         assertGettersAndSetters(new MeasurementStatistics());
