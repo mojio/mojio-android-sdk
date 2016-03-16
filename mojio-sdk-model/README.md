@@ -11,7 +11,7 @@ GSON.
 
 ## Download ##
 ```gradle
-compile 'io.moj.mobile.android:mojio-sdk-model:0.0.10'
+compile 'io.moj.mobile.android:mojio-sdk-model:0.0.13'
 ```
 
 ## Instructions ##
