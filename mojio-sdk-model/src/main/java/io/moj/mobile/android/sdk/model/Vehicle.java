@@ -113,7 +113,7 @@ public class Vehicle extends MojioObject {
         AccidentState = accidentState;
     }
 
-    public io.moj.mobile.android.sdk.model.values.Location getLocation() {
+    public Location getLocation() {
         return Location;
     }
 

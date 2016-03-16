@@ -214,7 +214,7 @@ public class VehicleMeasure extends MojioObject {
         IgnitionState = ignitionState;
     }
 
-    public io.moj.mobile.android.sdk.model.values.Location getLocation() {
+    public Location getLocation() {
         return Location;
     }
 
