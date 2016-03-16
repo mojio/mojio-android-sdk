@@ -1,8 +1,8 @@
 package io.moj.mobile.android.sdk.model;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
+
+import io.moj.mobile.android.sdk.model.values.LinkInfo;
 
 /**
  * Model object for a response whose data is a List.
@@ -10,56 +10,40 @@ import java.util.List;
  */
 public class ListResponse<T> {
 
-    @SerializedName("Data")
-    private List<T> data;
-
-    @SerializedName("Results")
-    private Integer count;
-
-    @SerializedName("Links")
-    private Links links;
-
-    public static class Links {
-        @SerializedName("Self")
-        private String self;
-
-        @SerializedName("Next")
-        private String next;
-
-        @SerializedName("First")
-        private String first;
-    }
-
-    public Integer getCount() {
-        return count;
-    }
+    private List<T> Data;
+    private Integer Results;
+    private LinkInfo Links;
 
     public List<T> getData() {
-        return data;
-    }
-
-    public Links getLinks() {
-        return links;
-    }
-
-    public void setCount(Integer count) {
-        this.count = count;
+        return Data;
     }
 
     public void setData(List<T> data) {
-        this.data = data;
+        Data = data;
     }
 
-    public void setLinks(Links links) {
-        this.links = links;
+    public LinkInfo getLinks() {
+        return Links;
+    }
+
+    public void setLinks(LinkInfo links) {
+        Links = links;
+    }
+
+    public Integer getResults() {
+        return Results;
+    }
+
+    public void setResults(Integer results) {
+        Results = results;
     }
 
     @Override
     public String toString() {
         return "ListResponse{" +
-                "count=" + count +
-                ", data=" + data +
-                ", links=" + links +
+                "Data=" + Data +
+                ", Results=" + Results +
+                ", Links=" + Links +
                 '}';
     }
 }
