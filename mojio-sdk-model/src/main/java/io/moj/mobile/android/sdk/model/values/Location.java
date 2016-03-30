@@ -1,7 +1,6 @@
 package io.moj.mobile.android.sdk.model.values;
 
 import io.moj.mobile.android.sdk.model.enums.GPSStatus;
-import io.moj.mobile.android.sdk.model.values.Address;
 
 /**
  * Model object for a Location.

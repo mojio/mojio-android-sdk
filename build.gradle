@@ -12,7 +12,7 @@ ext {
     VERSION_CODE = 1
 
     PUBLISH_GROUP_ID = 'io.moj.mobile.android'
-    PUBLISH_VERSION = '0.0.13'
+    PUBLISH_VERSION = '0.0.14'
     GLOBAL_COVERAGE_EXCLUDES = [
             '**/R.class',
             '**/R$*.class',

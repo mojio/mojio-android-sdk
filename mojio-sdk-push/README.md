@@ -11,7 +11,7 @@ GSON.
 
 ## Download ##
 ```gradle
-compile 'io.moj.mobile.android:mojio-sdk-push:0.0.13'
+compile 'io.moj.mobile.android:mojio-sdk-push:0.0.14'
 ```
 
 ## Instructions ##
