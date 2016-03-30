@@ -3,7 +3,7 @@ package io.moj.mobile.android.sdk.model.requests;
 import org.junit.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static io.moj.mobile.android.sdk.test.TestUtils.assertGettersAndSetters;
+import static io.moj.mobile.android.sdk.test.TestUtils.assertAccess;
 import static io.moj.mobile.android.sdk.test.TestUtils.assertToStringContainsAllFields;
 
 /**
@@ -18,7 +18,7 @@ public class RequestTests {
         assertThat(request.getImei()).isEqualTo(imei);
 
         assertToStringContainsAllFields(request);
-        assertGettersAndSetters(request);
+        assertAccess(request);
     }
 
 }

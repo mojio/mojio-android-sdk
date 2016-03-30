@@ -1,18 +1,14 @@
 package io.moj.mobile.android.sdk.push;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 
 import org.junit.Test;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 import io.moj.mobile.android.sdk.TestJson;
 import io.moj.mobile.android.sdk.test.TestUtils;
@@ -149,7 +145,7 @@ public class ObserverTest {
             if (method.getName().endsWith("Transport"))
                 i.remove();
         }
-        TestUtils.assertGettersAndSetters(o, methods);
+        TestUtils.assertAccess(o, methods);
 
         o.setTransport(null);
         assertNull(o.getTransport());
