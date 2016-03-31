@@ -41,11 +41,11 @@ public class VinDetails {
         DriveType = driveType;
     }
 
-    public io.moj.mobile.android.sdk.model.values.Engine getEngine() {
+    public Engine getEngine() {
         return Engine;
     }
 
-    public void setEngine(io.moj.mobile.android.sdk.model.values.Engine engine) {
+    public void setEngine(Engine engine) {
         Engine = engine;
     }
 
@@ -113,11 +113,11 @@ public class VinDetails {
         Timestamp = timestamp;
     }
 
-    public io.moj.mobile.android.sdk.model.values.Transmission getTransmission() {
+    public Transmission getTransmission() {
         return Transmission;
     }
 
-    public void setTransmission(io.moj.mobile.android.sdk.model.values.Transmission transmission) {
+    public void setTransmission(Transmission transmission) {
         Transmission = transmission;
     }
 
