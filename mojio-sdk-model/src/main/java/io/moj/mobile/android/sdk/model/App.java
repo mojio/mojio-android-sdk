@@ -8,7 +8,7 @@ import io.moj.mobile.android.sdk.model.values.Image;
  * Model object for an App.
  * Created by mhorie on 2016-01-12.
  */
-public class App extends MojioObject {
+public class App extends AbstractMojioObject {
 
     public static final String NAME = "Name";
     public static final String DESCRIPTION = "Description";

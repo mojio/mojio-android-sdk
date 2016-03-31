@@ -17,13 +17,10 @@ import io.moj.mobile.android.sdk.model.values.Speed;
 import io.moj.mobile.android.sdk.model.values.VinDetails;
 
 /**
- * Model object for an VehicleMeasure. A VehicleMeasure is what is returned by calls to v2/.../history/states.
- * It is not an entity per se as it neither has an ID nor a reference to its parent object when returned
- * by the server, but it is being subclassed from MojioObject here because it is worth caching or
- * persisting at the application layer due to its size.
+ * Model object for an vehicle measurement at a given point in time.
  * Created by mhorie on 2016-01-13.
  */
-public class VehicleMeasure extends MojioObject {
+public class VehicleMeasure {
 
     public static final String ACCELERATION = "Acceleration";
     public static final String ACCELEROMETER = "Accelerometer";
@@ -341,6 +338,6 @@ public class VehicleMeasure extends MojioObject {
                 ", VirtualOdometer=" + VirtualOdometer +
                 ", Odometer=" + Odometer +
                 ", Time='" + Time + '\'' +
-                "} " + super.toString();
+                '}';
     }
 }

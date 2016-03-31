@@ -10,7 +10,7 @@ import io.moj.mobile.android.sdk.model.values.PhoneNumber;
  * Model object for an User.
  * Created by mojio on 2016-01-13.
  */
-public class User extends MojioObject {
+public class User extends AbstractMojioObject {
 
     public static final String FIRST_NAME = "FirstName";
     public static final String LAST_NAME = "LastName";

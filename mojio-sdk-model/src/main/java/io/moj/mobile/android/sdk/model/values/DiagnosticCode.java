@@ -8,11 +8,11 @@ import io.moj.mobile.android.sdk.model.enums.RiskSeverity;
  */
 public class DiagnosticCode {
 
-    public String Code;
-    public String Description ;
-    public String Timestamp;
-    public RiskSeverity Severity;
-    public String Instructions;
+    private String Code;
+    private String Description ;
+    private String Timestamp;
+    private RiskSeverity Severity;
+    private String Instructions;
 
     public String getCode() {
         return Code;

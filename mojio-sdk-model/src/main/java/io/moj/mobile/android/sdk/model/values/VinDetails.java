@@ -3,12 +3,12 @@ package io.moj.mobile.android.sdk.model.values;
 import java.util.List;
 
 /**
- * Model object for vehicle details based on VIN.
+ * Model object for a vehicle's VIN record.
  * Created by mhorie on 2016-01-14.
  */
 public class VinDetails {
 
-    private String Vin;
+    private String VIN;
     private String Timestamp;
     private String Market;
     private Integer Year;
@@ -19,8 +19,8 @@ public class VinDetails {
     private String DriveType;
     private Double FuelTankSize;
     private Double EPAFuelEfficiency;
-    private String Engine;
-    private String Transmission;
+    private Engine Engine;
+    private Transmission Transmission;
     private List<Warranty> Warranties;
     private List<Recall> Recalls;
     private List<ServiceBulletin> ServiceBulletins;
@@ -39,6 +39,14 @@ public class VinDetails {
 
     public void setDriveType(String driveType) {
         DriveType = driveType;
+    }
+
+    public Engine getEngine() {
+        return Engine;
+    }
+
+    public void setEngine(Engine engine) {
+        Engine = engine;
     }
 
     public Double getEPAFuelEfficiency() {
@@ -105,6 +113,14 @@ public class VinDetails {
         Timestamp = timestamp;
     }
 
+    public Transmission getTransmission() {
+        return Transmission;
+    }
+
+    public void setTransmission(Transmission transmission) {
+        Transmission = transmission;
+    }
+
     public String getVehicleType() {
         return VehicleType;
     }
@@ -113,12 +129,12 @@ public class VinDetails {
         VehicleType = vehicleType;
     }
 
-    public String getVin() {
-        return Vin;
+    public String getVIN() {
+        return VIN;
     }
 
-    public void setVin(String vin) {
-        Vin = vin;
+    public void setVIN(String VIN) {
+        this.VIN = VIN;
     }
 
     public List<Warranty> getWarranties() {
@@ -137,27 +153,11 @@ public class VinDetails {
         Year = year;
     }
 
-    public String getEngine() {
-        return Engine;
-    }
-
-    public void setEngine(String engine) {
-        Engine = engine;
-    }
-
-    public String getTransmission() {
-        return Transmission;
-    }
-
-    public void setTransmission(String transmission) {
-        Transmission = transmission;
-    }
-
     @Override
     public String toString() {
         return "VinDetails{" +
                 "BodyType='" + BodyType + '\'' +
-                ", Vin='" + Vin + '\'' +
+                ", VIN='" + VIN + '\'' +
                 ", Timestamp='" + Timestamp + '\'' +
                 ", Market='" + Market + '\'' +
                 ", Year=" + Year +
@@ -167,8 +167,8 @@ public class VinDetails {
                 ", DriveType='" + DriveType + '\'' +
                 ", FuelTankSize=" + FuelTankSize +
                 ", EPAFuelEfficiency=" + EPAFuelEfficiency +
-                ", Engine='" + Engine + '\'' +
-                ", Transmission='" + Transmission + '\'' +
+                ", Engine=" + Engine +
+                ", Transmission=" + Transmission +
                 ", Warranties=" + Warranties +
                 ", Recalls=" + Recalls +
                 ", ServiceBulletins=" + ServiceBulletins +

@@ -6,7 +6,7 @@ import java.util.Arrays;
  * Model object for an Mojio.
  * Created by mhorie on 2016-01-13.
  */
-public class Mojio extends MojioObject {
+public class Mojio extends AbstractMojioObject {
 
     public static final String NAME = "Name";
     public static final String DEVICE_IMEI = "IMEI";

@@ -6,7 +6,7 @@ import java.util.Arrays;
  * Model object for a Group.
  * Created by mhorie on 2016-01-12.
  */
-public class Group extends MojioObject {
+public class Group extends AbstractMojioObject {
 
     public static final String NAME = "Name";
     public static final String DESCRIPTION = "Description";

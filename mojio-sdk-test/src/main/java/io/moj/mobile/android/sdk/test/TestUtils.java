@@ -57,11 +57,11 @@ public final class TestUtils {
         }
     }
 
-    public static void assertGettersAndSetters(Object pojo) {
-        assertGettersAndSetters(pojo, getAllMethods(pojo));
+    public static void assertAccess(Object pojo) {
+        assertAccess(pojo, getAllMethods(pojo));
     }
 
-    public static void assertGettersAndSetters(Object pojo, List<Method> methods) {
+    public static void assertAccess(Object pojo, List<Method> methods) {
         Set<String> methodNames =
                 new HashSet<>(Lists.transform(methods, FUNCTION_EXTRACT_METHOD_NAMES));
 
@@ -69,6 +69,8 @@ public final class TestUtils {
         for (Field field : fields) {
             if (Modifier.isStatic(field.getModifiers()))
                 continue;
+
+            assertThat(Modifier.isPrivate(field.getModifiers())).isTrue();
 
             String fieldName = field.getName();
             if (fieldName.startsWith("_")) {

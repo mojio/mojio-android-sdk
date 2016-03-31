@@ -11,7 +11,7 @@ web-based login flow.
 
 ## Download ##
 ```gradle
-compile 'io.moj.mobile.android:mojio-sdk-auth:0.0.14'
+compile 'io.moj.mobile.android:mojio-sdk-auth:0.0.15'
 ```
 
 ## Instructions ##
