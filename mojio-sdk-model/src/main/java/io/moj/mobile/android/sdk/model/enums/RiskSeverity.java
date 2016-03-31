@@ -3,10 +3,13 @@ package io.moj.mobile.android.sdk.model.enums;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Enum for RiskSeverity types.
+ * Enum for RiskSeverity types. Ordinality can be inferred as increasing severity.
  * Created by mhorie on 2016-01-14.
  */
 public enum RiskSeverity {
+
+    @SerializedName("None")
+    NONE("None"),
 
     @SerializedName("Unknown")
     UNKNOWN("Unknown"),
@@ -18,10 +21,7 @@ public enum RiskSeverity {
     MEDIUM("Medium"),
 
     @SerializedName("High")
-    HIGH("High"),
-
-    @SerializedName("None")
-    NONE("None");
+    HIGH("High");
 
     private String key;
 
