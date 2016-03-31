@@ -14,7 +14,7 @@ import io.moj.mobile.android.sdk.model.values.Speed;
  * Model object for a Trip.
  * Created by mhorie on 2016-01-13.
  */
-public class Trip extends MojioObject {
+public class Trip extends AbstractMojioObject {
 
     public static final String VEHICLE_ID = "VehicleId";
     public static final String NAME = "Name";

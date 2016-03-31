@@ -17,13 +17,13 @@ import io.moj.mobile.android.sdk.model.values.Location;
 import io.moj.mobile.android.sdk.model.values.Odometer;
 import io.moj.mobile.android.sdk.model.values.Rpm;
 import io.moj.mobile.android.sdk.model.values.Speed;
-import io.moj.mobile.android.sdk.model.values.VinDetails;
+import io.moj.mobile.android.sdk.model.values.VehicleDetails;
 
 /**
  * Model object for an Vehicle.
  * Created by mhorie on 2016-01-13.
  */
-public class Vehicle extends MojioObject {
+public class Vehicle extends AbstractMojioObject {
 
     public static final String NAME = "Name";
     public static final String LICENSE_PLATE = "LicensePlate";
@@ -84,7 +84,7 @@ public class Vehicle extends MojioObject {
     private Heading Heading;
     private Location Location;
     private BooleanState AccidentState;
-    private VinDetails VinDetails;
+    private VehicleDetails VinDetails;
     private BooleanState TowState;
     private BooleanState ParkedState;
     private String[] Tags;
@@ -332,11 +332,11 @@ public class Vehicle extends MojioObject {
         this.VIN = VIN;
     }
 
-    public VinDetails getVinDetails() {
+    public VehicleDetails getVinDetails() {
         return VinDetails;
     }
 
-    public void setVinDetails(VinDetails vinDetails) {
+    public void setVinDetails(VehicleDetails vinDetails) {
         VinDetails = vinDetails;
     }
 
