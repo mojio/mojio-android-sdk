@@ -54,11 +54,11 @@ public class VehicleDetails {
         Engine = engine;
     }
 
-    public io.moj.mobile.android.sdk.model.enums.FuelType getFuelType() {
+    public FuelType getFuelType() {
         return FuelType;
     }
 
-    public void setFuelType(io.moj.mobile.android.sdk.model.enums.FuelType fuelType) {
+    public void setFuelType(FuelType fuelType) {
         FuelType = fuelType;
     }
 
