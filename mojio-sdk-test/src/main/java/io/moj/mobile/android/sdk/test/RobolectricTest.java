@@ -1,4 +1,4 @@
-package io.moj.mobile.android.sdk;
+package io.moj.mobile.android.sdk.test;
 
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -6,8 +6,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
-
-import io.moj.mobile.android.sdk.auth.BuildConfig;
 
 /**
  * Base class for Robolectric tests to extend for a consistent config across all

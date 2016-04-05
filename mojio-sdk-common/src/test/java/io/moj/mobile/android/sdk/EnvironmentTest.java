@@ -1,16 +1,27 @@
 package io.moj.mobile.android.sdk;
 
+import android.net.Uri;
+
+import com.google.common.base.Strings;
+
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.MockPolicy;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Locale;
 
+import io.moj.mobile.android.sdk.test.RobolectricTest;
+
+import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth.assertWithMessage;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 
 /**
  * Created by skidson on 16-02-18.
  */
-public class EnvironmentTest {
+public class EnvironmentTest extends RobolectricTest {
 
     @Test
     public void testUrlLocales() {
@@ -29,6 +40,33 @@ public class EnvironmentTest {
         assertEquals(accountsUrl, e.getAccountsUrl());
         assertEquals(passwordRecoveryUrl, e.getPasswordRecoveryUrl());
         assertEquals(myMojioUrl, e.getMyMojioUrl());
+    }
+
+    /**
+     * Validates that environments with a prefix have a dash and those that don't do not.
+     */
+    @Test
+    public void testPrefixes() {
+        for (Environment environment : Environment.values()) {
+            String prefix = environment.getPrefix();
+
+            Uri accountsUri = Uri.parse(environment.getAccountsUrl());
+            Uri myMojioUri = Uri.parse(environment.getMyMojioUrl());
+            Uri passwordRecoveryUri = Uri.parse(environment.getPasswordRecoveryUrl());
+            Uri pushUri = Uri.parse(environment.getPushUrl());
+            Uri apiUri = Uri.parse(environment.getApiUrl());
+            Uri[] uris = new Uri[] {
+                    accountsUri, myMojioUri, passwordRecoveryUri, pushUri, apiUri
+            };
+
+            for (Uri uri : uris) {
+                assertThat(uri.getAuthority()).startsWith(prefix);
+
+                // assert the authority doesn't start with a dash
+                assertWithMessage("Uri '" + uri + " should not start with a dash")
+                        .that(uri.getAuthority()).doesNotMatch("^-.*");
+            }
+        }
     }
 
     @Test
