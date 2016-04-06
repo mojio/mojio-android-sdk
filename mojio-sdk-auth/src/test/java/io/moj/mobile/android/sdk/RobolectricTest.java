@@ -1,4 +1,4 @@
-package io.moj.mobile.android.sdk.test;
+package io.moj.mobile.android.sdk;
 
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -13,7 +13,7 @@ import org.robolectric.annotation.Config;
  */
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
+@Config(constants = io.moj.mobile.android.sdk.auth.BuildConfig.class, sdk = 21)
 @PowerMockIgnore({ "org.mockito.*", "org.robolectric.*", "android.*", "org.jacoco.*" })
 public abstract class RobolectricTest {
 }

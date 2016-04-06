@@ -14,7 +14,7 @@ import org.robolectric.RuntimeEnvironment;
 import java.util.Set;
 
 import io.moj.mobile.android.sdk.Environment;
-import io.moj.mobile.android.sdk.test.RobolectricTest;
+import io.moj.mobile.android.sdk.RobolectricTest;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Matchers.any;

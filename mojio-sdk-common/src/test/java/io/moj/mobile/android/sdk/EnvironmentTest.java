@@ -1,9 +1,5 @@
 package io.moj.mobile.android.sdk;
 
-import android.net.Uri;
-
-import com.google.common.base.Strings;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.MockPolicy;
@@ -11,7 +7,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Locale;
 
-import io.moj.mobile.android.sdk.test.RobolectricTest;
+import io.moj.mobile.android.sdk.test.AndroidMockPolicy;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
@@ -21,7 +17,11 @@ import static junit.framework.Assert.assertNull;
 /**
  * Created by skidson on 16-02-18.
  */
-public class EnvironmentTest extends RobolectricTest {
+@MockPolicy(AndroidMockPolicy.class)
+@RunWith(PowerMockRunner.class)
+public class EnvironmentTest {
+
+    private static final String SCHEME = "https://";
 
     @Test
     public void testUrlLocales() {
@@ -50,21 +50,24 @@ public class EnvironmentTest extends RobolectricTest {
         for (Environment environment : Environment.values()) {
             String prefix = environment.getPrefix();
 
-            Uri accountsUri = Uri.parse(environment.getAccountsUrl());
-            Uri myMojioUri = Uri.parse(environment.getMyMojioUrl());
-            Uri passwordRecoveryUri = Uri.parse(environment.getPasswordRecoveryUrl());
-            Uri pushUri = Uri.parse(environment.getPushUrl());
-            Uri apiUri = Uri.parse(environment.getApiUrl());
-            Uri[] uris = new Uri[] {
-                    accountsUri, myMojioUri, passwordRecoveryUri, pushUri, apiUri
+            String[] uris = new String[] {
+                    environment.getAccountsUrl(),
+                    environment.getMyMojioUrl(),
+                    environment.getPasswordRecoveryUrl(),
+                    environment.getPushUrl(),
+                    environment.getApiUrl()
             };
 
-            for (Uri uri : uris) {
-                assertThat(uri.getAuthority()).startsWith(prefix);
+            for (String uri : uris) {
+                assertThat(uri).isNotNull();
+                assertThat(uri).startsWith(SCHEME);
+
+                String authority = uri.substring(SCHEME.length());
+                assertThat(authority).startsWith(prefix);
 
                 // assert the authority doesn't start with a dash
-                assertWithMessage("Uri '" + uri + " should not start with a dash")
-                        .that(uri.getAuthority()).doesNotMatch("^-.*");
+                assertWithMessage("Uri '" + uri + "' should not start with a dash")
+                        .that(authority).doesNotMatch("^-.*");
             }
         }
     }
