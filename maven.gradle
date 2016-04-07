@@ -50,6 +50,26 @@ task generateRelease(group: 'Maven') {
     }
 }
 
+task publishRelease(group: 'Maven') {
+    description = "Publishes the generated .zip file to BinTray"
+    doFirst {
+        /* TODO POST /packages/:subject/:repo/:package/versions
+        {
+          "name": "${PUBLISH_VERSION}",
+          "desc": "This version...",
+        }
+        */
+
+        /* TODO PUT /content/:subject/:repo/:package/:version/:file_path?publish=1&explode=1
+            <attach .zip as body>
+        */
+    }
+
+    doLast {
+        println "${PUBLISH_GROUP_ID}:${PUBLISH_ARTIFACT_ID}:${PUBLISH_VERSION} uploaded to BinTray"
+    }
+}
+
 generateRelease.dependsOn(uploadArchives)
 generateRelease.dependsOn(zipRelease)
 
