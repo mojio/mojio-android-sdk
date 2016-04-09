@@ -1,1 +1,2 @@
 include ':mojio-sdk-common', ':mojio-sdk-auth', ':mojio-sdk-model', ':mojio-sdk-push', ':mojio-sdk-test'
+rootProject.name = 'mojio-android-sdk'

@@ -1,5 +1,7 @@
-// ./gradlew clean build generateRelease
-apply plugin: 'maven'
+apply plugin: 'com.github.dcendents.android-maven'
+
+def BINTRAY_SUBJECT = "mojio"
+def BINTRAY_REPO = "maven"
 
 def groupId = project.PUBLISH_GROUP_ID
 def artifactId = project.PUBLISH_ARTIFACT_ID
@@ -25,56 +27,51 @@ task androidSourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
 }
 
-uploadArchives {
+uploadArchives() {
+    description = "Uploads all Maven artifacts to BinTray"
     group = "Maven"
-    repositories.mavenDeployer {
-        pom.groupId = groupId
-        pom.artifactId = artifactId
-        pom.version = version
-        // Add other pom properties here if you want (developer details / licenses)
-        repository(url: "file://${localReleaseDest}")
+
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+    repositories {
+        mavenDeployer {
+            repository(url: "https://api.bintray.com/maven/${BINTRAY_SUBJECT}/${BINTRAY_REPO}/${groupId}:${artifactId}/;publish=1") {
+                authentication(userName: properties.getProperty('bintray.username'),
+                               password: properties.getProperty('bintray.apikey'))
+            }
+
+            pom.groupId = groupId
+            pom.artifactId = artifactId
+            pom.version = version
+        }
     }
 }
 
-task zipRelease(type: Zip, group: 'Maven') {
+install {
+    repositories.mavenInstaller {
+        pom.groupId = groupId
+        pom.artifactId = artifactId
+        pom.version = version
+    }
+}
+
+task generateRelease(type: Zip, group: 'Maven') {
+    description = "Generates a .zip file containing jars and poms for hosting on a Maven repo"
+
     from localReleaseDest
     destinationDir buildDir
     archiveName archiveFilename
-}
 
-task generateRelease(group: 'Maven') {
-    description = "Generates a .zip file containing jars and poms for hosting on a Maven repo"
     doLast {
         println "Release ${version} can be found at ${localReleaseDest}/"
         println "Release ${version} zipped can be found ${buildDir}/${archiveFilename}"
     }
 }
 
-task publishRelease(group: 'Maven') {
-    description = "Publishes the generated .zip file to BinTray"
-    doFirst {
-        /* TODO POST /packages/:subject/:repo/:package/versions
-        {
-          "name": "${PUBLISH_VERSION}",
-          "desc": "This version...",
-        }
-        */
-
-        /* TODO PUT /content/:subject/:repo/:package/:version/:file_path?publish=1&explode=1
-            <attach .zip as body>
-        */
-    }
-
-    doLast {
-        println "${PUBLISH_GROUP_ID}:${PUBLISH_ARTIFACT_ID}:${PUBLISH_VERSION} uploaded to BinTray"
-    }
-}
-
-generateRelease.dependsOn(uploadArchives)
-generateRelease.dependsOn(zipRelease)
-
-
 artifacts {
     archives androidSourcesJar
     archives androidJavadocsJar
 }
+
+uploadArchives.dependsOn(generateRelease)
