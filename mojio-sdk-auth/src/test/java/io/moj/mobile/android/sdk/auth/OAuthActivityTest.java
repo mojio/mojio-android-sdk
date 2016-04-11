@@ -2,23 +2,14 @@ package io.moj.mobile.android.sdk.auth;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v4.app.Fragment;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import com.google.common.collect.Sets;
 
 import org.junit.Test;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Implementation;
-import org.robolectric.annotation.Implements;
-import org.robolectric.annotation.RealObject;
-import org.robolectric.shadows.ShadowActivity;
-import org.robolectric.shadows.support.v4.SupportFragmentTestUtil;
 
 import java.util.Set;
 
@@ -27,7 +18,6 @@ import io.moj.mobile.android.sdk.RobolectricTest;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.mock;

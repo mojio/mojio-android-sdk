@@ -12,7 +12,14 @@ ext {
     VERSION_CODE = 1
 
     PUBLISH_GROUP_ID = 'io.moj.mobile.android'
-    PUBLISH_VERSION = '0.0.15'
+
+    if (project.hasProperty('publishVersion')) {
+        println "Version ${publishVersion}"
+        PUBLISH_VERSION = publishVersion;
+    } else {
+        PUBLISH_VERSION = '0.0.16'
+    }
+
     GLOBAL_COVERAGE_EXCLUDES = [
             '**/R.class',
             '**/R$*.class',
@@ -31,11 +38,14 @@ jacoco {
 buildscript {
     repositories {
         jcenter()
+        mavenCentral()
+        mavenLocal()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.0.0-beta6'
-        classpath "org.jacoco:org.jacoco.core:0.7.2.201409121644"
+        classpath 'com.android.tools.build:gradle:2.0.0'
+        classpath 'org.jacoco:org.jacoco.core:0.7.2.201409121644'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.3'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

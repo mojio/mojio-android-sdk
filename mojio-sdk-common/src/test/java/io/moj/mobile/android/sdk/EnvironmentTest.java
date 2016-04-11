@@ -1,16 +1,27 @@
 package io.moj.mobile.android.sdk;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.MockPolicy;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.Locale;
 
+import io.moj.mobile.android.sdk.test.AndroidMockPolicy;
+
+import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth.assertWithMessage;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 
 /**
  * Created by skidson on 16-02-18.
  */
+@MockPolicy(AndroidMockPolicy.class)
+@RunWith(PowerMockRunner.class)
 public class EnvironmentTest {
+
+    private static final String SCHEME = "https://";
 
     @Test
     public void testUrlLocales() {
@@ -29,6 +40,36 @@ public class EnvironmentTest {
         assertEquals(accountsUrl, e.getAccountsUrl());
         assertEquals(passwordRecoveryUrl, e.getPasswordRecoveryUrl());
         assertEquals(myMojioUrl, e.getMyMojioUrl());
+    }
+
+    /**
+     * Validates that environments with a prefix have a dash and those that don't do not.
+     */
+    @Test
+    public void testPrefixes() {
+        for (Environment environment : Environment.values()) {
+            String prefix = environment.getPrefix();
+
+            String[] uris = new String[] {
+                    environment.getAccountsUrl(),
+                    environment.getMyMojioUrl(),
+                    environment.getPasswordRecoveryUrl(),
+                    environment.getPushUrl(),
+                    environment.getApiUrl()
+            };
+
+            for (String uri : uris) {
+                assertThat(uri).isNotNull();
+                assertThat(uri).startsWith(SCHEME);
+
+                String authority = uri.substring(SCHEME.length());
+                assertThat(authority).startsWith(prefix);
+
+                // assert the authority doesn't start with a dash
+                assertWithMessage("Uri '" + uri + "' should not start with a dash")
+                        .that(authority).doesNotMatch("^-.*");
+            }
+        }
     }
 
     @Test

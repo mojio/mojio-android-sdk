@@ -1,5 +1,7 @@
 package io.moj.mobile.android.sdk;
 
+import android.text.TextUtils;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -11,18 +13,20 @@ import java.util.Map;
  */
 public enum Environment {
 
-    PROD("prod"),
-    CZECH("cz"),
+    PROD(""),
     TRIAL("trial"),
     STAGING("staging"),
-    DEVELOP("develop");
+    EU_PROD("eu-production"),
+    EU_STAGING("eu-staging"),
+    NA_PROD("na-production"),
+    NA_STAGING("na-staging");
 
     private static final int DEFAULT_VERSION = 2;
     private static final String SCHEME = "https://";
-    private static final String FORMAT_ACCOUNTS_HOSTNAME = SCHEME + "%s-accounts.moj.io";
-    private static final String FORMAT_MY_MOJIO_HOSTNAME = SCHEME + "%s-my.moj.io";
-    private static final String FORMAT_API_HOSTNAME = SCHEME + "%s-api.moj.io/v%d";
-    private static final String FORMAT_PUSH_HOSTNAME = SCHEME + "%s-push.moj.io/v%d";
+    private static final String FORMAT_ACCOUNTS_HOSTNAME = SCHEME + "%saccounts.moj.io";
+    private static final String FORMAT_MY_MOJIO_HOSTNAME = SCHEME + "%smy.moj.io";
+    private static final String FORMAT_API_HOSTNAME = SCHEME + "%sapi.moj.io/v%d";
+    private static final String FORMAT_PUSH_HOSTNAME = SCHEME + "%spush.moj.io/v%d";
     private static final String PATH_FORGOT_PASSWORD = "/account/forgot-password";
 
     private static final Map<String, Environment> PREFIX_MAP;
@@ -40,7 +44,7 @@ public enum Environment {
     }
 
     public String getAccountsUrl() {
-        return String.format(Locale.US, FORMAT_ACCOUNTS_HOSTNAME, prefix);
+        return String.format(Locale.US, FORMAT_ACCOUNTS_HOSTNAME, buildUrlPrefix());
     }
 
     public String getPasswordRecoveryUrl() {
@@ -52,7 +56,7 @@ public enum Environment {
     }
 
     public String getApiUrl(int version) {
-        return String.format(Locale.US, FORMAT_API_HOSTNAME, prefix, version);
+        return String.format(Locale.US, FORMAT_API_HOSTNAME, buildUrlPrefix(), version);
     }
 
     public String getPushUrl() {
@@ -60,15 +64,19 @@ public enum Environment {
     }
 
     public String getPushUrl(int version) {
-        return String.format(Locale.US, FORMAT_PUSH_HOSTNAME, prefix, version);
+        return String.format(Locale.US, FORMAT_PUSH_HOSTNAME, buildUrlPrefix(), version);
     }
 
     public String getMyMojioUrl() {
-        return String.format(Locale.US, FORMAT_MY_MOJIO_HOSTNAME, prefix);
+        return String.format(Locale.US, FORMAT_MY_MOJIO_HOSTNAME, buildUrlPrefix());
     }
 
     public String getPrefix() {
         return prefix;
+    }
+
+    private String buildUrlPrefix() {
+        return prefix + (TextUtils.isEmpty(prefix) ? "" : "-");
     }
 
     public static Environment getDefault() {
