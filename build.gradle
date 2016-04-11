@@ -12,7 +12,14 @@ ext {
     VERSION_CODE = 1
 
     PUBLISH_GROUP_ID = 'io.moj.mobile.android'
-    PUBLISH_VERSION = '0.0.17'
+
+    if (project.hasProperty('publishVersion')) {
+        println "Version ${publishVersion}"
+        PUBLISH_VERSION = publishVersion;
+    } else {
+        PUBLISH_VERSION = '0.0.16'
+    }
+
     GLOBAL_COVERAGE_EXCLUDES = [
             '**/R.class',
             '**/R$*.class',
