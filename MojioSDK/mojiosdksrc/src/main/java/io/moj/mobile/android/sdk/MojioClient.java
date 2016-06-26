@@ -125,17 +125,11 @@ public class MojioClient {
         _mojioAppSecretKey = mojioSecretkey;
         _redirectUrl = redirectUrl;
 
-        /* HACK: this is a temporary solution added for the Czech trial. In the SDK we have
-         * specified that the endpoint URL for MCC 230 and MNC 1 is cz-api.moj.io. The code below
-         * will make it so that if you have specify your locale to EN_GB or CS_CZ you will also connect
-         * to the cz-api.moj.io backend.
-         */
-        Configuration config = ctx.getResources().getConfiguration();
-        if (config.locale.equals(EN_GB) || config.locale.getLanguage().equals(CS_CZ.getLanguage())) {
-            updateRegion(CZ_MCC, CZ_TMOBILE_MNC);
-        } else {
-            updateRegion(config.mcc, config.mnc);
-        }
+        this.sandboxAvailable = false;
+        this.updateUrl("staging-api.moj.io");
+        this._configuredMcc = 0;
+        this._configuredMnc = 0;
+
     }
 
     //========================================================================
